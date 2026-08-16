@@ -1,14 +1,13 @@
 import { useEffect, useEffectEvent } from 'react'
 import { useAtom, useAtomValue } from 'jotai'
-import { ChevronRight, ChevronLeft, Circle, Square } from 'lucide-react'
-import { recordingsAtom, selectedRecordingIdAtom, isSidebarOpenAtom } from './atoms'
+import { Circle, Square } from 'lucide-react'
+import { recordingsAtom, selectedRecordingIdAtom } from './atoms'
 import { useScreenRecording } from './useScreenRecording'
 import { RecordingItem } from './RecordingItem'
 
 export function RecordingsSidebar() {
   const recordings = useAtomValue(recordingsAtom)
   const [selectedRecordingId, setSelectedRecordingId] = useAtom(selectedRecordingIdAtom)
-  const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom)
   const { isRecording, start, stop } = useScreenRecording()
 
   // keep a valid selection: autoselect the first recording, and reselect
@@ -25,33 +24,10 @@ export function RecordingsSidebar() {
     syncSelection()
   }, [recordings])
 
-  if (!isSidebarOpen) {
-    return (
-      <div className="flex w-10 flex-col items-center border-r border-neutral-300 py-2">
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(true)}
-          className="rounded p-1 text-neutral-900 hover:bg-neutral-200"
-          aria-label="Open recordings list"
-        >
-          <ChevronRight size={16} />
-        </button>
-      </div>
-    )
-  }
-
   return (
     <div className="flex w-64 flex-col border-r border-neutral-300">
-      <div className="flex items-center justify-between border-b border-neutral-300 p-2">
+      <div className="border-b border-neutral-300 p-2">
         <span className="text-sm font-semibold text-neutral-900">Recordings</span>
-        <button
-          type="button"
-          onClick={() => setIsSidebarOpen(false)}
-          className="rounded p-1 text-neutral-900 hover:bg-neutral-200"
-          aria-label="Close recordings list"
-        >
-          <ChevronLeft size={16} />
-        </button>
       </div>
 
       <button
