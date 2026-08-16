@@ -38,8 +38,8 @@ export function Player() {
 
   if (!videoUrl) {
     return (
-      <div className="flex flex-1 items-center justify-center text-neutral-600">
-        Select a recording
+      <div className="flex flex-1 items-center justify-center text-center text-neutral-600">
+        {recordings.length === 0 ? 'Create your first recording' : 'Select a recording'}
       </div>
     )
   }
