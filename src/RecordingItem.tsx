@@ -10,11 +10,11 @@ type RecordingItemProps = {
 }
 
 export function RecordingItem({ recording }: RecordingItemProps) {
-  const [selectedId, setSelectedId] = useAtom(selectedRecordingIdAtom)
+  const [selectedRecordingId, setSelectedRecordingId] = useAtom(selectedRecordingIdAtom)
   const setRecordings = useSetAtom(recordingsAtom)
   const [isEditing, setIsEditing] = useState(false)
   const [editingName, setEditingName] = useState(recording.name)
-  const isSelected = recording.id === selectedId
+  const isSelected = recording.id === selectedRecordingId
 
   function startRename() {
     setEditingName(recording.name)
@@ -72,7 +72,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
       ) : (
         <button
           type="button"
-          onClick={() => setSelectedId(recording.id)}
+          onClick={() => setSelectedRecordingId(recording.id)}
           className={`min-w-0 flex-1 truncate px-3 py-2 text-left text-sm text-neutral-900 ${
             isSelected ? 'font-medium' : ''
           }`}

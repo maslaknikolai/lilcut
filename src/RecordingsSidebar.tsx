@@ -1,35 +1,36 @@
 import { useEffect, useEffectEvent } from 'react'
 import { useAtom, useAtomValue } from 'jotai'
 import { ChevronRight, ChevronLeft, Circle, Square } from 'lucide-react'
-import { recordingsAtom, selectedRecordingIdAtom, sidebarOpenAtom } from './atoms'
+import { recordingsAtom, selectedRecordingIdAtom, isSidebarOpenAtom } from './atoms'
 import { useScreenRecording } from './useScreenRecording'
 import { RecordingItem } from './RecordingItem'
 
 export function RecordingsSidebar() {
   const recordings = useAtomValue(recordingsAtom)
-  const [selectedId, setSelectedId] = useAtom(selectedRecordingIdAtom)
-  const [isOpen, setIsOpen] = useAtom(sidebarOpenAtom)
+  const [selectedRecordingId, setSelectedRecordingId] = useAtom(selectedRecordingIdAtom)
+  const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom)
   const { isRecording, start, stop } = useScreenRecording()
 
   // keep a valid selection: autoselect the first recording, and reselect
   // after the selected one is deleted
   const syncSelection = useEffectEvent(() => {
-    if (selectedId !== null && recordings.some((recording) => recording.id === selectedId)) {
-      return
+    const isValid =
+      !!selectedRecordingId && recordings.some((recording) => recording.id === selectedRecordingId)
+    if (!isValid) {
+      setSelectedRecordingId(recordings[0]?.id ?? null)
     }
-    setSelectedId(recordings[0]?.id ?? null)
   })
 
   useEffect(() => {
     syncSelection()
   }, [recordings])
 
-  if (!isOpen) {
+  if (!isSidebarOpen) {
     return (
       <div className="flex w-10 flex-col items-center border-r border-neutral-300 py-2">
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
+          onClick={() => setIsSidebarOpen(true)}
           className="rounded p-1 text-neutral-900 hover:bg-neutral-200"
           aria-label="Open recordings list"
         >
@@ -45,7 +46,7 @@ export function RecordingsSidebar() {
         <span className="text-sm font-semibold text-neutral-900">Recordings</span>
         <button
           type="button"
-          onClick={() => setIsOpen(false)}
+          onClick={() => setIsSidebarOpen(false)}
           className="rounded p-1 text-neutral-900 hover:bg-neutral-200"
           aria-label="Close recordings list"
         >

@@ -2,6 +2,13 @@ import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import type { Recording } from './types'
 
-export const recordingsAtom = atomWithStorage<Recording[]>('recordings', [])
-export const selectedRecordingIdAtom = atom<string | null>(null)
-export const sidebarOpenAtom = atom(true)
+export const recordingsAtom = atomWithStorage<Recording[]>('recordings', [], undefined, {
+  getOnInit: true,
+})
+export const selectedRecordingIdAtom = atomWithStorage<string | null>(
+  'selectedRecordingId',
+  null,
+  undefined,
+  { getOnInit: true },
+)
+export const isSidebarOpenAtom = atom(true)

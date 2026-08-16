@@ -5,10 +5,10 @@ import { readOpfsFile } from './opfs'
 
 export function Player() {
   const recordings = useAtomValue(recordingsAtom)
-  const selectedId = useAtomValue(selectedRecordingIdAtom)
+  const selectedRecordingId = useAtomValue(selectedRecordingIdAtom)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
 
-  const selected = recordings.find((recording) => recording.id === selectedId)
+  const selected = recordings.find((recording) => recording.id === selectedRecordingId)
 
   const openRecording = useEffectEvent(() => {
     if (!selected) {
@@ -17,9 +17,9 @@ export function Player() {
     }
 
     let url: string | null = null
-    let cancelled = false
+    let isCancelled = false
     readOpfsFile(selected.opfsName).then((file) => {
-      if (cancelled) {
+      if (isCancelled) {
         return
       }
       url = URL.createObjectURL(file)
@@ -27,7 +27,7 @@ export function Player() {
     })
 
     return () => {
-      cancelled = true
+      isCancelled = true
       if (url) {
         URL.revokeObjectURL(url)
       }
