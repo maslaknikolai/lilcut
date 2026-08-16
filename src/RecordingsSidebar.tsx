@@ -14,7 +14,9 @@ export function RecordingsSidebar() {
   // keep a valid selection: autoselect the first recording, and reselect
   // after the selected one is deleted
   const syncSelection = useEffectEvent(() => {
-    if (selectedId !== null && recordings.some((recording) => recording.id === selectedId)) return
+    if (selectedId !== null && recordings.some((recording) => recording.id === selectedId)) {
+      return
+    }
     setSelectedId(recordings[0]?.id ?? null)
   })
 

@@ -50,7 +50,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
   return (
     <li
       className={`flex items-center border-b border-neutral-300 ${
-        isSelected ? 'bg-neutral-200' : ''
+        isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
       }`}
     >
       {isEditing ? (
@@ -60,8 +60,12 @@ export function RecordingItem({ recording }: RecordingItemProps) {
           onChange={(e) => setEditingName(e.target.value)}
           onBlur={commitRename}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') commitRename()
-            if (e.key === 'Escape') setIsEditing(false)
+            if (e.key === 'Enter') {
+              commitRename()
+            }
+            if (e.key === 'Escape') {
+              setIsEditing(false)
+            }
           }}
           className="min-w-0 flex-1 border-b border-neutral-400 bg-transparent px-3 py-2 text-sm text-neutral-900 outline-none"
         />
@@ -70,7 +74,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
           type="button"
           onClick={() => setSelectedId(recording.id)}
           className={`min-w-0 flex-1 truncate px-3 py-2 text-left text-sm text-neutral-900 ${
-            isSelected ? 'font-medium' : 'hover:bg-neutral-200'
+            isSelected ? 'font-medium' : ''
           }`}
         >
           {recording.name}

@@ -19,14 +19,18 @@ export function Player() {
     let url: string | null = null
     let cancelled = false
     readOpfsFile(selected.opfsName).then((file) => {
-      if (cancelled) return
+      if (cancelled) {
+        return
+      }
       url = URL.createObjectURL(file)
       setVideoUrl(url)
     })
 
     return () => {
       cancelled = true
-      if (url) URL.revokeObjectURL(url)
+      if (url) {
+        URL.revokeObjectURL(url)
+      }
     }
   })
 
