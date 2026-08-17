@@ -203,7 +203,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
   const playheadPercent = totalDuration > 0 ? (projectTime / totalDuration) * 100 : 0
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2">
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {videoUrl && (
           <video
