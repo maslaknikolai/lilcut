@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
+import { ProjectEditor } from './ProjectEditor'
 import { ProjectsSidebar } from './ProjectsSidebar'
 
 export function ProjectsPage() {
@@ -10,9 +11,13 @@ export function ProjectsPage() {
   return (
     <>
       <ProjectsSidebar />
-      <div className="flex flex-1 items-center justify-center text-neutral-600">
-        {selected ? selected.name : 'Create your first project'}
-      </div>
+      {selected ? (
+        <ProjectEditor key={selected.id} project={selected} />
+      ) : (
+        <div className="flex flex-1 items-center justify-center text-neutral-600">
+          Create your first project
+        </div>
+      )}
     </>
   )
 }
