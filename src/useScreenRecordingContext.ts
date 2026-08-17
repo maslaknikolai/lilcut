@@ -3,8 +3,11 @@ import { invariant } from './invariant'
 
 type ScreenRecordingContextValue = {
   isRecording: boolean
+  isPaused: boolean
   start: () => void
   stop: () => void
+  pause: () => void
+  resume: () => void
 }
 
 export const ScreenRecordingContext = createContext<ScreenRecordingContextValue | null>(null)

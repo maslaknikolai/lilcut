@@ -14,7 +14,7 @@ export type Project = {
 
 export type Clip = {
   id: string
-  source: string
+  mediaFileId: string
   cutStart?: number
   cutEnd?: number
 }
