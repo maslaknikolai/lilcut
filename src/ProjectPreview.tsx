@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useRef, useState, type MouseEvent } from 're
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Pause, Play, X } from 'lucide-react'
 import { mediaFilesAtom, projectsAtom } from './atoms'
+import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
 import { readOpfsFile } from './opfs'
 import type { Project } from './types'
@@ -237,6 +238,10 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <span className="w-24 shrink-0 text-xs text-neutral-500">
           {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
         </span>
+
+        <div className="flex-1" />
+
+        <ExportProjectButton project={project} />
       </div>
 
       <div className="flex flex-col gap-1">

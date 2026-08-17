@@ -116,9 +116,15 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       const opfsName = `${mediaFileId}.${extension}`
       await writeOpfsFile(opfsName, blob)
 
-      const name = formatRecordingName(new Date())
+      const mediaFileName = `Recording ${formatRecordingName(new Date())}`
       setMediaFiles((prev) => [
-        { id: mediaFileId, name, createdAt: Date.now(), opfsName, mimeType: recorder.mimeType },
+        {
+          id: mediaFileId,
+          name: mediaFileName,
+          createdAt: Date.now(),
+          opfsName,
+          mimeType: recorder.mimeType,
+        },
         ...prev,
       ])
       setSelectedMediaFileId(mediaFileId)
@@ -130,7 +136,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
         cutStart: segment.cutStart,
         cutEnd: segment.cutEnd,
       }))
-      setProjects((prev) => [{ id: projectId, name, clips }, ...prev])
+      setProjects((prev) => [{ id: projectId, name: `Project: ${mediaFileName}`, clips }, ...prev])
       setSelectedProjectId(projectId)
 
       setIsRecording(false)
