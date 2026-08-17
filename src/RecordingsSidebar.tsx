@@ -26,10 +26,6 @@ export function RecordingsSidebar() {
 
   return (
     <div className="flex w-64 flex-col border-r border-neutral-300">
-      <div className="border-b border-neutral-300 p-2">
-        <span className="text-sm font-semibold text-neutral-900">Recordings</span>
-      </div>
-
       <ScreenRecordingProvider>
         <RecordButton />
         <RecordingPipWindow />
