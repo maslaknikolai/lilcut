@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { useSetAtom } from 'jotai'
 import { recordingsAtom, selectedRecordingIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
+import { ScreenRecordingContext } from './useScreenRecordingContext'
 
 function formatRecordingName(date: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0')
@@ -23,10 +24,10 @@ function pickSupportedMimeType(): string {
   return MIME_TYPE_CANDIDATES.find((type) => MediaRecorder.isTypeSupported(type)) ?? 'video/webm'
 }
 
-export function useScreenRecording() {
+export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [isRecording, setIsRecording] = useState(false)
   const setRecordings = useSetAtom(recordingsAtom)
-  const setSelectedId = useSetAtom(selectedRecordingIdAtom)
+  const setSelectedRecordingId = useSetAtom(selectedRecordingIdAtom)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
@@ -87,7 +88,7 @@ export function useScreenRecording() {
         },
         ...prev,
       ])
-      setSelectedId(id)
+      setSelectedRecordingId(id)
       setIsRecording(false)
     }
 
@@ -97,11 +98,15 @@ export function useScreenRecording() {
     recorder.start()
     recorderRef.current = recorder
     setIsRecording(true)
-  }, [setRecordings, setSelectedId])
+  }, [setRecordings, setSelectedRecordingId])
 
   const stop = useCallback(() => {
     recorderRef.current?.stop()
   }, [])
 
-  return { isRecording, start, stop }
+  return (
+    <ScreenRecordingContext.Provider value={{ isRecording, start, stop }}>
+      {children}
+    </ScreenRecordingContext.Provider>
+  )
 }
