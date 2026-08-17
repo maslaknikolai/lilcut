@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { ExportJobWidget } from './ExportJobWidget'
 
 function getTabClassName({ isActive }: { isActive: boolean }) {
   const activeClassName = isActive
@@ -9,13 +10,17 @@ function getTabClassName({ isActive }: { isActive: boolean }) {
 
 export function TabNav() {
   return (
-    <nav className="flex border-b border-neutral-300">
-      <NavLink to="/" end className={getTabClassName}>
-        Projects
-      </NavLink>
-      <NavLink to="/files" className={getTabClassName}>
-        Files
-      </NavLink>
+    <nav className="flex items-center justify-between border-b border-neutral-300 pr-2">
+      <div className="flex">
+        <NavLink to="/" end className={getTabClassName}>
+          Projects
+        </NavLink>
+        <NavLink to="/files" className={getTabClassName}>
+          Files
+        </NavLink>
+      </div>
+
+      <ExportJobWidget />
     </nav>
   )
 }
