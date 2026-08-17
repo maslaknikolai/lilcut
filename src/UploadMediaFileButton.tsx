@@ -1,10 +1,10 @@
 import { useRef, type ChangeEvent } from 'react'
 import { useSetAtom } from 'jotai'
-import { Plus } from 'lucide-react'
+import { Upload } from 'lucide-react'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
 
-export function AddMediaFileButton() {
+export function UploadMediaFileButton() {
   const setMediaFiles = useSetAtom(mediaFilesAtom)
   const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -33,9 +33,9 @@ export function AddMediaFileButton() {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="flex flex-1 items-center justify-center gap-1.5 rounded border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+        className="flex flex-1 items-center justify-center gap-1.5 rounded border border-neutral-300 px-1 py-1 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
       >
-        <Plus size={14} /> Add
+        <Upload size={14} />
       </button>
 
       <input

@@ -18,7 +18,7 @@ export function NewProjectButton() {
       onClick={handleClick}
       className="flex flex-1 items-center justify-center gap-1.5 rounded bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800"
     >
-      <Plus size={14} /> New project
+      <Plus size={14} />
     </button>
   )
 }

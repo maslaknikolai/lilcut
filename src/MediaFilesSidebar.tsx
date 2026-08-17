@@ -1,12 +1,12 @@
 import { useEffect, useEffectEvent } from 'react'
 import { useAtom, useAtomValue } from 'jotai'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
-import { AddMediaFileButton } from './AddMediaFileButton'
 import { MediaFileItem } from './MediaFileItem'
 import { PauseResumeButton } from './PauseResumeButton'
 import { RecordButton } from './RecordButton'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
+import { UploadMediaFileButton } from './UploadMediaFileButton'
 
 export function MediaFilesSidebar() {
   const mediaFiles = useAtomValue(mediaFilesAtom)
@@ -32,7 +32,7 @@ export function MediaFilesSidebar() {
         <div className="flex gap-2 p-2">
           <RecordButton />
           <PauseResumeButton />
-          <AddMediaFileButton />
+          <UploadMediaFileButton />
         </div>
         <RecordingPipWindow />
       </ScreenRecordingProvider>
