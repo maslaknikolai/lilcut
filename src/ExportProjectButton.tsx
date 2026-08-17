@@ -111,7 +111,7 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
         const bytes = typeof output === 'string' ? new TextEncoder().encode(output) : output
         const blob = new Blob([new Uint8Array(bytes)], { type: 'video/mp4' })
 
-        const exportedName = `${project.name} exported`
+        const exportedName = `Exported: ${project.name}`
         const exportedId = crypto.randomUUID()
         const exportedOpfsName = `${exportedId}.mp4`
         await writeOpfsFile(exportedOpfsName, blob)
