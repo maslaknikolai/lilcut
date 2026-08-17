@@ -1,48 +1,13 @@
-import { useEffect, useEffectEvent, useRef, useState, type MouseEvent } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { Pause, Play, X } from 'lucide-react'
-import { mediaFilesAtom, projectsAtom } from './atoms'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useAtomValue } from 'jotai'
+import { Pause, Play } from 'lucide-react'
+import { mediaFilesAtom } from './atoms'
 import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
 import { readOpfsFile } from './opfs'
+import { Timeline } from './Timeline'
+import { buildTimeline, findClipIndexAtTime } from './projectTimeline'
 import type { Project } from './types'
-
-type TimelineClip = {
-  id: string
-  mediaFileId: string
-  cutStart: number
-  cutEnd: number
-  duration: number
-  projectStart: number
-}
-
-function buildTimeline(project: Project): TimelineClip[] {
-  let projectStart = 0
-  return project.clips.map((clip) => {
-    const cutStart = clip.cutStart ?? 0
-    const cutEnd = clip.cutEnd ?? cutStart
-    const duration = Math.max(0, cutEnd - cutStart)
-    const timelineClip = {
-      id: clip.id,
-      mediaFileId: clip.mediaFileId,
-      cutStart,
-      cutEnd,
-      duration,
-      projectStart,
-    }
-    projectStart += duration
-    return timelineClip
-  })
-}
-
-function findClipIndexAtTime(timeline: TimelineClip[], time: number): number {
-  for (let i = 0; i < timeline.length; i++) {
-    if (time < timeline[i].projectStart + timeline[i].duration) {
-      return i
-    }
-  }
-  return Math.max(0, timeline.length - 1)
-}
 
 type ProjectPreviewProps = {
   project: Project
@@ -50,7 +15,6 @@ type ProjectPreviewProps = {
 
 export function ProjectPreview({ project }: ProjectPreviewProps) {
   const mediaFiles = useAtomValue(mediaFilesAtom)
-  const setProjects = useSetAtom(projectsAtom)
   const timeline = buildTimeline(project)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
@@ -176,36 +140,10 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
     }
   }
 
-  function handleTimelineClick(event: MouseEvent<HTMLDivElement>) {
-    if (totalDuration <= 0) {
-      return
-    }
-    const track = event.currentTarget.getBoundingClientRect()
-    const ratio = (event.clientX - track.left) / track.width
-    seekToProjectTime(Math.min(1, Math.max(0, ratio)) * totalDuration)
-  }
-
-  function removeClip(event: MouseEvent<HTMLButtonElement>, clipId: string) {
-    event.stopPropagation()
-    setProjects((prev) =>
-      prev.map((p) =>
-        p.id === project.id ? { ...p, clips: p.clips.filter((clip) => clip.id !== clipId) } : p,
-      ),
-    )
-  }
-
-  if (timeline.length === 0) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-neutral-600">No clips yet</div>
-    )
-  }
-
-  const playheadPercent = totalDuration > 0 ? (projectTime / totalDuration) * 100 : 0
-
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
       <div className="flex flex-1 items-center justify-center overflow-hidden">
-        {videoUrl && (
+        {videoUrl ? (
           <video
             ref={videoRef}
             src={videoUrl}
@@ -218,6 +156,8 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
           />
+        ) : (
+          <span className="text-neutral-600">No clips yet</span>
         )}
       </div>
 
@@ -225,7 +165,8 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <button
           type="button"
           onClick={togglePlayback}
-          className="flex shrink-0 items-center justify-center rounded p-1.5 text-neutral-700 hover:bg-neutral-100"
+          disabled={timeline.length === 0}
+          className="flex shrink-0 items-center justify-center rounded p-1.5 text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -244,43 +185,12 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <ExportProjectButton project={project} />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <div
-          onClick={handleTimelineClick}
-          className="relative h-1.5 cursor-pointer rounded-full bg-neutral-300"
-        >
-          <div
-            className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-neutral-900"
-            style={{ left: `${playheadPercent}%`, transform: 'translate(-50%, -50%)' }}
-          />
-        </div>
-
-        <div onClick={handleTimelineClick} className="flex h-12 cursor-pointer gap-px">
-          {timeline.map((timelineClip) => (
-            <div
-              key={timelineClip.id}
-              style={{ flexGrow: timelineClip.duration || 1 }}
-              className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${
-                timelineClip.id === currentClipId ? 'bg-neutral-900' : 'bg-neutral-500'
-              }`}
-            >
-              <span className="truncate">
-                {mediaFiles.find((file) => file.id === timelineClip.mediaFileId)?.name ??
-                  'Unknown file'}
-              </span>
-
-              <button
-                type="button"
-                onClick={(e) => removeClip(e, timelineClip.id)}
-                className="absolute top-0.5 right-0.5 rounded p-0.5 opacity-0 hover:bg-black/30 group-hover:opacity-100"
-                aria-label="Remove clip"
-              >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Timeline
+        project={project}
+        currentClipId={currentClipId}
+        projectTime={projectTime}
+        onSeek={seekToProjectTime}
+      />
     </div>
   )
 }
