@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { MediaFilesPage } from './MediaFilesPage'
 import { ProjectsPage } from './ProjectsPage'
-import { RecordingPage } from './RecordingPage'
 import { TabNav } from './TabNav'
 
 export function App() {
@@ -12,7 +12,7 @@ export function App() {
         <div className="flex flex-1 overflow-hidden">
           <Routes>
             <Route path="/" element={<ProjectsPage />} />
-            <Route path="/recording" element={<RecordingPage />} />
+            <Route path="/files" element={<MediaFilesPage />} />
           </Routes>
         </div>
       </div>

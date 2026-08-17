@@ -13,8 +13,8 @@ export function TabNav() {
       <NavLink to="/" end className={getTabClassName}>
         Projects
       </NavLink>
-      <NavLink to="/recording" className={getTabClassName}>
-        Recordings
+      <NavLink to="/files" className={getTabClassName}>
+        Files
       </NavLink>
     </nav>
   )

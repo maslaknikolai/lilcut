@@ -1,16 +1,16 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { useAtomValue } from 'jotai'
-import { recordingsAtom, selectedRecordingIdAtom } from './atoms'
+import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { readOpfsFile } from './opfs'
 
 export function Player() {
-  const recordings = useAtomValue(recordingsAtom)
-  const selectedRecordingId = useAtomValue(selectedRecordingIdAtom)
+  const mediaFiles = useAtomValue(mediaFilesAtom)
+  const selectedMediaFileId = useAtomValue(selectedMediaFileIdAtom)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
 
-  const selected = recordings.find((recording) => recording.id === selectedRecordingId)
+  const selected = mediaFiles.find((file) => file.id === selectedMediaFileId)
 
-  const openRecording = useEffectEvent(() => {
+  const openFile = useEffectEvent(() => {
     if (!selected) {
       setVideoUrl(null)
       return () => {}
@@ -34,12 +34,12 @@ export function Player() {
     }
   })
 
-  useEffect(() => openRecording(), [selected])
+  useEffect(() => openFile(), [selected])
 
   if (!videoUrl) {
     return (
       <div className="flex flex-1 items-center justify-center text-center text-neutral-600">
-        {recordings.length === 0 ? 'Create your first recording' : 'Select a recording'}
+        {mediaFiles.length === 0 ? 'Record or add your first file' : 'Select a file'}
       </div>
     )
   }

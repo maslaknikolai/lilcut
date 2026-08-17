@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { useSetAtom } from 'jotai'
-import { recordingsAtom, selectedRecordingIdAtom } from './atoms'
+import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
 import { ScreenRecordingContext } from './useScreenRecordingContext'
 
@@ -26,8 +26,8 @@ function pickSupportedMimeType(): string {
 
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [isRecording, setIsRecording] = useState(false)
-  const setRecordings = useSetAtom(recordingsAtom)
-  const setSelectedRecordingId = useSetAtom(selectedRecordingIdAtom)
+  const setMediaFiles = useSetAtom(mediaFilesAtom)
+  const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
@@ -78,7 +78,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       const opfsName = `${id}.${extension}`
       await writeOpfsFile(opfsName, blob)
 
-      setRecordings((prev) => [
+      setMediaFiles((prev) => [
         {
           id,
           name: formatRecordingName(new Date()),
@@ -88,7 +88,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
         },
         ...prev,
       ])
-      setSelectedRecordingId(id)
+      setSelectedMediaFileId(id)
       setIsRecording(false)
     }
 
@@ -98,7 +98,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     recorder.start()
     recorderRef.current = recorder
     setIsRecording(true)
-  }, [setRecordings, setSelectedRecordingId])
+  }, [setMediaFiles, setSelectedMediaFileId])
 
   const stop = useCallback(() => {
     recorderRef.current?.stop()

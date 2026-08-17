@@ -1,52 +1,50 @@
 import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { Download, Trash2 } from 'lucide-react'
-import { recordingsAtom, selectedRecordingIdAtom } from './atoms'
+import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { deleteOpfsFile, readOpfsFile } from './opfs'
-import type { Recording } from './types'
+import type { MediaFile } from './types'
 
-type RecordingItemProps = {
-  recording: Recording
+type MediaFileItemProps = {
+  file: MediaFile
 }
 
-export function RecordingItem({ recording }: RecordingItemProps) {
-  const [selectedRecordingId, setSelectedRecordingId] = useAtom(selectedRecordingIdAtom)
-  const setRecordings = useSetAtom(recordingsAtom)
-  const [editingName, setEditingName] = useState(recording.name)
-  const isSelected = recording.id === selectedRecordingId
+export function MediaFileItem({ file }: MediaFileItemProps) {
+  const [selectedMediaFileId, setSelectedMediaFileId] = useAtom(selectedMediaFileIdAtom)
+  const setMediaFiles = useSetAtom(mediaFilesAtom)
+  const [editingName, setEditingName] = useState(file.name)
+  const isSelected = file.id === selectedMediaFileId
 
   function commitRename() {
     const name = editingName.trim()
-    if (!name || name === recording.name) {
-      setEditingName(recording.name)
+    if (!name || name === file.name) {
+      setEditingName(file.name)
       return
     }
-    setRecordings((prev) =>
-      prev.map((item) => (item.id === recording.id ? { ...item, name } : item)),
-    )
+    setMediaFiles((prev) => prev.map((item) => (item.id === file.id ? { ...item, name } : item)))
   }
 
   async function handleDelete(e: React.MouseEvent) {
     e.stopPropagation()
-    await deleteOpfsFile(recording.opfsName)
-    setRecordings((prev) => prev.filter((item) => item.id !== recording.id))
+    await deleteOpfsFile(file.opfsName)
+    setMediaFiles((prev) => prev.filter((item) => item.id !== file.id))
   }
 
   async function handleDownload(e: React.MouseEvent) {
     e.stopPropagation()
-    const file = await readOpfsFile(recording.opfsName)
-    const url = URL.createObjectURL(file)
+    const downloadedFile = await readOpfsFile(file.opfsName)
+    const url = URL.createObjectURL(downloadedFile)
     const link = document.createElement('a')
     link.href = url
-    const extension = recording.opfsName.split('.').pop()
-    link.download = `${recording.name}.${extension}`
+    const extension = file.opfsName.split('.').pop()
+    link.download = `${file.name}.${extension}`
     link.click()
     URL.revokeObjectURL(url)
   }
 
   return (
     <li
-      onClick={() => setSelectedRecordingId(recording.id)}
+      onClick={() => setSelectedMediaFileId(file.id)}
       className={`flex items-center border-b border-neutral-300 ${
         isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
       }`}
@@ -60,7 +58,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
             e.currentTarget.blur()
           }
           if (e.key === 'Escape') {
-            setEditingName(recording.name)
+            setEditingName(file.name)
             e.currentTarget.blur()
           }
         }}
@@ -71,7 +69,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
         type="button"
         onClick={handleDownload}
         className="px-1.5 text-neutral-500 hover:text-neutral-900"
-        aria-label={`Download ${recording.name}`}
+        aria-label={`Download ${file.name}`}
       >
         <Download size={16} />
       </button>
@@ -80,7 +78,7 @@ export function RecordingItem({ recording }: RecordingItemProps) {
         type="button"
         onClick={handleDelete}
         className="px-1.5 pr-2 text-neutral-500 hover:text-red-700"
-        aria-label={`Delete ${recording.name}`}
+        aria-label={`Delete ${file.name}`}
       >
         <Trash2 size={16} />
       </button>

@@ -8,7 +8,7 @@ export function RecordButton() {
     <button
       type="button"
       onClick={() => (isRecording ? stop() : start())}
-      className="m-2 flex items-center justify-center gap-1.5 rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-800"
+      className="flex flex-1 items-center justify-center gap-1.5 rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-800"
     >
       {isRecording ? (
         <>
