@@ -30,6 +30,8 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
 
   const [isExporting, setIsExporting] = useState(false)
+  const [isExportComplete, setIsExportComplete] = useState(false)
+  const [exportingProjectName, setExportingProjectName] = useState<string | null>(null)
   const [exportProgress, setExportProgress] = useState(0)
   const [logLines, setLogLines] = useState<string[]>([])
   const ffmpegInstanceRef = useRef<FFmpeg | null>(null)
@@ -52,6 +54,8 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
 
     isCancelledRef.current = false
     setIsExporting(true)
+    setIsExportComplete(false)
+    setExportingProjectName(project.name)
     setExportProgress(0)
     setLogLines([])
 
@@ -150,6 +154,7 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
         ])
         setSelectedMediaFileId(exportedId)
         navigate('/files')
+        setIsExportComplete(true)
 
         await ffmpeg.deleteFile(concatListName)
         await ffmpeg.deleteFile('output.mp4')
@@ -184,9 +189,22 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     setExportProgress(0)
   })
 
+  const dismissExport = useEffectEvent(() => {
+    setIsExportComplete(false)
+  })
+
   return (
     <ExportJobContext.Provider
-      value={{ isExporting, exportProgress, logLines, startExport, cancelExport }}
+      value={{
+        isExporting,
+        isExportComplete,
+        exportingProjectName,
+        exportProgress,
+        logLines,
+        startExport,
+        cancelExport,
+        dismissExport,
+      }}
     >
       {children}
     </ExportJobContext.Provider>
