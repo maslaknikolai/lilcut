@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { Trash2 } from 'lucide-react'
+import { Copy } from 'lucide-react'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
+import { RemoveButton } from './RemoveButton'
 import type { Project } from './types'
 
 type ProjectItemProps = {
@@ -23,9 +24,19 @@ export function ProjectItem({ project }: ProjectItemProps) {
     setProjects((prev) => prev.map((item) => (item.id === project.id ? { ...item, name } : item)))
   }
 
-  function handleDelete(e: React.MouseEvent) {
-    e.stopPropagation()
+  function handleRemove() {
     setProjects((prev) => prev.filter((item) => item.id !== project.id))
+  }
+
+  function handleClone(e: React.MouseEvent) {
+    e.stopPropagation()
+    const cloneId = crypto.randomUUID()
+    const clonedClips = project.clips.map((clip) => ({ ...clip, id: crypto.randomUUID() }))
+    setProjects((prev) => [
+      { id: cloneId, name: `${project.name} copy`, clips: clonedClips },
+      ...prev,
+    ])
+    setSelectedProjectId(cloneId)
   }
 
   return (
@@ -53,12 +64,14 @@ export function ProjectItem({ project }: ProjectItemProps) {
 
       <button
         type="button"
-        onClick={handleDelete}
-        className="px-1.5 pr-2 text-neutral-500 hover:text-red-700"
-        aria-label={`Delete ${project.name}`}
+        onClick={handleClone}
+        className="px-1.5 text-neutral-500 hover:text-neutral-900"
+        aria-label={`Clone ${project.name}`}
       >
-        <Trash2 size={16} />
+        <Copy size={16} />
       </button>
+
+      <RemoveButton label={project.name} onRemove={handleRemove} />
     </li>
   )
 }

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
-import { Download, Trash2 } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { deleteOpfsFile, readOpfsFile } from './opfs'
+import { RemoveButton } from './RemoveButton'
 import type { MediaFile } from './types'
 
 type MediaFileItemProps = {
@@ -24,8 +25,7 @@ export function MediaFileItem({ file }: MediaFileItemProps) {
     setMediaFiles((prev) => prev.map((item) => (item.id === file.id ? { ...item, name } : item)))
   }
 
-  async function handleDelete(e: React.MouseEvent) {
-    e.stopPropagation()
+  async function handleRemove() {
     await deleteOpfsFile(file.opfsName)
     setMediaFiles((prev) => prev.filter((item) => item.id !== file.id))
   }
@@ -74,14 +74,7 @@ export function MediaFileItem({ file }: MediaFileItemProps) {
         <Download size={16} />
       </button>
 
-      <button
-        type="button"
-        onClick={handleDelete}
-        className="px-1.5 pr-2 text-neutral-500 hover:text-red-700"
-        aria-label={`Delete ${file.name}`}
-      >
-        <Trash2 size={16} />
-      </button>
+      <RemoveButton label={file.name} onRemove={handleRemove} />
     </li>
   )
 }
