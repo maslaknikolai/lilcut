@@ -169,11 +169,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
           className="flex shrink-0 items-center justify-center rounded p-1.5 text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
-          {isPlaying ? (
-            <Pause size={16} fill="currentColor" />
-          ) : (
-            <Play size={16} fill="currentColor" />
-          )}
+          {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
         </button>
 
         <span className="w-24 shrink-0 text-xs text-neutral-500">
@@ -185,12 +181,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <ExportProjectButton project={project} />
       </div>
 
-      <Timeline
-        project={project}
-        currentClipId={currentClipId}
-        projectTime={projectTime}
-        onSeek={seekToProjectTime}
-      />
+      <Timeline project={project} currentClipId={currentClipId} projectTime={projectTime} onSeek={seekToProjectTime} />
     </div>
   )
 }

@@ -16,9 +16,7 @@ type TimelineProps = {
 export function Timeline({ project, currentClipId, projectTime, onSeek }: TimelineProps) {
   const mediaFiles = useAtomValue(mediaFilesAtom)
   const setProjects = useSetAtom(projectsAtom)
-  const [editorState, setEditorState] = useState<
-    { mode: 'create' } | { mode: 'edit'; clip: TimelineClip } | null
-  >(null)
+  const [editorState, setEditorState] = useState<{ mode: 'create' } | { mode: 'edit'; clip: TimelineClip } | null>(null)
 
   const timeline = buildTimeline(project)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
@@ -35,9 +33,7 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
 
   function removeClip(clipId: string) {
     setProjects((prev) =>
-      prev.map((p) =>
-        p.id === project.id ? { ...p, clips: p.clips.filter((clip) => clip.id !== clipId) } : p,
-      ),
+      prev.map((p) => (p.id === project.id ? { ...p, clips: p.clips.filter((clip) => clip.id !== clipId) } : p)),
     )
   }
 
@@ -74,10 +70,7 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
         </button>
       </div>
 
-      <div
-        onClick={handleClick}
-        className="relative h-1.5 cursor-pointer rounded-full bg-neutral-300"
-      >
+      <div onClick={handleClick} className="relative h-1.5 cursor-pointer rounded-full bg-neutral-300">
         <div
           className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-neutral-900"
           style={{ left: `${playheadPercent}%`, transform: 'translate(-50%, -50%)' }}
@@ -94,8 +87,7 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
             }`}
           >
             <span className="truncate">
-              {mediaFiles.find((file) => file.id === timelineClip.mediaFileId)?.name ??
-                'Unknown file'}
+              {mediaFiles.find((file) => file.id === timelineClip.mediaFileId)?.name ?? 'Unknown file'}
             </span>
 
             <button

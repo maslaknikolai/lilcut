@@ -3,6 +3,7 @@ import { useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
+import { SidebarActionButton } from './SidebarActionButton'
 
 export function UploadMediaFileButton() {
   const setMediaFiles = useSetAtom(mediaFilesAtom)
@@ -21,30 +22,20 @@ export function UploadMediaFileButton() {
     const opfsName = `${id}.${extension}`
     await writeOpfsFile(opfsName, file)
 
-    setMediaFiles((prev) => [
-      { id, name: file.name, createdAt: Date.now(), opfsName, mimeType: file.type },
-      ...prev,
-    ])
+    setMediaFiles((prev) => [{ id, name: file.name, createdAt: Date.now(), opfsName, mimeType: file.type }, ...prev])
     setSelectedMediaFileId(id)
   }
 
   return (
     <>
-      <button
-        type="button"
+      <SidebarActionButton
         onClick={() => inputRef.current?.click()}
-        className="flex flex-1 items-center justify-center gap-1.5 rounded border border-neutral-300 px-1 py-1 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+        className="border border-neutral-300 text-neutral-700 hover:bg-neutral-100"
       >
         <Upload size={14} />
-      </button>
+      </SidebarActionButton>
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept="video/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
+      <input ref={inputRef} type="file" accept="video/*" onChange={handleFileChange} className="hidden" />
     </>
   )
 }

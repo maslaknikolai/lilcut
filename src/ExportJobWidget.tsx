@@ -2,14 +2,8 @@ import { OctagonX, X } from 'lucide-react'
 import { useExportJobContext } from './useExportJobContext'
 
 export function ExportJobWidget() {
-  const {
-    isExporting,
-    isExportComplete,
-    exportingProjectName,
-    exportProgress,
-    cancelExport,
-    dismissExport,
-  } = useExportJobContext()
+  const { isExporting, isExportComplete, exportingProjectName, exportProgress, cancelExport, dismissExport } =
+    useExportJobContext()
 
   if (!isExporting && !isExportComplete) {
     return null

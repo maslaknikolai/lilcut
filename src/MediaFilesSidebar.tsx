@@ -6,6 +6,8 @@ import { PauseResumeButton } from './PauseResumeButton'
 import { RecordButton } from './RecordButton'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
+import { Sidebar } from './Sidebar'
+import { SidebarActions } from './SidebarActions'
 import { SortingList } from './SortingList'
 import { UploadMediaFileButton } from './UploadMediaFileButton'
 
@@ -27,13 +29,13 @@ export function MediaFilesSidebar() {
   }, [mediaFiles])
 
   return (
-    <div className="flex w-64 flex-col border-r border-neutral-300">
+    <Sidebar>
       <ScreenRecordingProvider>
-        <div className="flex gap-2 p-2">
+        <SidebarActions>
           <RecordButton />
           <PauseResumeButton />
           <UploadMediaFileButton />
-        </div>
+        </SidebarActions>
         <RecordingPipWindow />
       </ScreenRecordingProvider>
 
@@ -42,6 +44,6 @@ export function MediaFilesSidebar() {
         onReorder={setMediaFiles}
         renderItem={(file, dragProps) => <MediaFileItem file={file} {...dragProps} />}
       />
-    </div>
+    </Sidebar>
   )
 }

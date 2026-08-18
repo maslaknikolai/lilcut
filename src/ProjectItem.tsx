@@ -68,7 +68,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
             e.currentTarget.blur()
           }
         }}
-        className="min-w-0 flex-1 bg-transparent py-2 text-sm text-neutral-900 outline-none"
+        className="min-w-0 flex-1 bg-transparent py-2 text-xs text-neutral-900 outline-none"
       />
 
       <button

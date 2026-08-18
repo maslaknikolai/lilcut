@@ -3,6 +3,8 @@ import { useAtom } from 'jotai'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { NewProjectButton } from './NewProjectButton'
 import { ProjectItem } from './ProjectItem'
+import { Sidebar } from './Sidebar'
+import { SidebarActions } from './SidebarActions'
 import { SortingList } from './SortingList'
 
 export function ProjectsSidebar() {
@@ -23,16 +25,16 @@ export function ProjectsSidebar() {
   }, [projects])
 
   return (
-    <div className="flex w-64 flex-col border-r border-neutral-300">
-      <div className="p-2">
+    <Sidebar>
+      <SidebarActions>
         <NewProjectButton />
-      </div>
+      </SidebarActions>
 
       <SortingList
         items={projects}
         onReorder={setProjects}
         renderItem={(project, dragProps) => <ProjectItem project={project} {...dragProps} />}
       />
-    </div>
+    </Sidebar>
   )
 }

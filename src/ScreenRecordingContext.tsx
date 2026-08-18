@@ -1,11 +1,6 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useSetAtom } from 'jotai'
-import {
-  mediaFilesAtom,
-  projectsAtom,
-  selectedMediaFileIdAtom,
-  selectedProjectIdAtom,
-} from './atoms'
+import { mediaFilesAtom, projectsAtom, selectedMediaFileIdAtom, selectedProjectIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
 import { ScreenRecordingContext } from './useScreenRecordingContext'
 
@@ -83,10 +78,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       audioContext.createMediaStreamSource(new MediaStream([track])).connect(mixedAudio)
     }
 
-    const stream = new MediaStream([
-      ...displayStream.getVideoTracks(),
-      ...mixedAudio.stream.getAudioTracks(),
-    ])
+    const stream = new MediaStream([...displayStream.getVideoTracks(), ...mixedAudio.stream.getAudioTracks()])
     const mimeType = pickSupportedMimeType()
     const recorder = new MediaRecorder(stream, { mimeType })
     chunksRef.current = []

@@ -1,6 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
+import { SidebarActionButton } from './SidebarActionButton'
 
 export function NewProjectButton() {
   const setProjects = useSetAtom(projectsAtom)
@@ -13,12 +14,8 @@ export function NewProjectButton() {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="flex flex-1 items-center justify-center gap-1.5 rounded bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800"
-    >
+    <SidebarActionButton onClick={handleClick} className="bg-neutral-900 text-white hover:bg-neutral-800">
       <Plus size={14} />
-    </button>
+    </SidebarActionButton>
   )
 }

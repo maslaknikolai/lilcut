@@ -76,17 +76,7 @@ export async function exportProjectVideo(
     const concatListName = 'concat.txt'
     const concatList = segmentNames.map((name) => `file '${name}'`).join('\n')
     await ffmpeg.writeFile(concatListName, concatList)
-    await ffmpeg.exec([
-      '-f',
-      'concat',
-      '-safe',
-      '0',
-      '-i',
-      concatListName,
-      '-c',
-      'copy',
-      'output.mp4',
-    ])
+    await ffmpeg.exec(['-f', 'concat', '-safe', '0', '-i', concatListName, '-c', 'copy', 'output.mp4'])
     completedSteps += 1
 
     if (isCancelled()) {

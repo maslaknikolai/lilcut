@@ -16,9 +16,7 @@ export function ProjectsPage() {
           <ProjectPreview project={selected} />
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center text-neutral-600">
-          Create your first project
-        </div>
+        <div className="flex flex-1 items-center justify-center text-neutral-600">Create your first project</div>
       )}
     </>
   )

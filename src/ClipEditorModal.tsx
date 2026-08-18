@@ -92,18 +92,13 @@ export function ClipEditorModal({ projectId, clip, onClose }: ClipEditorModalPro
   }
 
   return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-    >
+    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div
         onClick={(e) => e.stopPropagation()}
         className="flex w-full max-w-lg flex-col gap-3 rounded bg-white p-4 shadow-lg"
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-neutral-900">
-            {clip ? 'Edit clip' : 'New clip'}
-          </span>
+          <span className="text-sm font-semibold text-neutral-900">{clip ? 'Edit clip' : 'New clip'}</span>
           <button
             type="button"
             onClick={onClose}
