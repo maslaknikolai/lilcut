@@ -80,7 +80,10 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
         <Copy size={16} />
       </button>
 
-      <RemoveButton label={project.name} onRemove={handleRemove} />
+      <RemoveButton
+        label={project.name}
+        onRemove={handleRemove}
+      />
     </SortingItem>
   )
 }

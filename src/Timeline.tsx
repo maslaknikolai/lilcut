@@ -70,14 +70,20 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
         </button>
       </div>
 
-      <div onClick={handleClick} className="relative h-1.5 cursor-pointer rounded-full bg-neutral-300">
+      <div
+        onClick={handleClick}
+        className="relative h-1.5 cursor-pointer rounded-full bg-neutral-300"
+      >
         <div
           className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-neutral-900"
           style={{ left: `${playheadPercent}%`, transform: 'translate(-50%, -50%)' }}
         />
       </div>
 
-      <div onClick={handleClick} className="flex h-12 cursor-pointer gap-px">
+      <div
+        onClick={handleClick}
+        className="flex h-12 cursor-pointer gap-px"
+      >
         {timeline.map((timelineClip, index) => (
           <div
             key={timelineClip.id}

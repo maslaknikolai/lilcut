@@ -13,8 +13,14 @@ export function App() {
 
           <div className="flex flex-1 overflow-hidden">
             <Routes>
-              <Route path="/" element={<ProjectsPage />} />
-              <Route path="/files" element={<MediaFilesPage />} />
+              <Route
+                path="/"
+                element={<ProjectsPage />}
+              />
+              <Route
+                path="/files"
+                element={<MediaFilesPage />}
+              />
             </Routes>
           </div>
         </div>

@@ -35,7 +35,13 @@ export function UploadMediaFileButton() {
         <Upload size={14} />
       </SidebarActionButton>
 
-      <input ref={inputRef} type="file" accept="video/*" onChange={handleFileChange} className="hidden" />
+      <input
+        ref={inputRef}
+        type="file"
+        accept="video/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </>
   )
 }

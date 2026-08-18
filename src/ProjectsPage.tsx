@@ -12,7 +12,10 @@ export function ProjectsPage() {
     <>
       <ProjectsSidebar />
       {selected ? (
-        <div key={selected.id} className="flex flex-1 flex-col p-4">
+        <div
+          key={selected.id}
+          className="flex flex-1 flex-col p-4"
+        >
           <ProjectPreview project={selected} />
         </div>
       ) : (

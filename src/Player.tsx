@@ -46,7 +46,11 @@ export function Player() {
 
   return (
     <div className="flex flex-1 items-center justify-center p-4">
-      <video src={videoUrl} controls className="max-h-full max-w-full" />
+      <video
+        src={videoUrl}
+        controls
+        className="max-h-full max-w-full"
+      />
     </div>
   )
 }

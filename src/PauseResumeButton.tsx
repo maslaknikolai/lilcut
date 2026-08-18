@@ -14,7 +14,17 @@ export function PauseResumeButton() {
       onClick={() => (isPaused ? resume() : pause())}
       className="bg-neutral-200 text-neutral-700 hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
+      {isPaused ? (
+        <Play
+          size={14}
+          fill="currentColor"
+        />
+      ) : (
+        <Pause
+          size={14}
+          fill="currentColor"
+        />
+      )}
     </SidebarActionButton>
   )
 }

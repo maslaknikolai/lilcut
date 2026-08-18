@@ -92,7 +92,10 @@ export function ClipEditorModal({ projectId, clip, onClose }: ClipEditorModalPro
   }
 
   return (
-    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    >
       <div
         onClick={(e) => e.stopPropagation()}
         className="flex w-full max-w-lg flex-col gap-3 rounded bg-white p-4 shadow-lg"
@@ -116,11 +119,17 @@ export function ClipEditorModal({ projectId, clip, onClose }: ClipEditorModalPro
             onChange={(e) => handleMediaFileChange(e.target.value)}
             className="rounded border border-neutral-300 px-2 py-1"
           >
-            <option value="" disabled>
+            <option
+              value=""
+              disabled
+            >
               Select a file
             </option>
             {mediaFiles.map((file) => (
-              <option key={file.id} value={file.id}>
+              <option
+                key={file.id}
+                value={file.id}
+              >
                 {file.name}
               </option>
             ))}

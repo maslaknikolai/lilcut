@@ -47,7 +47,11 @@ export function RecordingPipWindow() {
         onClick={stop}
         className="flex flex-1 items-center justify-center gap-1.5 rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-800"
       >
-        <Square size={14} fill="currentColor" /> Stop
+        <Square
+          size={14}
+          fill="currentColor"
+        />{' '}
+        Stop
       </button>
       <PauseResumeButton />
     </div>,

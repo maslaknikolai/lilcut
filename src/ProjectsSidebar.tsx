@@ -33,7 +33,12 @@ export function ProjectsSidebar() {
       <SortingList
         items={projects}
         onReorder={setProjects}
-        renderItem={(project, dragProps) => <ProjectItem project={project} {...dragProps} />}
+        renderItem={(project, dragProps) => (
+          <ProjectItem
+            project={project}
+            {...dragProps}
+          />
+        )}
       />
     </Sidebar>
   )

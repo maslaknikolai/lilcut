@@ -86,7 +86,10 @@ export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDro
         <Download size={16} />
       </button>
 
-      <RemoveButton label={file.name} onRemove={handleRemove} />
+      <RemoveButton
+        label={file.name}
+        onRemove={handleRemove}
+      />
     </SortingItem>
   )
 }

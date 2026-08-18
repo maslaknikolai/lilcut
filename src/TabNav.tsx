@@ -13,11 +13,18 @@ export function TabNav() {
   return (
     <nav className="flex items-center justify-between border-b border-neutral-300 pr-2">
       <div className="flex">
-        <NavLink to="/" end className={getTabClassName}>
+        <NavLink
+          to="/"
+          end
+          className={getTabClassName}
+        >
           <FolderKanban className="size-4" />
           Projects
         </NavLink>
-        <NavLink to="/files" className={getTabClassName}>
+        <NavLink
+          to="/files"
+          className={getTabClassName}
+        >
           <Film className="size-4" />
           Files
         </NavLink>

@@ -10,7 +10,14 @@ export function RecordButton() {
       onClick={() => (isRecording ? stop() : start())}
       className="bg-red-700 text-white hover:bg-red-800"
     >
-      {isRecording ? <Square size={14} /> : <Circle size={14} fill="currentColor" />}
+      {isRecording ? (
+        <Square size={14} />
+      ) : (
+        <Circle
+          size={14}
+          fill="currentColor"
+        />
+      )}
     </SidebarActionButton>
   )
 }

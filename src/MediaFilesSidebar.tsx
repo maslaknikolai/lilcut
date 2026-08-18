@@ -42,7 +42,12 @@ export function MediaFilesSidebar() {
       <SortingList
         items={mediaFiles}
         onReorder={setMediaFiles}
-        renderItem={(file, dragProps) => <MediaFileItem file={file} {...dragProps} />}
+        renderItem={(file, dragProps) => (
+          <MediaFileItem
+            file={file}
+            {...dragProps}
+          />
+        )}
       />
     </Sidebar>
   )

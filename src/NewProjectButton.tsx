@@ -14,7 +14,10 @@ export function NewProjectButton() {
   }
 
   return (
-    <SidebarActionButton onClick={handleClick} className="bg-neutral-900 text-white hover:bg-neutral-800">
+    <SidebarActionButton
+      onClick={handleClick}
+      className="bg-neutral-900 text-white hover:bg-neutral-800"
+    >
       <Plus size={14} />
     </SidebarActionButton>
   )
