@@ -39,9 +39,6 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
-  // MediaRecorder.pause()/resume() already produce one gapless output, so all
-  // we track here is where each active (non-paused) stretch lands on that
-  // output's timeline, in seconds — that becomes the new project's clips
   const segmentsRef = useRef<Segment[]>([])
   const activeDurationRef = useRef(0)
   const segmentStartRef = useRef<number | null>(null)
@@ -66,13 +63,16 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       video: true,
       audio: true,
     })
-    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    let micStream: MediaStream | null = null
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch {
+      micStream = null
+    }
 
-    // MediaRecorder only reliably encodes one audio track, so mix system
-    // and mic audio down to a single track via the Web Audio API
     const audioContext = new AudioContext()
     const mixedAudio = audioContext.createMediaStreamDestination()
-    const mixedAudioTracks = [...displayStream.getAudioTracks(), ...micStream.getAudioTracks()]
+    const mixedAudioTracks = [...displayStream.getAudioTracks(), ...(micStream?.getAudioTracks() ?? [])]
 
     for (const track of mixedAudioTracks) {
       audioContext.createMediaStreamSource(new MediaStream([track])).connect(mixedAudio)
@@ -95,7 +95,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     // (share/mic indicators stay on), so stop every source explicitly
     const stopAllTracks = () => {
       displayStream.getTracks().forEach((track) => track.stop())
-      micStream.getTracks().forEach((track) => track.stop())
+      micStream?.getTracks().forEach((track) => track.stop())
       audioContext.close()
     }
 
@@ -135,7 +135,6 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       setIsPaused(false)
     }
 
-    // browser's own "Stop sharing" UI ends the track without calling recorder.stop()
     stream.getVideoTracks()[0].addEventListener('ended', () => recorder.stop())
 
     recorder.start()
