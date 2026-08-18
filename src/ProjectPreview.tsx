@@ -4,10 +4,11 @@ import { Pause, Play } from 'lucide-react'
 import { mediaFilesAtom } from './atoms'
 import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
-import { readOpfsFile } from './opfs'
+import { Scrubber } from './Scrubber'
 import { Timeline } from './Timeline'
 import { buildTimeline, findClipIndexAtTime } from './projectTimeline'
 import type { Project } from './types'
+import { useMediaFileVideoUrl } from './useMediaFileVideoUrl'
 
 type ProjectPreviewProps = {
   project: Project
@@ -18,67 +19,24 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
   const timeline = buildTimeline(project)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
-  const [currentClipId, setCurrentClipId] = useState(timeline[0]?.id ?? null)
   const [projectTime, setProjectTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const pendingOffsetRef = useRef(0)
 
-  const currentClipIndex = timeline.findIndex((timelineClip) => timelineClip.id === currentClipId)
+  const currentClipIndex = findClipIndexAtTime(timeline, projectTime)
   const currentClip = timeline[currentClipIndex]
   const mediaFile = mediaFiles.find((file) => file.id === currentClip?.mediaFileId)
-
-  // deleting the currently playing clip means currentClipId no longer
-  // matches anything in the timeline — fall back to the first remaining clip
-  const syncCurrentClip = useEffectEvent(() => {
-    if (timeline.some((timelineClip) => timelineClip.id === currentClipId)) {
-      return
-    }
-    pendingOffsetRef.current = 0
-    setCurrentClipId(timeline[0]?.id ?? null)
-  })
-
-  useEffect(() => {
-    syncCurrentClip()
-  }, [project])
-
-  const openMediaFile = useEffectEvent(() => {
-    if (!mediaFile) {
-      setVideoUrl(null)
-      return () => {}
-    }
-
-    let url: string | null = null
-    let isCancelled = false
-    readOpfsFile(mediaFile.opfsName).then((downloadedFile) => {
-      if (isCancelled) {
-        return
-      }
-      url = URL.createObjectURL(downloadedFile)
-      setVideoUrl(url)
-    })
-
-    return () => {
-      isCancelled = true
-      if (url) {
-        URL.revokeObjectURL(url)
-      }
-    }
-  })
-
-  useEffect(() => openMediaFile(), [mediaFile])
+  const videoUrl = useMediaFileVideoUrl(mediaFile)
 
   // switching the active clip doesn't necessarily reload the <video> element
   // (consecutive clips often share the same underlying file), so the jump to
-  // the clip's start (or a pending seek offset within it) happens here
+  // the clip's start (or wherever within it projectTime landed) happens here
   const applyPendingSeek = useEffectEvent(() => {
     const video = videoRef.current
     if (!video || !currentClip) {
       return
     }
-    video.currentTime = currentClip.cutStart + pendingOffsetRef.current
-    pendingOffsetRef.current = 0
+    video.currentTime = currentClip.cutStart + (projectTime - currentClip.projectStart)
     if (isPlaying) {
       video.play()
     }
@@ -86,27 +44,22 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
 
   useEffect(() => {
     applyPendingSeek()
-  }, [currentClipId, mediaFile])
+  }, [currentClip?.id, mediaFile])
 
   function seekToProjectTime(time: number) {
     if (timeline.length === 0) {
       return
     }
     const clampedTime = Math.min(totalDuration, Math.max(0, time))
-    const index = findClipIndexAtTime(timeline, clampedTime)
-    const clip = timeline[index]
-    const offsetWithinClip = clampedTime - clip.projectStart
-
     setProjectTime(clampedTime)
-    if (clip.id === currentClipId && videoRef.current) {
-      videoRef.current.currentTime = clip.cutStart + offsetWithinClip
-    } else {
-      pendingOffsetRef.current = offsetWithinClip
-      setCurrentClipId(clip.id)
+
+    const clip = timeline[findClipIndexAtTime(timeline, clampedTime)]
+    if (clip.id === currentClip?.id && videoRef.current) {
+      videoRef.current.currentTime = clip.cutStart + (clampedTime - clip.projectStart)
     }
   }
 
-  function handleTimeUpdate() {
+  function handleVideoTimeUpdate() {
     const video = videoRef.current
     if (!video || !currentClip) {
       return
@@ -114,8 +67,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
     if (video.currentTime >= currentClip.cutEnd) {
       const nextClip = timeline[currentClipIndex + 1]
       if (nextClip) {
-        pendingOffsetRef.current = 0
-        setCurrentClipId(nextClip.id)
+        setProjectTime(nextClip.projectStart)
       } else {
         video.currentTime = currentClip.cutEnd
         video.pause()
@@ -149,10 +101,9 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
             src={videoUrl}
             className="max-h-full max-w-full"
             onLoadedMetadata={(e) => {
-              e.currentTarget.currentTime = currentClip.cutStart + pendingOffsetRef.current
-              pendingOffsetRef.current = 0
+              e.currentTarget.currentTime = currentClip.cutStart + (projectTime - currentClip.projectStart)
             }}
-            onTimeUpdate={handleTimeUpdate}
+            onTimeUpdate={handleVideoTimeUpdate}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
           />
@@ -191,11 +142,15 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
         <ExportProjectButton project={project} />
       </div>
 
+      <Scrubber
+        projectTime={projectTime}
+        totalDuration={totalDuration}
+        onSeek={seekToProjectTime}
+      />
+
       <Timeline
         project={project}
-        currentClipId={currentClipId}
-        projectTime={projectTime}
-        onSeek={seekToProjectTime}
+        currentClipId={currentClip?.id ?? null}
       />
     </div>
   )

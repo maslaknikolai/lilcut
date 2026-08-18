@@ -15,10 +15,11 @@ type EditingClip = {
 type ClipEditorModalProps = {
   projectId: string
   clip: EditingClip | null
+  insertAt?: number
   onClose: () => void
 }
 
-export function ClipEditorModal({ projectId, clip, onClose }: ClipEditorModalProps) {
+export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEditorModalProps) {
   const mediaFiles = useAtomValue(mediaFilesAtom)
   const setProjects = useSetAtom(projectsAtom)
 
@@ -82,9 +83,11 @@ export function ClipEditorModal({ projectId, clip, onClose }: ClipEditorModalPro
             ),
           }
         }
+        const newClip = { id: crypto.randomUUID(), mediaFileId, cutStart, cutEnd }
+        const targetIndex = insertAt ?? project.clips.length
         return {
           ...project,
-          clips: [...project.clips, { id: crypto.randomUUID(), mediaFileId, cutStart, cutEnd }],
+          clips: [...project.clips.slice(0, targetIndex), newClip, ...project.clips.slice(targetIndex)],
         }
       }),
     )

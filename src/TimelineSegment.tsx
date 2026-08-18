@@ -7,11 +7,20 @@ import type { Project } from './types'
 type SegmentProps = {
   project: Project
   timelineClip: TimelineClip
+  totalDuration: number
+  insertButtonsWidth: number
   isCurrent: boolean
   onEdit: () => void
 }
 
-export function Segment({ project, timelineClip, isCurrent, onEdit }: SegmentProps) {
+export function TimelineSegment({
+  project,
+  timelineClip,
+  totalDuration,
+  insertButtonsWidth,
+  isCurrent,
+  onEdit,
+}: SegmentProps) {
   const mediaFiles = useAtomValue(mediaFilesAtom)
   const setProjects = useSetAtom(projectsAtom)
 
@@ -19,7 +28,7 @@ export function Segment({ project, timelineClip, isCurrent, onEdit }: SegmentPro
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
-  const currentClassName = isCurrent ? 'bg-neutral-900' : 'bg-neutral-500'
+  const durationRatio = totalDuration > 0 ? timelineClip.duration / totalDuration : 0
 
   function removeClip() {
     setProjects((prev) =>
@@ -50,36 +59,14 @@ export function Segment({ project, timelineClip, isCurrent, onEdit }: SegmentPro
 
   return (
     <div
-      style={{ flexGrow: timelineClip.duration || 1 }}
-      className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${currentClassName}`}
+      className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${
+        isCurrent ? 'bg-neutral-900' : 'bg-neutral-500'
+      }`}
+      style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >
       <span className="truncate">{mediaFileName}</span>
 
       <div className="absolute top-0.5 right-0.5 flex gap-0.5 opacity-0 group-hover:opacity-100">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit()
-          }}
-          className="rounded p-0.5 hover:bg-black/30"
-          aria-label="Edit clip"
-        >
-          <Pencil size={12} />
-        </button>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            removeClip()
-          }}
-          className="rounded p-0.5 hover:bg-black/30"
-          aria-label="Remove clip"
-        >
-          <X size={12} />
-        </button>
-
         <button
           type="button"
           onClick={(e) => {
@@ -104,6 +91,30 @@ export function Segment({ project, timelineClip, isCurrent, onEdit }: SegmentPro
           aria-label="Move clip later"
         >
           <ChevronRight size={12} />
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit()
+          }}
+          className="rounded p-0.5 hover:bg-black/30"
+          aria-label="Edit clip"
+        >
+          <Pencil size={12} />
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            removeClip()
+          }}
+          className="rounded p-0.5 hover:bg-black/30"
+          aria-label="Remove clip"
+        >
+          <X size={12} />
         </button>
       </div>
     </div>
