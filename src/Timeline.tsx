@@ -1,9 +1,8 @@
 import { useState, type MouseEvent } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { ChevronLeft, ChevronRight, Pencil, Plus, X } from 'lucide-react'
-import { mediaFilesAtom, projectsAtom } from './atoms'
+import { Plus } from 'lucide-react'
 import { ClipEditorModal } from './ClipEditorModal'
 import { buildTimeline, type TimelineClip } from './projectTimeline'
+import { Segment } from './Segment'
 import type { Project } from './types'
 
 type TimelineProps = {
@@ -14,8 +13,6 @@ type TimelineProps = {
 }
 
 export function Timeline({ project, currentClipId, projectTime, onSeek }: TimelineProps) {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
-  const setProjects = useSetAtom(projectsAtom)
   const [editorState, setEditorState] = useState<{ mode: 'create' } | { mode: 'edit'; clip: TimelineClip } | null>(null)
 
   const timeline = buildTimeline(project)
@@ -29,31 +26,6 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
     const track = event.currentTarget.getBoundingClientRect()
     const ratio = (event.clientX - track.left) / track.width
     onSeek(Math.min(1, Math.max(0, ratio)) * totalDuration)
-  }
-
-  function removeClip(clipId: string) {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === project.id ? { ...p, clips: p.clips.filter((clip) => clip.id !== clipId) } : p)),
-    )
-  }
-
-  function moveClip(clipId: string, direction: -1 | 1) {
-    setProjects((prev) =>
-      prev.map((p) => {
-        if (p.id !== project.id) {
-          return p
-        }
-        const index = p.clips.findIndex((clip) => clip.id === clipId)
-        const targetIndex = index + direction
-        if (index === -1 || targetIndex < 0 || targetIndex >= p.clips.length) {
-          return p
-        }
-        const clips = [...p.clips]
-        const [moved] = clips.splice(index, 1)
-        clips.splice(targetIndex, 0, moved)
-        return { ...p, clips }
-      }),
-    )
   }
 
   return (
@@ -84,68 +56,14 @@ export function Timeline({ project, currentClipId, projectTime, onSeek }: Timeli
         onClick={handleClick}
         className="flex h-12 cursor-pointer gap-px"
       >
-        {timeline.map((timelineClip, index) => (
-          <div
+        {timeline.map((timelineClip) => (
+          <Segment
             key={timelineClip.id}
-            style={{ flexGrow: timelineClip.duration || 1 }}
-            className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${
-              timelineClip.id === currentClipId ? 'bg-neutral-900' : 'bg-neutral-500'
-            }`}
-          >
-            <span className="truncate">
-              {mediaFiles.find((file) => file.id === timelineClip.mediaFileId)?.name ?? 'Unknown file'}
-            </span>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setEditorState({ mode: 'edit', clip: timelineClip })
-              }}
-              className="absolute top-0.5 left-0.5 rounded p-0.5 opacity-0 hover:bg-black/30 group-hover:opacity-100"
-              aria-label="Edit clip"
-            >
-              <Pencil size={12} />
-            </button>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                removeClip(timelineClip.id)
-              }}
-              className="absolute top-0.5 right-0.5 rounded p-0.5 opacity-0 hover:bg-black/30 group-hover:opacity-100"
-              aria-label="Remove clip"
-            >
-              <X size={12} />
-            </button>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                moveClip(timelineClip.id, -1)
-              }}
-              disabled={index === 0}
-              className="absolute bottom-0.5 left-0.5 rounded p-0.5 opacity-0 hover:bg-black/30 group-hover:opacity-100 disabled:hidden"
-              aria-label="Move clip earlier"
-            >
-              <ChevronLeft size={12} />
-            </button>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                moveClip(timelineClip.id, 1)
-              }}
-              disabled={index === timeline.length - 1}
-              className="absolute right-0.5 bottom-0.5 rounded p-0.5 opacity-0 hover:bg-black/30 group-hover:opacity-100 disabled:hidden"
-              aria-label="Move clip later"
-            >
-              <ChevronRight size={12} />
-            </button>
-          </div>
+            project={project}
+            timelineClip={timelineClip}
+            isCurrent={timelineClip.id === currentClipId}
+            onEdit={() => setEditorState({ mode: 'edit', clip: timelineClip })}
+          />
         ))}
       </div>
 

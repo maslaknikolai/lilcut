@@ -30,7 +30,7 @@ export function UploadMediaFileButton() {
     <>
       <SidebarActionButton
         onClick={() => inputRef.current?.click()}
-        className="border border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+        className="border-neutral-300 text-neutral-700 hover:bg-neutral-100"
       >
         <Upload size={14} />
       </SidebarActionButton>

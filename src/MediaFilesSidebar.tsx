@@ -4,8 +4,6 @@ import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { MediaFileItem } from './MediaFileItem'
 import { PauseResumeButton } from './PauseResumeButton'
 import { RecordButton } from './RecordButton'
-import { RecordingPipWindow } from './RecordingPipWindow'
-import { ScreenRecordingProvider } from './ScreenRecordingContext'
 import { Sidebar } from './Sidebar'
 import { SidebarActions } from './SidebarActions'
 import { SortingList } from './SortingList'
@@ -30,14 +28,11 @@ export function MediaFilesSidebar() {
 
   return (
     <Sidebar>
-      <ScreenRecordingProvider>
-        <SidebarActions>
-          <RecordButton />
-          <PauseResumeButton />
-          <UploadMediaFileButton />
-        </SidebarActions>
-        <RecordingPipWindow />
-      </ScreenRecordingProvider>
+      <SidebarActions>
+        <RecordButton />
+        <PauseResumeButton />
+        <UploadMediaFileButton />
+      </SidebarActions>
 
       <SortingList
         items={mediaFiles}
