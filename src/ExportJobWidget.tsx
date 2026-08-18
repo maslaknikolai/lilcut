@@ -19,7 +19,7 @@ export function ExportJobWidget() {
           <button
             type="button"
             onClick={cancelExport}
-            className="flex items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
+            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
           >
             <OctagonX size={14} />
             Cancel
@@ -31,7 +31,7 @@ export function ExportJobWidget() {
           <button
             type="button"
             onClick={dismissExport}
-            className="flex items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
+            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
             aria-label="Dismiss"
           >
             <X size={14} />

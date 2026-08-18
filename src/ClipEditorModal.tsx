@@ -108,7 +108,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-900"
+            className="cursor-pointer text-neutral-500 hover:text-neutral-900"
             aria-label="Close"
           >
             <X size={16} />
@@ -168,7 +168,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
               <button
                 type="button"
                 onClick={() => videoRef.current && setCutStart(videoRef.current.currentTime)}
-                className="shrink-0 rounded border border-neutral-300 px-2 text-xs text-neutral-700 hover:bg-neutral-100"
+                className="shrink-0 cursor-pointer rounded border border-neutral-300 px-2 text-xs text-neutral-700 hover:bg-neutral-100"
               >
                 Use current
               </button>
@@ -189,7 +189,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
               <button
                 type="button"
                 onClick={() => videoRef.current && setCutEnd(videoRef.current.currentTime)}
-                className="shrink-0 rounded border border-neutral-300 px-2 text-xs text-neutral-700 hover:bg-neutral-100"
+                className="shrink-0 cursor-pointer rounded border border-neutral-300 px-2 text-xs text-neutral-700 hover:bg-neutral-100"
               >
                 Use current
               </button>
@@ -201,7 +201,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="rounded px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100"
+            className="cursor-pointer rounded px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-100"
           >
             Cancel
           </button>
@@ -209,7 +209,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={handleSave}
             disabled={!mediaFileId || cutEnd <= cutStart}
-            className="rounded bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save
           </button>

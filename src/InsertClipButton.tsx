@@ -14,7 +14,7 @@ export function InsertClipButton({ onClick }: InsertClipButtonProps) {
         e.stopPropagation()
         onClick()
       }}
-      className="flex w-4 shrink-0 items-center justify-center rounded text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900"
+      className="flex w-4 shrink-0 cursor-pointer items-center justify-center rounded text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900"
       aria-label="Add clip here"
     >
       <Plus size={12} />

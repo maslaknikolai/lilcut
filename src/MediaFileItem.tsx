@@ -80,7 +80,7 @@ export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDro
       <button
         type="button"
         onClick={handleDownload}
-        className="px-1.5 text-neutral-500 hover:text-neutral-900"
+        className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-900"
         aria-label={`Download ${file.name}`}
       >
         <Download size={16} />

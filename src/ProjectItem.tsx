@@ -74,7 +74,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       <button
         type="button"
         onClick={handleClone}
-        className="px-1.5 text-neutral-500 hover:text-neutral-900"
+        className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-900"
         aria-label={`Clone ${project.name}`}
       >
         <Copy size={16} />

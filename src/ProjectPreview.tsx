@@ -117,7 +117,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
           type="button"
           onClick={togglePlayback}
           disabled={timeline.length === 0}
-          className="flex shrink-0 items-center justify-center rounded p-1.5 text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (

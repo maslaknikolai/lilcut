@@ -74,7 +74,7 @@ export function TimelineSegment({
             moveClip(-1)
           }}
           disabled={isFirst}
-          className="rounded p-0.5 hover:bg-black/30 disabled:hidden"
+          className="cursor-pointer rounded p-0.5 hover:bg-black/30 disabled:hidden"
           aria-label="Move clip earlier"
         >
           <ChevronLeft size={12} />
@@ -87,7 +87,7 @@ export function TimelineSegment({
             moveClip(1)
           }}
           disabled={isLast}
-          className="rounded p-0.5 hover:bg-black/30 disabled:hidden"
+          className="cursor-pointer rounded p-0.5 hover:bg-black/30 disabled:hidden"
           aria-label="Move clip later"
         >
           <ChevronRight size={12} />
@@ -99,7 +99,7 @@ export function TimelineSegment({
             e.stopPropagation()
             onEdit()
           }}
-          className="rounded p-0.5 hover:bg-black/30"
+          className="cursor-pointer rounded p-0.5 hover:bg-black/30"
           aria-label="Edit clip"
         >
           <Pencil size={12} />
@@ -111,7 +111,7 @@ export function TimelineSegment({
             e.stopPropagation()
             removeClip()
           }}
-          className="rounded p-0.5 hover:bg-black/30"
+          className="cursor-pointer rounded p-0.5 hover:bg-black/30"
           aria-label="Remove clip"
         >
           <X size={12} />
