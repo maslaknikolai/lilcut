@@ -1,15 +1,20 @@
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { ActionButton } from './ActionButton'
+import { uniqueName } from './uniqueName'
 
 export function NewProjectButton() {
-  const setProjects = useSetAtom(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const setSelectedProjectId = useSetAtom(selectedProjectIdAtom)
 
   function handleClick() {
     const id = crypto.randomUUID()
-    setProjects((prev) => [{ id, name: 'Untitled project', clips: [] }, ...prev])
+    const name = uniqueName(
+      'Untitled project',
+      projects.map((project) => project.name),
+    )
+    setProjects((prev) => [{ id, name, clips: [] }, ...prev])
     setSelectedProjectId(id)
   }
 

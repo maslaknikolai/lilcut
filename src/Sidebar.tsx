@@ -5,5 +5,5 @@ type SidebarProps = {
 }
 
 export function Sidebar({ children }: SidebarProps) {
-  return <div className="flex w-80 flex-col border-r border-neutral-300">{children}</div>
+  return <div className="flex w-80 shrink-0 flex-col border-r border-neutral-300">{children}</div>
 }

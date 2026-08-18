@@ -6,7 +6,7 @@ import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
-import { writeOpfsFile } from './opfs'
+import { uniqueOpfsName, writeOpfsFile } from './opfs'
 import { ExportJobContext } from './useExportJobContext'
 import type { Project } from './types'
 
@@ -64,14 +64,12 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       })
 
       if (blob) {
-        const exportedName = `Exported: ${project.name}`
         const exportedId = crypto.randomUUID()
-        const exportedOpfsName = `${exportedId}.mp4`
+        const exportedOpfsName = uniqueOpfsName(`Exported ${project.name}.mp4`, mediaFiles)
         await writeOpfsFile(exportedOpfsName, blob)
         setMediaFiles((prev) => [
           {
             id: exportedId,
-            name: exportedName,
             createdAt: Date.now(),
             opfsName: exportedOpfsName,
             mimeType: 'video/mp4',

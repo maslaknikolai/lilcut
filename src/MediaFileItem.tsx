@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { Download } from 'lucide-react'
-import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
-import { deleteOpfsFile, readOpfsFile } from './opfs'
+import { mediaFilesAtom, projectsAtom, selectedMediaFileIdAtom } from './atoms'
+import { deleteOpfsFile, readOpfsFile, renameOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
 import type { MediaFile } from './types'
@@ -18,17 +18,35 @@ type MediaFileItemProps = {
 
 export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: MediaFileItemProps) {
   const [selectedMediaFileId, setSelectedMediaFileId] = useAtom(selectedMediaFileIdAtom)
-  const setMediaFiles = useSetAtom(mediaFilesAtom)
-  const [editingName, setEditingName] = useState(file.name)
+  const [mediaFiles, setMediaFiles] = useAtom(mediaFilesAtom)
+  const setProjects = useSetAtom(projectsAtom)
+  const [editingOpfsName, setEditingOpfsName] = useState(file.opfsName)
+  const [isNameTaken, setIsNameTaken] = useState(false)
   const isSelected = file.id === selectedMediaFileId
 
-  function commitRename() {
-    const name = editingName.trim()
-    if (!name || name === file.name) {
-      setEditingName(file.name)
+  async function commitRename() {
+    const opfsName = editingOpfsName.trim()
+    if (!opfsName || opfsName === file.opfsName) {
+      setEditingOpfsName(file.opfsName)
       return
     }
-    setMediaFiles((prev) => prev.map((item) => (item.id === file.id ? { ...item, name } : item)))
+    const isTaken = mediaFiles.some((item) => item.id !== file.id && item.opfsName === opfsName)
+    if (isTaken) {
+      setEditingOpfsName(file.opfsName)
+      setIsNameTaken(true)
+      setTimeout(() => setIsNameTaken(false), 1500)
+      return
+    }
+    await renameOpfsFile(file.opfsName, opfsName)
+    setMediaFiles((prev) => prev.map((item) => (item.id === file.id ? { ...item, opfsName } : item)))
+    setProjects((prev) =>
+      prev.map((project) => ({
+        ...project,
+        clips: project.clips.map((clip) =>
+          clip.mediaFileOpfsName === file.opfsName ? { ...clip, mediaFileOpfsName: opfsName } : clip,
+        ),
+      })),
+    )
   }
 
   async function handleRemove() {
@@ -42,8 +60,7 @@ export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDro
     const url = URL.createObjectURL(downloadedFile)
     const link = document.createElement('a')
     link.href = url
-    const extension = file.opfsName.split('.').pop()
-    link.download = `${file.name}.${extension}`
+    link.download = file.opfsName
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -59,35 +76,36 @@ export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDro
       onDragEnd={onDragEnd}
       onClick={() => setSelectedMediaFileId(file.id)}
       className={selectionClassName}
-      dragHandleLabel={`Reorder ${file.name}`}
+      dragHandleLabel={`Reorder ${file.opfsName}`}
     >
       <input
-        value={editingName}
-        onChange={(e) => setEditingName(e.target.value)}
+        value={editingOpfsName}
+        onChange={(e) => setEditingOpfsName(e.target.value)}
         onBlur={commitRename}
+        spellCheck={false}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.currentTarget.blur()
           }
           if (e.key === 'Escape') {
-            setEditingName(file.name)
+            setEditingOpfsName(file.opfsName)
             e.currentTarget.blur()
           }
         }}
-        className="min-w-0 flex-1 bg-transparent py-2 text-xs text-neutral-900 outline-none"
+        className={`min-w-0 flex-1 bg-transparent py-2 text-xs text-neutral-900 outline-none ${isNameTaken ? 'ring-1 ring-red-500' : ''}`}
       />
 
       <button
         type="button"
         onClick={handleDownload}
         className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-900"
-        aria-label={`Download ${file.name}`}
+        aria-label={`Download ${file.opfsName}`}
       >
         <Download size={16} />
       </button>
 
       <RemoveButton
-        label={file.name}
+        label={file.opfsName}
         onRemove={handleRemove}
       />
     </SortingItem>

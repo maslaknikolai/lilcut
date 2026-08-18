@@ -25,7 +25,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
 
   const currentClipIndex = findClipIndexAtTime(timeline, projectTime)
   const currentClip = timeline[currentClipIndex]
-  const mediaFile = mediaFiles.find((file) => file.id === currentClip?.mediaFileId)
+  const mediaFile = mediaFiles.find((file) => file.opfsName === currentClip?.mediaFileOpfsName)
   const videoUrl = useMediaFileVideoUrl(mediaFile)
 
   // switching the active clip doesn't necessarily reload the <video> element

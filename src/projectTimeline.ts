@@ -2,7 +2,7 @@ import type { Project } from './types'
 
 export type TimelineClip = {
   id: string
-  mediaFileId: string
+  mediaFileOpfsName: string
   cutStart: number
   cutEnd: number
   duration: number
@@ -17,7 +17,7 @@ export function buildTimeline(project: Project): TimelineClip[] {
     const duration = Math.max(0, cutEnd - cutStart)
     const timelineClip = {
       id: clip.id,
-      mediaFileId: clip.mediaFileId,
+      mediaFileOpfsName: clip.mediaFileOpfsName,
       cutStart,
       cutEnd,
       duration,

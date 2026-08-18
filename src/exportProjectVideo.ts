@@ -16,7 +16,7 @@ export async function exportProjectVideo(
   { onProgress, onLog, isCancelled }: ExportCallbacks,
 ): Promise<Blob | null> {
   const segments = clips.flatMap((clip) => {
-    const mediaFile = mediaFiles.find((file) => file.id === clip.mediaFileId)
+    const mediaFile = mediaFiles.find((file) => file.opfsName === clip.mediaFileOpfsName)
     return mediaFile ? [{ clip, mediaFile }] : []
   })
   if (segments.length === 0) {

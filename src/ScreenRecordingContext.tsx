@@ -1,14 +1,24 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { mediaFilesAtom, projectsAtom, selectedMediaFileIdAtom, selectedProjectIdAtom } from './atoms'
-import { writeOpfsFile } from './opfs'
+import { uniqueOpfsName, writeOpfsFile } from './opfs'
 import { ScreenRecordingContext } from './useScreenRecordingContext'
+import type { Project } from './types'
 
-function formatRecordingName(date: Date): string {
+// e.g. rec_09_25_2026_16_45_59.mp4
+function formatRecordingOpfsName(date: Date, extension: string): string {
   const pad = (n: number) => String(n).padStart(2, '0')
-  const day = `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}`
-  const time = `${pad(date.getHours())}:${pad(date.getMinutes())}`
-  return `${day} ${time}`
+  const stamp = [
+    date.getMonth() + 1,
+    date.getDate(),
+    date.getFullYear(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds(),
+  ]
+    .map(pad)
+    .join('_')
+  return `rec_${stamp}.${extension}`
 }
 
 // prefer mp4 where the browser can record it directly (Safari, recent Chrome);
@@ -32,6 +42,7 @@ type Segment = {
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [isRecording, setIsRecording] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const mediaFiles = useAtomValue(mediaFilesAtom)
   const setMediaFiles = useSetAtom(mediaFilesAtom)
   const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
   const setProjects = useSetAtom(projectsAtom)
@@ -63,12 +74,14 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       video: true,
       audio: true,
     })
-    let micStream: MediaStream | null = null
-    try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    } catch {
-      micStream = null
-    }
+
+    const micStream = await (async () => {
+      try {
+        return await navigator.mediaDevices.getUserMedia({ audio: true })
+      } catch {
+        return null
+      }
+    })()
 
     const audioContext = new AudioContext()
     const mixedAudio = audioContext.createMediaStreamDestination()
@@ -105,14 +118,13 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       const blob = new Blob(chunksRef.current, { type: recorder.mimeType })
       const mediaFileId = crypto.randomUUID()
       const extension = recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'
-      const opfsName = `${mediaFileId}.${extension}`
+      const now = new Date()
+      const opfsName = uniqueOpfsName(formatRecordingOpfsName(now, extension), mediaFiles)
       await writeOpfsFile(opfsName, blob)
 
-      const mediaFileName = `Recording ${formatRecordingName(new Date())}`
       setMediaFiles((prev) => [
         {
           id: mediaFileId,
-          name: mediaFileName,
           createdAt: Date.now(),
           opfsName,
           mimeType: recorder.mimeType,
@@ -122,13 +134,19 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       setSelectedMediaFileId(mediaFileId)
 
       const projectId = crypto.randomUUID()
-      const clips = segmentsRef.current.map((segment) => ({
-        id: crypto.randomUUID(),
-        mediaFileId,
-        cutStart: segment.cutStart,
-        cutEnd: segment.cutEnd,
-      }))
-      setProjects((prev) => [{ id: projectId, name: `Project: ${mediaFileName}`, clips }, ...prev])
+
+      const newProject: Project = {
+        id: projectId,
+        name: `Project: ${opfsName}`,
+        clips: segmentsRef.current.map((segment) => ({
+          id: crypto.randomUUID(),
+          mediaFileOpfsName: opfsName,
+          cutStart: segment.cutStart,
+          cutEnd: segment.cutEnd,
+        })),
+      }
+
+      setProjects((prev) => [newProject, ...prev])
       setSelectedProjectId(projectId)
 
       setIsRecording(false)

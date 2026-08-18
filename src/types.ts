@@ -1,6 +1,5 @@
 export type MediaFile = {
   id: string
-  name: string
   createdAt: number
   opfsName: string
   mimeType: string
@@ -14,7 +13,7 @@ export type Project = {
 
 export type Clip = {
   id: string
-  mediaFileId: string
+  mediaFileOpfsName: string
   cutStart?: number
   cutEnd?: number
 }

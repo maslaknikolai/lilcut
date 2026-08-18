@@ -24,7 +24,8 @@ export function TimelineSegment({
   const mediaFiles = useAtomValue(mediaFilesAtom)
   const setProjects = useSetAtom(projectsAtom)
 
-  const mediaFileName = mediaFiles.find((file) => file.id === timelineClip.mediaFileId)?.name ?? 'Unknown file'
+  const mediaFileExists = mediaFiles.some((file) => file.opfsName === timelineClip.mediaFileOpfsName)
+  const mediaFileName = mediaFileExists ? timelineClip.mediaFileOpfsName : 'Unknown file'
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1

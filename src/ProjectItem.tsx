@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
-import { Copy } from 'lucide-react'
+import { useAtom } from 'jotai'
+import { Files } from 'lucide-react'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
+import { uniqueName } from './uniqueName'
 import type { Project } from './types'
 
 type ProjectItemProps = {
@@ -17,7 +18,7 @@ type ProjectItemProps = {
 
 export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
   const [selectedProjectId, setSelectedProjectId] = useAtom(selectedProjectIdAtom)
-  const setProjects = useSetAtom(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const [editingName, setEditingName] = useState(project.name)
   const isSelected = project.id === selectedProjectId
 
@@ -38,7 +39,11 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     e.stopPropagation()
     const cloneId = crypto.randomUUID()
     const clonedClips = project.clips.map((clip) => ({ ...clip, id: crypto.randomUUID() }))
-    setProjects((prev) => [{ id: cloneId, name: `${project.name} copy`, clips: clonedClips }, ...prev])
+    const cloneName = uniqueName(
+      project.name,
+      projects.map((item) => item.name),
+    )
+    setProjects((prev) => [{ id: cloneId, name: cloneName, clips: clonedClips }, ...prev])
     setSelectedProjectId(cloneId)
   }
 
@@ -77,7 +82,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
         className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-900"
         aria-label={`Clone ${project.name}`}
       >
-        <Copy size={16} />
+        <Files size={16} />
       </button>
 
       <RemoveButton
