@@ -4,13 +4,19 @@ import { Download } from 'lucide-react'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { deleteOpfsFile, readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
+import { SortingItem } from './SortingItem'
 import type { MediaFile } from './types'
 
 type MediaFileItemProps = {
   file: MediaFile
+  isDragging: boolean
+  onDragStart: () => void
+  onDragOver: () => void
+  onDrop: () => void
+  onDragEnd: () => void
 }
 
-export function MediaFileItem({ file }: MediaFileItemProps) {
+export function MediaFileItem({ file, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: MediaFileItemProps) {
   const [selectedMediaFileId, setSelectedMediaFileId] = useAtom(selectedMediaFileIdAtom)
   const setMediaFiles = useSetAtom(mediaFilesAtom)
   const [editingName, setEditingName] = useState(file.name)
@@ -42,12 +48,18 @@ export function MediaFileItem({ file }: MediaFileItemProps) {
     URL.revokeObjectURL(url)
   }
 
+  const selectionClassName = isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
+
   return (
-    <li
+    <SortingItem
+      isDragging={isDragging}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
       onClick={() => setSelectedMediaFileId(file.id)}
-      className={`flex items-center border-b border-neutral-300 ${
-        isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
-      }`}
+      className={selectionClassName}
+      dragHandleLabel={`Reorder ${file.name}`}
     >
       <input
         value={editingName}
@@ -62,7 +74,7 @@ export function MediaFileItem({ file }: MediaFileItemProps) {
             e.currentTarget.blur()
           }
         }}
-        className={`min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-neutral-900 outline-none`}
+        className="min-w-0 flex-1 bg-transparent py-2 text-sm text-neutral-900 outline-none"
       />
 
       <button
@@ -75,6 +87,6 @@ export function MediaFileItem({ file }: MediaFileItemProps) {
       </button>
 
       <RemoveButton label={file.name} onRemove={handleRemove} />
-    </li>
+    </SortingItem>
   )
 }

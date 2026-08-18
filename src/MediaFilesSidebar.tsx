@@ -1,22 +1,22 @@
 import { useEffect, useEffectEvent } from 'react'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { MediaFileItem } from './MediaFileItem'
 import { PauseResumeButton } from './PauseResumeButton'
 import { RecordButton } from './RecordButton'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
+import { SortingList } from './SortingList'
 import { UploadMediaFileButton } from './UploadMediaFileButton'
 
 export function MediaFilesSidebar() {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
+  const [mediaFiles, setMediaFiles] = useAtom(mediaFilesAtom)
   const [selectedMediaFileId, setSelectedMediaFileId] = useAtom(selectedMediaFileIdAtom)
 
   // keep a valid selection: autoselect the first file, and reselect
   // after the selected one is deleted
   const syncSelection = useEffectEvent(() => {
-    const isValid =
-      !!selectedMediaFileId && mediaFiles.some((file) => file.id === selectedMediaFileId)
+    const isValid = !!selectedMediaFileId && mediaFiles.some((file) => file.id === selectedMediaFileId)
     if (!isValid) {
       setSelectedMediaFileId(mediaFiles[0]?.id ?? null)
     }
@@ -37,11 +37,11 @@ export function MediaFilesSidebar() {
         <RecordingPipWindow />
       </ScreenRecordingProvider>
 
-      <ul className="flex-1 overflow-y-auto">
-        {mediaFiles.map((file) => (
-          <MediaFileItem key={file.id} file={file} />
-        ))}
-      </ul>
+      <SortingList
+        items={mediaFiles}
+        onReorder={setMediaFiles}
+        renderItem={(file, dragProps) => <MediaFileItem file={file} {...dragProps} />}
+      />
     </div>
   )
 }

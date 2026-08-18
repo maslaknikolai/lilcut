@@ -1,18 +1,18 @@
 import { useEffect, useEffectEvent } from 'react'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { NewProjectButton } from './NewProjectButton'
 import { ProjectItem } from './ProjectItem'
+import { SortingList } from './SortingList'
 
 export function ProjectsSidebar() {
-  const projects = useAtomValue(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const [selectedProjectId, setSelectedProjectId] = useAtom(selectedProjectIdAtom)
 
   // keep a valid selection: autoselect the first project, and reselect
   // after the selected one is deleted
   const syncSelection = useEffectEvent(() => {
-    const isValid =
-      !!selectedProjectId && projects.some((project) => project.id === selectedProjectId)
+    const isValid = !!selectedProjectId && projects.some((project) => project.id === selectedProjectId)
     if (!isValid) {
       setSelectedProjectId(projects[0]?.id ?? null)
     }
@@ -28,11 +28,11 @@ export function ProjectsSidebar() {
         <NewProjectButton />
       </div>
 
-      <ul className="flex-1 overflow-y-auto">
-        {projects.map((project) => (
-          <ProjectItem key={project.id} project={project} />
-        ))}
-      </ul>
+      <SortingList
+        items={projects}
+        onReorder={setProjects}
+        renderItem={(project, dragProps) => <ProjectItem project={project} {...dragProps} />}
+      />
     </div>
   )
 }

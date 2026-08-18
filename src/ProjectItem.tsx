@@ -3,13 +3,19 @@ import { useAtom, useSetAtom } from 'jotai'
 import { Copy } from 'lucide-react'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
+import { SortingItem } from './SortingItem'
 import type { Project } from './types'
 
 type ProjectItemProps = {
   project: Project
+  isDragging: boolean
+  onDragStart: () => void
+  onDragOver: () => void
+  onDrop: () => void
+  onDragEnd: () => void
 }
 
-export function ProjectItem({ project }: ProjectItemProps) {
+export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
   const [selectedProjectId, setSelectedProjectId] = useAtom(selectedProjectIdAtom)
   const setProjects = useSetAtom(projectsAtom)
   const [editingName, setEditingName] = useState(project.name)
@@ -32,19 +38,22 @@ export function ProjectItem({ project }: ProjectItemProps) {
     e.stopPropagation()
     const cloneId = crypto.randomUUID()
     const clonedClips = project.clips.map((clip) => ({ ...clip, id: crypto.randomUUID() }))
-    setProjects((prev) => [
-      { id: cloneId, name: `${project.name} copy`, clips: clonedClips },
-      ...prev,
-    ])
+    setProjects((prev) => [{ id: cloneId, name: `${project.name} copy`, clips: clonedClips }, ...prev])
     setSelectedProjectId(cloneId)
   }
 
+  const selectionClassName = isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
+
   return (
-    <li
+    <SortingItem
+      isDragging={isDragging}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
       onClick={() => setSelectedProjectId(project.id)}
-      className={`flex items-center border-b border-neutral-300 ${
-        isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
-      }`}
+      className={selectionClassName}
+      dragHandleLabel={`Reorder ${project.name}`}
     >
       <input
         value={editingName}
@@ -59,7 +68,7 @@ export function ProjectItem({ project }: ProjectItemProps) {
             e.currentTarget.blur()
           }
         }}
-        className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-neutral-900 outline-none"
+        className="min-w-0 flex-1 bg-transparent py-2 text-sm text-neutral-900 outline-none"
       />
 
       <button
@@ -72,6 +81,6 @@ export function ProjectItem({ project }: ProjectItemProps) {
       </button>
 
       <RemoveButton label={project.name} onRemove={handleRemove} />
-    </li>
+    </SortingItem>
   )
 }
