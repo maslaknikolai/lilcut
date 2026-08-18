@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { writeOpfsFile } from './opfs'
-import { SidebarActionButton } from './SidebarActionButton'
+import { ActionButton } from './ActionButton'
 
 export function UploadMediaFileButton() {
   const setMediaFiles = useSetAtom(mediaFilesAtom)
@@ -28,12 +28,12 @@ export function UploadMediaFileButton() {
 
   return (
     <>
-      <SidebarActionButton
+      <ActionButton
         onClick={() => inputRef.current?.click()}
         className="border-neutral-300 text-neutral-700 hover:bg-neutral-100"
       >
         <Upload size={14} />
-      </SidebarActionButton>
+      </ActionButton>
 
       <input
         ref={inputRef}

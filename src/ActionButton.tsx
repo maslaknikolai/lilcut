@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
 
-type SidebarActionButtonProps = {
+type ActionButtonProps = {
   onClick: () => void
   className: string
   children: ReactNode
 }
 
-export function SidebarActionButton({ onClick, className, children }: SidebarActionButtonProps) {
+export function ActionButton({ onClick, className, children }: ActionButtonProps) {
   return (
     <button
       type="button"

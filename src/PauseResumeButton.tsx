@@ -1,5 +1,5 @@
 import { Pause, Play } from 'lucide-react'
-import { SidebarActionButton } from './SidebarActionButton'
+import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 export function PauseResumeButton() {
@@ -10,7 +10,7 @@ export function PauseResumeButton() {
   }
 
   return (
-    <SidebarActionButton
+    <ActionButton
       onClick={() => (isPaused ? resume() : pause())}
       className="bg-neutral-200 text-neutral-700 hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-50"
     >
@@ -25,6 +25,6 @@ export function PauseResumeButton() {
           fill="currentColor"
         />
       )}
-    </SidebarActionButton>
+    </ActionButton>
   )
 }

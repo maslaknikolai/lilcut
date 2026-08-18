@@ -1,7 +1,6 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { PauseResumeButton } from './PauseResumeButton'
-import { RecordButton } from './RecordButton'
+import { RecordControls } from './RecordControls'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 function copyStylesInto(pipDocument: Document) {
@@ -42,8 +41,7 @@ export function RecordingPipWindow() {
 
   return createPortal(
     <div className="flex gap-2 p-2">
-      <RecordButton />
-      <PauseResumeButton />
+      <RecordControls />
     </div>,
     pipWindow.document.body,
   )

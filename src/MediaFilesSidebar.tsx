@@ -2,8 +2,7 @@ import { useEffect, useEffectEvent } from 'react'
 import { useAtom } from 'jotai'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { MediaFileItem } from './MediaFileItem'
-import { PauseResumeButton } from './PauseResumeButton'
-import { RecordButton } from './RecordButton'
+import { RecordControls } from './RecordControls'
 import { Sidebar } from './Sidebar'
 import { SidebarActions } from './SidebarActions'
 import { SortingList } from './SortingList'
@@ -29,8 +28,7 @@ export function MediaFilesSidebar() {
   return (
     <Sidebar>
       <SidebarActions>
-        <RecordButton />
-        <PauseResumeButton />
+        <RecordControls />
         <UploadMediaFileButton />
       </SidebarActions>
 

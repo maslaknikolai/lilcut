@@ -1,12 +1,12 @@
 import { Circle, Square } from 'lucide-react'
-import { SidebarActionButton } from './SidebarActionButton'
+import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 export function RecordButton() {
   const { isRecording, start, stop } = useScreenRecordingContext()
 
   return (
-    <SidebarActionButton
+    <ActionButton
       onClick={() => (isRecording ? stop() : start())}
       className="bg-red-700 text-white hover:bg-red-800"
     >
@@ -18,6 +18,6 @@ export function RecordButton() {
           fill="currentColor"
         />
       )}
-    </SidebarActionButton>
+    </ActionButton>
   )
 }

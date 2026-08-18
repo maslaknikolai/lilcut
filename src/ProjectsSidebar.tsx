@@ -3,6 +3,7 @@ import { useAtom } from 'jotai'
 import { projectsAtom, selectedProjectIdAtom } from './atoms'
 import { NewProjectButton } from './NewProjectButton'
 import { ProjectItem } from './ProjectItem'
+import { RecordControls } from './RecordControls'
 import { Sidebar } from './Sidebar'
 import { SidebarActions } from './SidebarActions'
 import { SortingList } from './SortingList'
@@ -27,6 +28,7 @@ export function ProjectsSidebar() {
   return (
     <Sidebar>
       <SidebarActions>
+        <RecordControls />
         <NewProjectButton />
       </SidebarActions>
 
