@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Square } from 'lucide-react'
 import { PauseResumeButton } from './PauseResumeButton'
+import { RecordButton } from './RecordButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 function copyStylesInto(pipDocument: Document) {
@@ -13,7 +13,7 @@ function copyStylesInto(pipDocument: Document) {
 }
 
 export function RecordingPipWindow() {
-  const { isRecording, stop } = useScreenRecordingContext()
+  const { isRecording } = useScreenRecordingContext()
   const [pipWindow, setPipWindow] = useState<Window | null>(null)
 
   const syncPipWindow = useEffectEvent(async () => {
@@ -42,17 +42,7 @@ export function RecordingPipWindow() {
 
   return createPortal(
     <div className="flex gap-2 p-2">
-      <button
-        type="button"
-        onClick={stop}
-        className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-800"
-      >
-        <Square
-          size={14}
-          fill="currentColor"
-        />{' '}
-        Stop
-      </button>
+      <RecordButton />
       <PauseResumeButton />
     </div>,
     pipWindow.document.body,
