@@ -69,7 +69,6 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     >
       <Scissors
         size={14}
-        fill="currentColor"
         className="mr-1.5 shrink-0 text-blue-500"
       />
 

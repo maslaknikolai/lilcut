@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { Download, Film } from 'lucide-react'
+import { Download, FilePlay } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
@@ -93,9 +93,8 @@ export function MediaAssetItem({
       className={selectionClassName}
       dragHandleLabel={`Reorder ${mediaAsset.opfsName}`}
     >
-      <Film
+      <FilePlay
         size={14}
-        fill="currentColor"
         className="mr-1.5 shrink-0 text-violet-500"
       />
 
