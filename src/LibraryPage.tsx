@@ -1,12 +1,11 @@
-import { useAtomValue } from 'jotai'
-import { selectedLibraryItemIdAtom } from './atoms'
 import { libraryItemId, useLibraryItems } from './library'
 import { Player } from './Player'
 import { ProjectPreview } from './ProjectPreview'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 export function LibraryPage() {
   const library = useLibraryItems()
-  const selectedLibraryItemId = useAtomValue(selectedLibraryItemIdAtom)
+  const [selectedLibraryItemId] = useSelectedLibraryItemId()
   const selectedLibraryItem = library.find((item) => libraryItemId(item) === selectedLibraryItemId)
 
   if (selectedLibraryItem?.type === 'project') {

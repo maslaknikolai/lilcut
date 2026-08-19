@@ -1,13 +1,14 @@
 import { useAtom, useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
-import { libraryOrderAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ActionButton } from './ActionButton'
 import { uniqueName } from './uniqueName'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 export function NewProjectButton() {
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
+  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
 
   function handleClick() {
     const id = crypto.randomUUID()

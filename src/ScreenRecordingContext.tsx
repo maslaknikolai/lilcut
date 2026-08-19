@@ -1,9 +1,10 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { uniqueOpfsName } from './opfs'
 import type { Clip, Project } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 import { ScreenRecordingContext, type RecordingState } from './useScreenRecordingContext'
 
 // e.g. rec_09_25_2026_16_45_59.mp4
@@ -41,7 +42,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const { writeMediaAsset } = useMediaAssetActions()
   const setProjects = useSetAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
+  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 

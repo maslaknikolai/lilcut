@@ -1,3 +1,4 @@
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
@@ -8,11 +9,7 @@ import { ScreenRecordingProvider } from './ScreenRecordingContext'
 import { useSyncIndexedDbAtom } from './useSyncIndexedDbAtom'
 import { useSyncMediaAssets } from './useSyncMediaAssets'
 
-export function App() {
-  useSyncIndexedDbAtom(projectsAtom, 'projects')
-  useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
-  useSyncMediaAssets()
-
+function AppContent() {
   return (
     <ExportJobProvider>
       <ScreenRecordingProvider>
@@ -28,5 +25,22 @@ export function App() {
         <RecordingPipWindow />
       </ScreenRecordingProvider>
     </ExportJobProvider>
+  )
+}
+
+export function App() {
+  useSyncIndexedDbAtom(projectsAtom, 'projects')
+  useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
+  useSyncMediaAssets()
+
+  return (
+    <HashRouter>
+      <Routes>
+        <Route
+          path="/:selectedId?"
+          element={<AppContent />}
+        />
+      </Routes>
+    </HashRouter>
   )
 }

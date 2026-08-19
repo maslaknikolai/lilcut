@@ -1,6 +1,5 @@
-import { useEffect, useEffectEvent } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
-import { libraryOrderAtom, selectedLibraryItemIdAtom } from './atoms'
+import { useSetAtom } from 'jotai'
+import { libraryOrderAtom } from './atoms'
 import { libraryItemId, useLibraryItems } from './library'
 import { MediaAssetItem } from './MediaAssetItem'
 import { NewProjectButton } from './NewProjectButton'
@@ -8,24 +7,12 @@ import { ProjectItem } from './ProjectItem'
 import { RecordControls } from './RecordControls'
 import { SortingList } from './SortingList'
 import { UploadMediaAssetButton } from './UploadMediaAssetButton'
+import { useSyncSelectedLibraryItem } from './useSyncSelectedLibraryItem'
 
 export function LibrarySidebar() {
   const library = useLibraryItems()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const [selectedLibraryItemId, setSelectedLibraryItemId] = useAtom(selectedLibraryItemIdAtom)
-
-  // keep a valid selection: autoselect the first item, and reselect after
-  // the selected item is deleted
-  const syncSelection = useEffectEvent(() => {
-    const isValid = !!selectedLibraryItemId && library.some((item) => libraryItemId(item) === selectedLibraryItemId)
-    if (!isValid) {
-      setSelectedLibraryItemId(library[0] ? libraryItemId(library[0]) : null)
-    }
-  })
-
-  useEffect(() => {
-    syncSelection()
-  }, [library])
+  useSyncSelectedLibraryItem()
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r border-neutral-300">

@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { Download, FilePlay } from 'lucide-react'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type MediaAssetItemProps = {
   mediaAsset: MediaAsset
@@ -25,7 +26,7 @@ export function MediaAssetItem({
   onDrop,
   onDragEnd,
 }: MediaAssetItemProps) {
-  const [selectedLibraryItemId, setSelectedLibraryItemId] = useAtom(selectedLibraryItemIdAtom)
+  const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { renameMediaAsset, deleteMediaAsset } = useMediaAssetActions()
   const setProjects = useSetAtom(projectsAtom)

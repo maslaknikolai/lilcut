@@ -1,16 +1,17 @@
 import { useRef, type ChangeEvent } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
-import { libraryOrderAtom, mediaAssetsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { uniqueOpfsName } from './opfs'
 import { ActionButton } from './ActionButton'
 import { useMediaAssetActions } from './useMediaAssetActions'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 export function UploadMediaAssetButton() {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
+  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {

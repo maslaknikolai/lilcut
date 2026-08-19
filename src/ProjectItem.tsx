@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
-import { libraryOrderAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, projectsAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
 import { uniqueName } from './uniqueName'
 import type { Project } from './types'
+import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type ProjectItemProps = {
   project: Project
@@ -17,7 +18,7 @@ type ProjectItemProps = {
 }
 
 export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
-  const [selectedLibraryItemId, setSelectedLibraryItemId] = useAtom(selectedLibraryItemIdAtom)
+  const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [editingName, setEditingName] = useState(project.name)
