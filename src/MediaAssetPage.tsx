@@ -1,11 +1,11 @@
 import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
 import type { MediaAsset } from './types'
 
-type PlayerProps = {
+type MediaAssetPageProps = {
   mediaAsset: MediaAsset
 }
 
-export function Player({ mediaAsset }: PlayerProps) {
+export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const videoUrl = useMediaAssetVideoUrl(mediaAsset)
 
   if (!videoUrl) {

@@ -1,6 +1,6 @@
 import { libraryItemId, useLibraryItems } from './library'
-import { Player } from './Player'
-import { ProjectPreview } from './ProjectPreview'
+import { MediaAssetPage } from './MediaAssetPage'
+import { ProjectPage } from './ProjectPage'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 export function PageView() {
@@ -14,14 +14,14 @@ export function PageView() {
         key={selectedLibraryItem.project.id}
         className="flex flex-1 flex-col p-4"
       >
-        <ProjectPreview project={selectedLibraryItem.project} />
+        <ProjectPage project={selectedLibraryItem.project} />
       </div>
     )
   }
 
   if (selectedLibraryItem?.type === 'media') {
     return (
-      <Player
+      <MediaAssetPage
         key={selectedLibraryItem.mediaAsset.opfsName}
         mediaAsset={selectedLibraryItem.mediaAsset}
       />

@@ -16,7 +16,7 @@ type ProjectPreviewProps = {
   project: Project
 }
 
-export function ProjectPreview({ project }: ProjectPreviewProps) {
+export function ProjectPage({ project }: ProjectPreviewProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const timelineClips = buildTimelineClips(project, mediaAssets)
   const playbackClips = buildPlaybackClips(timelineClips)
