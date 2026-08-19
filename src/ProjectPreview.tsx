@@ -10,6 +10,7 @@ import { Timeline } from './Timeline'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './projectTimeline'
 import type { Project } from './types'
 import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
+import { CutHereButton } from './CutHereButton'
 
 type ProjectPreviewProps = {
   project: Project
@@ -155,6 +156,12 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
             />
           )}
         </button>
+
+        <CutHereButton
+          project={project}
+          projectTime={projectTime}
+          currentTimelineClip={currentTimelineClip}
+        />
 
         <span className="w-24 shrink-0 text-xs text-neutral-500">
           {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
