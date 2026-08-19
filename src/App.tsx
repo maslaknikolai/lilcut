@@ -2,6 +2,7 @@ import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
 import { LibraryPage } from './LibraryPage'
+import { LibrarySidebar } from './LibrarySidebar'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
 import { useSyncIndexedDbAtom } from './useSyncIndexedDbAtom'
@@ -16,6 +17,7 @@ export function App() {
     <ExportJobProvider>
       <ScreenRecordingProvider>
         <div className="flex h-svh overflow-hidden">
+          <LibrarySidebar />
           <LibraryPage />
         </div>
 

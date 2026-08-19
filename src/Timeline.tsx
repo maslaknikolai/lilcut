@@ -35,6 +35,7 @@ export function Timeline({ project, currentClipId }: TimelineProps) {
             project={project}
             timelineClip={timelineClip}
             totalDuration={totalDuration}
+            clipCount={timeline.length}
             insertButtonsWidth={insertButtonsWidth}
             isCurrent={timelineClip.id === currentClipId}
             onEdit={() => setClipEditorState({ mode: 'edit', clip: timelineClip })}

@@ -4,7 +4,7 @@ import { libraryOrderAtom, mediaAssetsAtom, projectsAtom, selectedLibraryItemIdA
 import { uniqueOpfsName } from './opfs'
 import type { Clip, Project } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
-import { ScreenRecordingContext, type RecordingState, type Segment } from './useScreenRecordingContext'
+import { ScreenRecordingContext, type RecordingState } from './useScreenRecordingContext'
 
 // e.g. rec_09_25_2026_16_45_59.mp4
 function formatRecordingOpfsName(date: Date, extension: string): string {
@@ -35,10 +35,6 @@ function pickSupportedMimeType(): string {
   return MIME_TYPE_CANDIDATES.find((type) => MediaRecorder.isTypeSupported(type)) ?? 'video/webm'
 }
 
-function totalDuration(segments: Segment[]): number {
-  return segments.reduce((sum, segment) => sum + (segment.cutEnd - segment.cutStart), 0)
-}
-
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [recording, setRecording] = useState<RecordingState>({ status: 'idle' })
   const mediaAssets = useAtomValue(mediaAssetsAtom)
@@ -65,7 +61,11 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     }))
 
     if (recording.status === 'recording') {
-      clips.push({ id: crypto.randomUUID(), mediaAssetOpfsName: opfsName, cutStart: totalDuration(recording.segments) })
+      clips.push({
+        id: crypto.randomUUID(),
+        mediaAssetOpfsName: opfsName,
+        cutStart: recording.segments.at(-1)?.cutEnd ?? 0,
+      })
     }
 
     const lastClip = clips.at(-1)
@@ -146,7 +146,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       return
     }
     recorder.pause()
-    const cutStart = totalDuration(recording.segments)
+    const cutStart = recording.segments.at(-1)?.cutEnd ?? 0
     const cutEnd = cutStart + (Date.now() - recording.segmentStartedAt) / 1000
     setRecording({ status: 'paused', segments: [...recording.segments, { cutStart, cutEnd }] })
   })

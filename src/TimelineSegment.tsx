@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { ChevronLeft, ChevronRight, Pencil, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileX, Pencil, X } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { updateProject } from './library'
 import type { TimelineClip } from './projectTimeline'
@@ -9,6 +9,7 @@ type SegmentProps = {
   project: Project
   timelineClip: TimelineClip
   totalDuration: number
+  clipCount: number
   insertButtonsWidth: number
   isCurrent: boolean
   onEdit: () => void
@@ -18,6 +19,7 @@ export function TimelineSegment({
   project,
   timelineClip,
   totalDuration,
+  clipCount,
   insertButtonsWidth,
   isCurrent,
   onEdit,
@@ -30,7 +32,10 @@ export function TimelineSegment({
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
-  const durationRatio = totalDuration > 0 ? timelineClip.duration / totalDuration : 0
+  // totalDuration can be 0 when no clip's duration is known (e.g. its file is
+  // missing) — fall back to splitting width evenly so segments stay visible
+  // and clickable instead of collapsing to zero
+  const durationRatio = totalDuration > 0 ? timelineClip.duration / totalDuration : 1 / clipCount
 
   function removeClip() {
     setProjects((prev) =>
@@ -64,6 +69,12 @@ export function TimelineSegment({
       }`}
       style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >
+      {!mediaAssetExists && (
+        <FileX
+          size={12}
+          className="mr-1 shrink-0"
+        />
+      )}
       <span className="truncate">{mediaAssetName}</span>
 
       <div className="absolute top-0.5 right-0.5 flex gap-0.5 opacity-0 group-hover:opacity-100">
