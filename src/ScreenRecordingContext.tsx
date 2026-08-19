@@ -1,10 +1,10 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { uniqueOpfsName } from './opfs'
-import type { Project } from './types'
+import type { Clip, Project } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
-import { ScreenRecordingContext, type RecordingState } from './useScreenRecordingContext'
+import { ScreenRecordingContext, type RecordingState, type Segment } from './useScreenRecordingContext'
 
 // e.g. rec_09_25_2026_16_45_59.mp4
 function formatRecordingOpfsName(date: Date, extension: string): string {
@@ -35,9 +35,8 @@ function pickSupportedMimeType(): string {
   return MIME_TYPE_CANDIDATES.find((type) => MediaRecorder.isTypeSupported(type)) ?? 'video/webm'
 }
 
-type Segment = {
-  cutStart: number
-  cutEnd: number
+function totalDuration(segments: Segment[]): number {
+  return segments.reduce((sum, segment) => sum + (segment.cutEnd - segment.cutStart), 0)
 }
 
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
@@ -45,28 +44,43 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setProjects = useSetAtom(projectsAtom)
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
-  const segmentsRef = useRef<Segment[]>([])
-  const activeDurationRef = useRef(0)
-  const segmentStartRef = useRef<number | null>(null)
+  const finishRecording = useEffectEvent(async (blob: Blob) => {
+    const closedSegments = recording.status === 'idle' ? [] : recording.segments
 
-  function startSegment() {
-    segmentStartRef.current = Date.now()
-  }
+    const extension = blob.type.includes('mp4') ? 'mp4' : 'webm'
+    const opfsName = uniqueOpfsName(formatRecordingOpfsName(new Date(), extension), mediaAssets)
 
-  function closeCurrentSegment() {
-    if (segmentStartRef.current === null) {
-      return
+    await writeMediaAsset(opfsName, blob)
+
+    const clips: Clip[] = closedSegments.map((segment) => ({
+      id: crypto.randomUUID(),
+      mediaAssetOpfsName: opfsName,
+      cutStart: segment.cutStart,
+      cutEnd: segment.cutEnd,
+    }))
+
+    if (recording.status === 'recording') {
+      clips.push({ id: crypto.randomUUID(), mediaAssetOpfsName: opfsName, cutStart: totalDuration(recording.segments) })
     }
-    const cutStart = activeDurationRef.current
-    const cutEnd = cutStart + (Date.now() - segmentStartRef.current) / 1000
-    segmentsRef.current.push({ cutStart, cutEnd })
-    activeDurationRef.current = cutEnd
-    segmentStartRef.current = null
-  }
+
+    const lastClip = clips.at(-1)
+    if (lastClip) {
+      lastClip.cutEnd = undefined
+    }
+
+    const projectId = crypto.randomUUID()
+    const newProject: Project = { id: projectId, name: `Project: ${opfsName}`, clips }
+    setProjects((prev) => [newProject, ...prev])
+
+    setLibraryOrder((prev) => [opfsName, projectId, ...prev])
+    setSelectedLibraryItemId(projectId)
+    setRecording({ status: 'idle' })
+  })
 
   const start = useEffectEvent(async () => {
     const displayStream = await navigator.mediaDevices.getDisplayMedia({
@@ -94,8 +108,6 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     const mimeType = pickSupportedMimeType()
     const recorder = new MediaRecorder(stream, { mimeType })
     chunksRef.current = []
-    segmentsRef.current = []
-    activeDurationRef.current = 0
 
     recorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
@@ -112,39 +124,16 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     }
 
     recorder.onstop = async () => {
-      closeCurrentSegment()
       stopAllTracks()
       const blob = new Blob(chunksRef.current, { type: recorder.mimeType })
-      const extension = recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'
-      const now = new Date()
-      const opfsName = uniqueOpfsName(formatRecordingOpfsName(now, extension), mediaAssets)
-
-      await writeMediaAsset(opfsName, blob)
-
-      const projectId = crypto.randomUUID()
-      const newProject: Project = {
-        id: projectId,
-        name: `Project: ${opfsName}`,
-        clips: segmentsRef.current.map((segment) => ({
-          id: crypto.randomUUID(),
-          mediaAssetOpfsName: opfsName,
-          cutStart: segment.cutStart,
-          cutEnd: segment.cutEnd,
-        })),
-      }
-
-      setProjects((prev) => [newProject, ...prev])
-      setSelectedLibraryItemId(projectId)
-
-      setRecording({ status: 'idle' })
+      await finishRecording(blob)
     }
 
     stream.getVideoTracks()[0].addEventListener('ended', () => recorder.stop())
 
     recorder.start()
     recorderRef.current = recorder
-    startSegment()
-    setRecording({ status: 'recording' })
+    setRecording({ status: 'recording', segments: [], segmentStartedAt: Date.now() })
   })
 
   const stop = useEffectEvent(() => {
@@ -153,22 +142,22 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
 
   const pause = useEffectEvent(() => {
     const recorder = recorderRef.current
-    if (!recorder || recorder.state !== 'recording') {
+    if (!recorder || recorder.state !== 'recording' || recording.status !== 'recording') {
       return
     }
     recorder.pause()
-    closeCurrentSegment()
-    setRecording({ status: 'paused' })
+    const cutStart = totalDuration(recording.segments)
+    const cutEnd = cutStart + (Date.now() - recording.segmentStartedAt) / 1000
+    setRecording({ status: 'paused', segments: [...recording.segments, { cutStart, cutEnd }] })
   })
 
   const resume = useEffectEvent(() => {
     const recorder = recorderRef.current
-    if (!recorder || recorder.state !== 'paused') {
+    if (!recorder || recorder.state !== 'paused' || recording.status !== 'paused') {
       return
     }
     recorder.resume()
-    startSegment()
-    setRecording({ status: 'recording' })
+    setRecording({ status: 'recording', segments: recording.segments, segmentStartedAt: Date.now() })
   })
 
   return (

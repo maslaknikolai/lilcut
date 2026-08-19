@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
-import { projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
 import { uniqueName } from './uniqueName'
@@ -19,6 +19,7 @@ type ProjectItemProps = {
 export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useAtom(selectedLibraryItemIdAtom)
   const [projects, setProjects] = useAtom(projectsAtom)
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [editingName, setEditingName] = useState(project.name)
   const isSelected = project.id === selectedLibraryItemId
 
@@ -40,6 +41,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
 
   function handleRemove() {
     setProjects((prev) => prev.filter((item) => item.id !== project.id))
+    setLibraryOrder((prev) => prev.filter((id) => id !== project.id))
   }
 
   function handleClone(e: React.MouseEvent) {
@@ -51,6 +53,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       projects.map((item) => item.name),
     )
     setProjects((prev) => [{ id: cloneId, name: cloneName, clips: clonedClips }, ...prev])
+    setLibraryOrder((prev) => [cloneId, ...prev])
     setSelectedLibraryItemId(cloneId)
   }
 

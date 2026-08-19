@@ -20,6 +20,22 @@ export async function deleteOpfsFile(name: string): Promise<void> {
   await root.removeEntry(name)
 }
 
+function readVideoDuration(file: File): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video')
+    video.preload = 'metadata'
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src)
+      resolve(video.duration)
+    }
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src)
+      reject(new Error(`failed to read duration for ${file.name}`))
+    }
+    video.src = URL.createObjectURL(file)
+  })
+}
+
 export async function listOpfsMediaAssets(): Promise<MediaAsset[]> {
   const root = await navigator.storage.getDirectory()
   const mediaAssets: MediaAsset[] = []
@@ -28,7 +44,8 @@ export async function listOpfsMediaAssets(): Promise<MediaAsset[]> {
       continue
     }
     const file = await handle.getFile()
-    mediaAssets.push({ opfsName: handle.name, mimeType: file.type })
+    const duration = await readVideoDuration(file)
+    mediaAssets.push({ opfsName: handle.name, mimeType: file.type, duration })
   }
   return mediaAssets
 }

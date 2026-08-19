@@ -1,11 +1,12 @@
 import { useAtom, useSetAtom } from 'jotai'
 import { Plus } from 'lucide-react'
-import { projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { ActionButton } from './ActionButton'
 import { uniqueName } from './uniqueName'
 
 export function NewProjectButton() {
   const [projects, setProjects] = useAtom(projectsAtom)
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
 
   function handleClick() {
@@ -15,6 +16,7 @@ export function NewProjectButton() {
       projects.map((project) => project.name),
     )
     setProjects((prev) => [{ id, name, clips: [] }, ...prev])
+    setLibraryOrder((prev) => [id, ...prev])
     setSelectedLibraryItemId(id)
   }
 

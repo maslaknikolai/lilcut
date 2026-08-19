@@ -1,4 +1,4 @@
-import type { Project } from './types'
+import type { MediaAsset, Project } from './types'
 
 export type TimelineClip = {
   id: string
@@ -9,12 +9,13 @@ export type TimelineClip = {
   projectStart: number
 }
 
-export function buildTimeline(project: Project): TimelineClip[] {
+export function buildTimeline(project: Project, mediaAssets: MediaAsset[]): TimelineClip[] {
   let projectStart = 0
 
   return project.clips.map((clip) => {
     const cutStart = clip.cutStart ?? 0
-    const cutEnd = clip.cutEnd ?? cutStart
+    const mediaAsset = mediaAssets.find((asset) => asset.opfsName === clip.mediaAssetOpfsName)
+    const cutEnd = clip.cutEnd ?? mediaAsset?.duration ?? cutStart
     const clipDuration = Math.max(0, cutEnd - cutStart)
     const timelineClip = {
       id: clip.id,
@@ -24,8 +25,6 @@ export function buildTimeline(project: Project): TimelineClip[] {
       duration: clipDuration,
       projectStart,
     }
-
-    console.log('WIPWIP', { clip, timelineClip })
 
     projectStart += clipDuration
     return timelineClip

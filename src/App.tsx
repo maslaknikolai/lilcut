@@ -4,12 +4,12 @@ import { ExportJobWidget } from './ExportJobWidget'
 import { LibraryPage } from './LibraryPage'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
-import { useIndexedDbAtom } from './useIndexedDbAtom'
+import { useSyncIndexedDbAtom } from './useSyncIndexedDbAtom'
 import { useSyncMediaAssets } from './useSyncMediaAssets'
 
 export function App() {
-  useIndexedDbAtom(projectsAtom, 'projects')
-  useIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
+  useSyncIndexedDbAtom(projectsAtom, 'projects')
+  useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
   useSyncMediaAssets()
 
   return (

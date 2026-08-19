@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAtomValue } from 'jotai'
+import { mediaAssetsAtom } from './atoms'
 import { ClipEditorModal } from './ClipEditorModal'
 import { INSERT_CLIP_BUTTON_WIDTH_PX, InsertClipButton } from './InsertClipButton'
 import { buildTimeline, type TimelineClip } from './projectTimeline'
@@ -14,8 +16,9 @@ type TimelineProps = {
 
 export function Timeline({ project, currentClipId }: TimelineProps) {
   const [clipEditorState, setClipEditorState] = useState<ClipEditorState | null>(null)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
 
-  const timeline = buildTimeline(project)
+  const timeline = buildTimeline(project, mediaAssets)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
   const insertButtonsWidth = (timeline.length + 1) * INSERT_CLIP_BUTTON_WIDTH_PX
 

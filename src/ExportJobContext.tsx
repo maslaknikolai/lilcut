@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
-import { mediaAssetsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
 import { uniqueOpfsName } from './opfs'
 import type { Project } from './types'
@@ -26,6 +26,7 @@ function loadFfmpeg(): Promise<FFmpeg> {
 export function ExportJobProvider({ children }: { children: ReactNode }) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
 
   const [job, setJob] = useState<ExportJob>({ status: 'idle' })
@@ -69,6 +70,7 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       if (blob) {
         const exportedOpfsName = uniqueOpfsName(`Exported ${project.name}.mp4`, mediaAssets)
         await writeMediaAsset(exportedOpfsName, blob)
+        setLibraryOrder((prev) => [exportedOpfsName, ...prev])
         setSelectedLibraryItemId(exportedOpfsName)
         setJob({
           status: 'complete',

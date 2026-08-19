@@ -1,11 +1,12 @@
 import { useSetAtom } from 'jotai'
-import { mediaAssetsAtom } from './atoms'
+import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { deleteOpfsFile, listOpfsMediaAssets, renameOpfsFile, writeOpfsFile } from './opfs'
 
 // wraps the OPFS media-asset mutations so every call site gets the
 // mediaAssetsAtom refresh for free, instead of remembering to trigger it
 export function useMediaAssetActions() {
   const setMediaAssets = useSetAtom(mediaAssetsAtom)
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
   async function refresh() {
     setMediaAssets(await listOpfsMediaAssets())
@@ -19,6 +20,7 @@ export function useMediaAssetActions() {
   async function deleteMediaAsset(name: string): Promise<void> {
     await deleteOpfsFile(name)
     await refresh()
+    setLibraryOrder((prev) => prev.filter((id) => id !== name))
   }
 
   async function renameMediaAsset(oldName: string, newName: string): Promise<void> {

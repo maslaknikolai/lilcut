@@ -16,7 +16,7 @@ type ProjectPreviewProps = {
 
 export function ProjectPreview({ project }: ProjectPreviewProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const timeline = buildTimeline(project)
+  const timeline = buildTimeline(project, mediaAssets)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
   const [projectTime, setProjectTime] = useState(0)

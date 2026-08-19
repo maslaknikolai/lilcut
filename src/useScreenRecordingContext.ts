@@ -1,7 +1,12 @@
 import { createContext, useContext } from 'react'
 import { invariant } from './invariant'
 
-export type RecordingState = { status: 'idle' } | { status: 'recording' } | { status: 'paused' }
+export type Segment = { cutStart: number; cutEnd: number }
+
+export type RecordingState =
+  | { status: 'idle' }
+  | { status: 'recording'; segments: Segment[]; segmentStartedAt: number }
+  | { status: 'paused'; segments: Segment[] }
 
 type ScreenRecordingContextValue = {
   recording: RecordingState

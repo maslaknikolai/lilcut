@@ -22,7 +22,7 @@ export function orderLibraryItems(projects: Project[], mediaAssets: MediaAsset[]
     itemsById.delete(id)
     return [item]
   })
-  return [...itemsById.values(), ...ordered]
+  return [...ordered, ...itemsById.values()]
 }
 
 export function useLibraryItems(): LibraryItem[] {

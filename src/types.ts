@@ -1,6 +1,7 @@
 export type MediaAsset = {
   opfsName: string
   mimeType: string
+  duration: number
 }
 
 export type Project = {

@@ -4,7 +4,7 @@ import { idbGet, idbSet } from './indexedDb'
 
 // loads `key` from the IndexedDB kv store into `valueAtom` on mount, then
 // persists every subsequent change back to that key
-export function useIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string) {
+export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string) {
   const [value, setValue] = useAtom(valueAtom)
   const [isLoaded, setIsLoaded] = useState(false)
 
