@@ -6,7 +6,8 @@ type ExportProjectButtonProps = {
 }
 
 export function ExportProjectButton({ project }: ExportProjectButtonProps) {
-  const { isExporting, startExport } = useExportJobContext()
+  const { job, startExport } = useExportJobContext()
+  const isExporting = job.status === 'exporting'
 
   return (
     <button

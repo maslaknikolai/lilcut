@@ -6,7 +6,7 @@ import wasmURL from '@ffmpeg/core/wasm?url'
 import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
 import { uniqueOpfsName, writeOpfsFile } from './opfs'
-import { ExportJobContext } from './useExportJobContext'
+import { ExportJobContext, type ExportJob } from './useExportJobContext'
 import type { Project } from './types'
 
 let ffmpegPromise: Promise<FFmpeg> | null = null
@@ -27,16 +27,12 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
   const setMediaFiles = useSetAtom(mediaFilesAtom)
   const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
 
-  const [isExporting, setIsExporting] = useState(false)
-  const [isExportComplete, setIsExportComplete] = useState(false)
-  const [exportingProjectName, setExportingProjectName] = useState<string | null>(null)
-  const [exportProgress, setExportProgress] = useState(0)
-  const [logLines, setLogLines] = useState<string[]>([])
+  const [job, setJob] = useState<ExportJob>({ status: 'idle' })
   const ffmpegInstanceRef = useRef<FFmpeg | null>(null)
   const isCancelledRef = useRef(false)
 
   const startExport = useEffectEvent(async (project: Project) => {
-    if (isExporting) {
+    if (job.status === 'exporting') {
       return
     }
 
@@ -45,19 +41,19 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     }
 
     isCancelledRef.current = false
-    setIsExporting(true)
-    setIsExportComplete(false)
-    setExportingProjectName(project.name)
-    setExportProgress(0)
-    setLogLines([])
+    setJob({ status: 'exporting', projectName: project.name, progress: 0, logLines: [] })
 
     try {
       const ffmpeg = await loadFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
       const blob = await exportProjectVideo(ffmpeg, project.clips, mediaFiles, {
-        onProgress: (overallProgress) => setExportProgress((prev) => Math.max(prev, overallProgress)),
-        onLog: (message) => setLogLines((prev) => [...prev, message]),
+        onProgress: (overallProgress) =>
+          setJob((prev) => {
+            return prev.status === 'exporting' ? { ...prev, progress: Math.max(prev.progress, overallProgress) } : prev
+          }),
+        onLog: (message) =>
+          setJob((prev) => (prev.status === 'exporting' ? { ...prev, logLines: [...prev.logLines, message] } : prev)),
         isCancelled: () => isCancelledRef.current,
       })
 
@@ -75,7 +71,10 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
           ...prev,
         ])
         setSelectedMediaFileId(exportedId)
-        setIsExportComplete(true)
+        setJob({
+          status: 'complete',
+          projectName: project.name,
+        })
       }
     } catch (error) {
       if (!isCancelledRef.current) {
@@ -83,12 +82,12 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       }
     } finally {
       ffmpegInstanceRef.current = null
-      setIsExporting(false)
+      setJob((prev) => (prev.status === 'exporting' ? { status: 'idle' } : prev))
     }
   })
 
   const cancelExport = useEffectEvent(() => {
-    if (!isExporting) {
+    if (job.status !== 'exporting') {
       return
     }
     isCancelledRef.current = true
@@ -97,22 +96,17 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     ffmpegInstanceRef.current?.terminate()
     ffmpegInstanceRef.current = null
     ffmpegPromise = null
-    setIsExporting(false)
-    setExportProgress(0)
+    setJob({ status: 'idle' })
   })
 
   const dismissExport = useEffectEvent(() => {
-    setIsExportComplete(false)
+    setJob((prev) => (prev.status === 'complete' ? { status: 'idle' } : prev))
   })
 
   return (
     <ExportJobContext.Provider
       value={{
-        isExporting,
-        isExportComplete,
-        exportingProjectName,
-        exportProgress,
-        logLines,
+        job,
         startExport,
         cancelExport,
         dismissExport,

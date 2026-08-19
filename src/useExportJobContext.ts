@@ -2,12 +2,13 @@ import { createContext, useContext } from 'react'
 import { invariant } from './invariant'
 import type { Project } from './types'
 
+export type ExportJob =
+  | { status: 'idle' }
+  | { status: 'exporting'; projectName: string; progress: number; logLines: string[] }
+  | { status: 'complete'; projectName: string }
+
 type ExportJobContextValue = {
-  isExporting: boolean
-  isExportComplete: boolean
-  exportingProjectName: string | null
-  exportProgress: number
-  logLines: string[]
+  job: ExportJob
   startExport: (project: Project) => void
   cancelExport: () => void
   dismissExport: () => void

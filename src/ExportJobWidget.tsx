@@ -2,19 +2,18 @@ import { OctagonX, X } from 'lucide-react'
 import { useExportJobContext } from './useExportJobContext'
 
 export function ExportJobWidget() {
-  const { isExporting, isExportComplete, exportingProjectName, exportProgress, cancelExport, dismissExport } =
-    useExportJobContext()
+  const { job, cancelExport, dismissExport } = useExportJobContext()
 
-  if (!isExporting && !isExportComplete) {
+  if (job.status === 'idle') {
     return null
   }
 
   return (
     <div className="flex items-center gap-3 rounded bg-neutral-900 px-3 py-1 text-sm font-medium text-white">
-      {isExporting ? (
+      {job.status === 'exporting' ? (
         <>
           <span>
-            Exporting "{exportingProjectName}": {Math.round(exportProgress * 100)}%
+            Exporting "{job.projectName}": {Math.round(job.progress * 100)}%
           </span>
           <button
             type="button"
@@ -27,7 +26,7 @@ export function ExportJobWidget() {
         </>
       ) : (
         <>
-          <span>Exported "{exportingProjectName}"</span>
+          <span>Exported "{job.projectName}"</span>
           <button
             type="button"
             onClick={dismissExport}
