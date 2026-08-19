@@ -3,7 +3,8 @@ import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 export function RecordButton() {
-  const { isRecording, start, stop } = useScreenRecordingContext()
+  const { recording, start, stop } = useScreenRecordingContext()
+  const isRecording = recording.status !== 'idle'
 
   return (
     <ActionButton

@@ -3,11 +3,12 @@ import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 export function PauseResumeButton() {
-  const { isRecording, isPaused, pause, resume } = useScreenRecordingContext()
+  const { recording, pause, resume } = useScreenRecordingContext()
 
-  if (!isRecording) {
+  if (recording.status === 'idle') {
     return null
   }
+  const isPaused = recording.status === 'paused'
 
   return (
     <ActionButton

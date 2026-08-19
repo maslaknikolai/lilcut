@@ -12,7 +12,8 @@ function copyStylesInto(pipDocument: Document) {
 }
 
 export function RecordingPipWindow() {
-  const { isRecording } = useScreenRecordingContext()
+  const { recording } = useScreenRecordingContext()
+  const isRecording = recording.status !== 'idle'
   const [pipWindow, setPipWindow] = useState<Window | null>(null)
 
   const syncPipWindow = useEffectEvent(async () => {

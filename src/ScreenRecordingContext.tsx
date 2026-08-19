@@ -4,7 +4,7 @@ import { mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atom
 import { uniqueOpfsName } from './opfs'
 import type { Project } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
-import { ScreenRecordingContext } from './useScreenRecordingContext'
+import { ScreenRecordingContext, type RecordingState } from './useScreenRecordingContext'
 
 // e.g. rec_09_25_2026_16_45_59.mp4
 function formatRecordingOpfsName(date: Date, extension: string): string {
@@ -41,8 +41,7 @@ type Segment = {
 }
 
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
-  const [isRecording, setIsRecording] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
+  const [recording, setRecording] = useState<RecordingState>({ status: 'idle' })
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setProjects = useSetAtom(projectsAtom)
@@ -119,10 +118,10 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       const extension = recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'
       const now = new Date()
       const opfsName = uniqueOpfsName(formatRecordingOpfsName(now, extension), mediaAssets)
+
       await writeMediaAsset(opfsName, blob)
 
       const projectId = crypto.randomUUID()
-
       const newProject: Project = {
         id: projectId,
         name: `Project: ${opfsName}`,
@@ -137,8 +136,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       setProjects((prev) => [newProject, ...prev])
       setSelectedLibraryItemId(projectId)
 
-      setIsRecording(false)
-      setIsPaused(false)
+      setRecording({ status: 'idle' })
     }
 
     stream.getVideoTracks()[0].addEventListener('ended', () => recorder.stop())
@@ -146,7 +144,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     recorder.start()
     recorderRef.current = recorder
     startSegment()
-    setIsRecording(true)
+    setRecording({ status: 'recording' })
   })
 
   const stop = useEffectEvent(() => {
@@ -160,7 +158,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     }
     recorder.pause()
     closeCurrentSegment()
-    setIsPaused(true)
+    setRecording({ status: 'paused' })
   })
 
   const resume = useEffectEvent(() => {
@@ -170,11 +168,11 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     }
     recorder.resume()
     startSegment()
-    setIsPaused(false)
+    setRecording({ status: 'recording' })
   })
 
   return (
-    <ScreenRecordingContext.Provider value={{ isRecording, isPaused, start, stop, pause, resume }}>
+    <ScreenRecordingContext.Provider value={{ recording, start, stop, pause, resume }}>
       {children}
     </ScreenRecordingContext.Provider>
   )
