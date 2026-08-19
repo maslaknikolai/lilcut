@@ -1,21 +1,21 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useAtomValue } from 'jotai'
 import { Pause, Play } from 'lucide-react'
-import { mediaFilesAtom } from './atoms'
+import { mediaAssetsAtom } from './atoms'
 import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
 import { Scrubber } from './Scrubber'
 import { Timeline } from './Timeline'
 import { buildTimeline, findClipIndexAtTime } from './projectTimeline'
 import type { Project } from './types'
-import { useMediaFileVideoUrl } from './useMediaFileVideoUrl'
+import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
 
 type ProjectPreviewProps = {
   project: Project
 }
 
 export function ProjectPreview({ project }: ProjectPreviewProps) {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
   const timeline = buildTimeline(project)
   const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
@@ -25,8 +25,8 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
 
   const currentClipIndex = findClipIndexAtTime(timeline, projectTime)
   const currentClip = timeline[currentClipIndex]
-  const mediaFile = mediaFiles.find((file) => file.opfsName === currentClip?.mediaFileOpfsName)
-  const videoUrl = useMediaFileVideoUrl(mediaFile)
+  const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === currentClip?.mediaAssetOpfsName)
+  const videoUrl = useMediaAssetVideoUrl(mediaAsset)
 
   // switching the active clip doesn't necessarily reload the <video> element
   // (consecutive clips often share the same underlying file), so the jump to
@@ -44,7 +44,7 @@ export function ProjectPreview({ project }: ProjectPreviewProps) {
 
   useEffect(() => {
     applyPendingSeek()
-  }, [currentClip?.id, mediaFile])
+  }, [currentClip?.id, mediaAsset])
 
   function seekToProjectTime(time: number) {
     if (timeline.length === 0) {

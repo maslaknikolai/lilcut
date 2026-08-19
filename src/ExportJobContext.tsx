@@ -3,11 +3,12 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
-import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
+import { mediaAssetsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
-import { uniqueOpfsName, writeOpfsFile } from './opfs'
-import { ExportJobContext, type ExportJob } from './useExportJobContext'
+import { uniqueOpfsName } from './opfs'
 import type { Project } from './types'
+import { ExportJobContext, type ExportJob } from './useExportJobContext'
+import { useMediaAssetActions } from './useMediaAssetActions'
 
 let ffmpegPromise: Promise<FFmpeg> | null = null
 
@@ -23,9 +24,9 @@ function loadFfmpeg(): Promise<FFmpeg> {
 }
 
 export function ExportJobProvider({ children }: { children: ReactNode }) {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
-  const setMediaFiles = useSetAtom(mediaFilesAtom)
-  const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const { writeMediaAsset } = useMediaAssetActions()
+  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
 
   const [job, setJob] = useState<ExportJob>({ status: 'idle' })
   const ffmpegInstanceRef = useRef<FFmpeg | null>(null)
@@ -47,30 +48,28 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       const ffmpeg = await loadFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
-      const blob = await exportProjectVideo(ffmpeg, project.clips, mediaFiles, {
+      const blob = await exportProjectVideo(ffmpeg, project.clips, mediaAssets, {
         onProgress: (overallProgress) =>
           setJob((prev) => {
-            return prev.status === 'exporting' ? { ...prev, progress: Math.max(prev.progress, overallProgress) } : prev
+            if (prev.status !== 'exporting') {
+              return prev
+            }
+            return { ...prev, progress: Math.max(prev.progress, overallProgress) }
           }),
         onLog: (message) =>
-          setJob((prev) => (prev.status === 'exporting' ? { ...prev, logLines: [...prev.logLines, message] } : prev)),
+          setJob((prev) => {
+            if (prev.status !== 'exporting') {
+              return prev
+            }
+            return { ...prev, logLines: [...prev.logLines, message] }
+          }),
         isCancelled: () => isCancelledRef.current,
       })
 
       if (blob) {
-        const exportedId = crypto.randomUUID()
-        const exportedOpfsName = uniqueOpfsName(`Exported ${project.name}.mp4`, mediaFiles)
-        await writeOpfsFile(exportedOpfsName, blob)
-        setMediaFiles((prev) => [
-          {
-            id: exportedId,
-            createdAt: Date.now(),
-            opfsName: exportedOpfsName,
-            mimeType: 'video/mp4',
-          },
-          ...prev,
-        ])
-        setSelectedMediaFileId(exportedId)
+        const exportedOpfsName = uniqueOpfsName(`Exported ${project.name}.mp4`, mediaAssets)
+        await writeMediaAsset(exportedOpfsName, blob)
+        setSelectedLibraryItemId(exportedOpfsName)
         setJob({
           status: 'complete',
           projectName: project.name,

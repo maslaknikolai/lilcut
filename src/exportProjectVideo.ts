@@ -1,7 +1,7 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
 import { readOpfsFile } from './opfs'
-import type { Clip, MediaFile } from './types'
+import type { Clip, MediaAsset } from './types'
 
 type ExportCallbacks = {
   onProgress: (overallProgress: number) => void
@@ -12,12 +12,12 @@ type ExportCallbacks = {
 export async function exportProjectVideo(
   ffmpeg: FFmpeg,
   clips: Clip[],
-  mediaFiles: MediaFile[],
+  mediaAssets: MediaAsset[],
   { onProgress, onLog, isCancelled }: ExportCallbacks,
 ): Promise<Blob | null> {
   const segments = clips.flatMap((clip) => {
-    const mediaFile = mediaFiles.find((file) => file.opfsName === clip.mediaFileOpfsName)
-    return mediaFile ? [{ clip, mediaFile }] : []
+    const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === clip.mediaAssetOpfsName)
+    return mediaAsset ? [{ clip, mediaAsset }] : []
   })
   if (segments.length === 0) {
     return null
@@ -45,14 +45,14 @@ export async function exportProjectVideo(
   try {
     const segmentNames: string[] = []
 
-    for (const [index, { clip, mediaFile }] of segments.entries()) {
+    for (const [index, { clip, mediaAsset }] of segments.entries()) {
       if (isCancelled()) {
         return null
       }
 
-      const extension = mediaFile.opfsName.split('.').pop()
+      const extension = mediaAsset.opfsName.split('.').pop()
       const inputName = `input_${index}.${extension}`
-      const sourceFile = await readOpfsFile(mediaFile.opfsName)
+      const sourceFile = await readOpfsFile(mediaAsset.opfsName)
       await ffmpeg.writeFile(inputName, await fetchFile(sourceFile))
 
       // -ss/-to after -i decodes from the start for a frame-accurate cut,

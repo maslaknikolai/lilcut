@@ -1,13 +1,15 @@
 import { useRef, type ChangeEvent } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
-import { mediaFilesAtom, selectedMediaFileIdAtom } from './atoms'
-import { uniqueOpfsName, writeOpfsFile } from './opfs'
+import { mediaAssetsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { uniqueOpfsName } from './opfs'
 import { ActionButton } from './ActionButton'
+import { useMediaAssetActions } from './useMediaAssetActions'
 
-export function UploadMediaFileButton() {
-  const [mediaFiles, setMediaFiles] = useAtom(mediaFilesAtom)
-  const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
+export function UploadMediaAssetButton() {
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const { writeMediaAsset } = useMediaAssetActions()
+  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -17,12 +19,10 @@ export function UploadMediaFileButton() {
       return
     }
 
-    const id = crypto.randomUUID()
-    const opfsName = uniqueOpfsName(file.name, mediaFiles)
-    await writeOpfsFile(opfsName, file)
+    const opfsName = uniqueOpfsName(file.name, mediaAssets)
+    await writeMediaAsset(opfsName, file)
 
-    setMediaFiles((prev) => [{ id, createdAt: Date.now(), opfsName, mimeType: file.type }, ...prev])
-    setSelectedMediaFileId(id)
+    setSelectedLibraryItemId(opfsName)
   }
 
   return (

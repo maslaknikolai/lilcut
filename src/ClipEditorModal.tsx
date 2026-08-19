@@ -1,13 +1,14 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { X } from 'lucide-react'
-import { mediaFilesAtom, projectsAtom } from './atoms'
+import { mediaAssetsAtom, projectsAtom } from './atoms'
+import { updateProject } from './library'
 import { formatTimestamp } from './formatTimestamp'
 import { readOpfsFile } from './opfs'
 
 type EditingClip = {
   id: string
-  mediaFileOpfsName: string
+  mediaAssetOpfsName: string
   cutStart: number
   cutEnd: number
 }
@@ -20,26 +21,28 @@ type ClipEditorModalProps = {
 }
 
 export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEditorModalProps) {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
   const setProjects = useSetAtom(projectsAtom)
 
-  const [mediaFileOpfsName, setMediaFileOpfsName] = useState(clip?.mediaFileOpfsName ?? mediaFiles[0]?.opfsName ?? '')
+  const [mediaAssetOpfsName, setMediaAssetOpfsName] = useState(
+    clip?.mediaAssetOpfsName ?? mediaAssets[0]?.opfsName ?? '',
+  )
   const [cutStart, setCutStart] = useState(clip?.cutStart ?? 0)
   const [cutEnd, setCutEnd] = useState(clip?.cutEnd ?? 0)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  const mediaFile = mediaFiles.find((file) => file.opfsName === mediaFileOpfsName)
+  const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === mediaAssetOpfsName)
 
-  const openMediaFile = useEffectEvent(() => {
-    if (!mediaFile) {
+  const openMediaAsset = useEffectEvent(() => {
+    if (!mediaAsset) {
       setVideoUrl(null)
       return () => {}
     }
 
     let url: string | null = null
     let isCancelled = false
-    readOpfsFile(mediaFile.opfsName).then((downloadedFile) => {
+    readOpfsFile(mediaAsset.opfsName).then((downloadedFile) => {
       if (isCancelled) {
         return
       }
@@ -55,10 +58,10 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
     }
   })
 
-  useEffect(() => openMediaFile(), [mediaFile])
+  useEffect(() => openMediaAsset(), [mediaAsset])
 
-  function handleMediaFileChange(newMediaFileOpfsName: string) {
-    setMediaFileOpfsName(newMediaFileOpfsName)
+  function handleMediaAssetChange(newMediaAssetOpfsName: string) {
+    setMediaAssetOpfsName(newMediaAssetOpfsName)
     if (!clip) {
       setCutStart(0)
       setCutEnd(0)
@@ -66,24 +69,21 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
   }
 
   function handleSave() {
-    if (!mediaFileOpfsName || cutEnd <= cutStart) {
+    if (!mediaAssetOpfsName || cutEnd <= cutStart) {
       return
     }
 
     setProjects((prev) =>
-      prev.map((project) => {
-        if (project.id !== projectId) {
-          return project
-        }
+      updateProject(prev, projectId, (project) => {
         if (clip) {
           return {
             ...project,
             clips: project.clips.map((item) =>
-              item.id === clip.id ? { ...item, mediaFileOpfsName, cutStart, cutEnd } : item,
+              item.id === clip.id ? { ...item, mediaAssetOpfsName, cutStart, cutEnd } : item,
             ),
           }
         }
-        const newClip = { id: crypto.randomUUID(), mediaFileOpfsName, cutStart, cutEnd }
+        const newClip = { id: crypto.randomUUID(), mediaAssetOpfsName, cutStart, cutEnd }
         const targetIndex = insertAt ?? project.clips.length
         return {
           ...project,
@@ -118,8 +118,8 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
         <label className="flex flex-col gap-1 text-sm text-neutral-700">
           File
           <select
-            value={mediaFileOpfsName}
-            onChange={(e) => handleMediaFileChange(e.target.value)}
+            value={mediaAssetOpfsName}
+            onChange={(e) => handleMediaAssetChange(e.target.value)}
             className="rounded border border-neutral-300 px-2 py-1"
           >
             <option
@@ -128,12 +128,12 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             >
               Select a file
             </option>
-            {mediaFiles.map((file) => (
+            {mediaAssets.map((mediaAsset) => (
               <option
-                key={file.id}
-                value={file.opfsName}
+                key={mediaAsset.opfsName}
+                value={mediaAsset.opfsName}
               >
-                {file.opfsName}
+                {mediaAsset.opfsName}
               </option>
             ))}
           </select>
@@ -208,7 +208,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={handleSave}
-            disabled={!mediaFileOpfsName || cutEnd <= cutStart}
+            disabled={!mediaAssetOpfsName || cutEnd <= cutStart}
             className="cursor-pointer rounded bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save

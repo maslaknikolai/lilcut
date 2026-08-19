@@ -2,7 +2,7 @@ import type { Project } from './types'
 
 export type TimelineClip = {
   id: string
-  mediaFileOpfsName: string
+  mediaAssetOpfsName: string
   cutStart: number
   cutEnd: number
   duration: number
@@ -11,19 +11,23 @@ export type TimelineClip = {
 
 export function buildTimeline(project: Project): TimelineClip[] {
   let projectStart = 0
+
   return project.clips.map((clip) => {
     const cutStart = clip.cutStart ?? 0
     const cutEnd = clip.cutEnd ?? cutStart
-    const duration = Math.max(0, cutEnd - cutStart)
+    const clipDuration = Math.max(0, cutEnd - cutStart)
     const timelineClip = {
       id: clip.id,
-      mediaFileOpfsName: clip.mediaFileOpfsName,
+      mediaAssetOpfsName: clip.mediaAssetOpfsName,
       cutStart,
       cutEnd,
-      duration,
+      duration: clipDuration,
       projectStart,
     }
-    projectStart += duration
+
+    console.log('WIPWIP', { clip, timelineClip })
+
+    projectStart += clipDuration
     return timelineClip
   })
 }

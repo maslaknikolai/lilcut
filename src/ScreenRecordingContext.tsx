@@ -1,9 +1,10 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { mediaFilesAtom, projectsAtom, selectedMediaFileIdAtom, selectedProjectIdAtom } from './atoms'
-import { uniqueOpfsName, writeOpfsFile } from './opfs'
-import { ScreenRecordingContext } from './useScreenRecordingContext'
+import { mediaAssetsAtom, projectsAtom, selectedLibraryItemIdAtom } from './atoms'
+import { uniqueOpfsName } from './opfs'
 import type { Project } from './types'
+import { useMediaAssetActions } from './useMediaAssetActions'
+import { ScreenRecordingContext } from './useScreenRecordingContext'
 
 // e.g. rec_09_25_2026_16_45_59.mp4
 function formatRecordingOpfsName(date: Date, extension: string): string {
@@ -42,11 +43,10 @@ type Segment = {
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [isRecording, setIsRecording] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
-  const mediaFiles = useAtomValue(mediaFilesAtom)
-  const setMediaFiles = useSetAtom(mediaFilesAtom)
-  const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const { writeMediaAsset } = useMediaAssetActions()
   const setProjects = useSetAtom(projectsAtom)
-  const setSelectedProjectId = useSetAtom(selectedProjectIdAtom)
+  const setSelectedLibraryItemId = useSetAtom(selectedLibraryItemIdAtom)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
@@ -116,22 +116,10 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       closeCurrentSegment()
       stopAllTracks()
       const blob = new Blob(chunksRef.current, { type: recorder.mimeType })
-      const mediaFileId = crypto.randomUUID()
       const extension = recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'
       const now = new Date()
-      const opfsName = uniqueOpfsName(formatRecordingOpfsName(now, extension), mediaFiles)
-      await writeOpfsFile(opfsName, blob)
-
-      setMediaFiles((prev) => [
-        {
-          id: mediaFileId,
-          createdAt: Date.now(),
-          opfsName,
-          mimeType: recorder.mimeType,
-        },
-        ...prev,
-      ])
-      setSelectedMediaFileId(mediaFileId)
+      const opfsName = uniqueOpfsName(formatRecordingOpfsName(now, extension), mediaAssets)
+      await writeMediaAsset(opfsName, blob)
 
       const projectId = crypto.randomUUID()
 
@@ -140,14 +128,14 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
         name: `Project: ${opfsName}`,
         clips: segmentsRef.current.map((segment) => ({
           id: crypto.randomUUID(),
-          mediaFileOpfsName: opfsName,
+          mediaAssetOpfsName: opfsName,
           cutStart: segment.cutStart,
           cutEnd: segment.cutEnd,
         })),
       }
 
       setProjects((prev) => [newProject, ...prev])
-      setSelectedProjectId(projectId)
+      setSelectedLibraryItemId(projectId)
 
       setIsRecording(false)
       setIsPaused(false)

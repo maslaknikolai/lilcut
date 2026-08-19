@@ -1,36 +1,30 @@
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
-import { MediaFilesPage } from './MediaFilesPage'
-import { ProjectsPage } from './ProjectsPage'
+import { ExportJobWidget } from './ExportJobWidget'
+import { LibraryPage } from './LibraryPage'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
-import { TabNav } from './TabNav'
+import { useIndexedDbAtom } from './useIndexedDbAtom'
+import { useSyncMediaAssets } from './useSyncMediaAssets'
 
 export function App() {
+  useIndexedDbAtom(projectsAtom, 'projects')
+  useIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
+  useSyncMediaAssets()
+
   return (
-    <HashRouter>
-      <ExportJobProvider>
-        <ScreenRecordingProvider>
-          <div className="flex h-svh flex-col">
-            <TabNav />
+    <ExportJobProvider>
+      <ScreenRecordingProvider>
+        <div className="flex h-svh overflow-hidden">
+          <LibraryPage />
+        </div>
 
-            <div className="flex flex-1 overflow-hidden">
-              <Routes>
-                <Route
-                  path="/"
-                  element={<ProjectsPage />}
-                />
-                <Route
-                  path="/files"
-                  element={<MediaFilesPage />}
-                />
-              </Routes>
-            </div>
-          </div>
+        <div className="fixed top-2 right-2">
+          <ExportJobWidget />
+        </div>
 
-          <RecordingPipWindow />
-        </ScreenRecordingProvider>
-      </ExportJobProvider>
-    </HashRouter>
+        <RecordingPipWindow />
+      </ScreenRecordingProvider>
+    </ExportJobProvider>
   )
 }

@@ -1,5 +1,5 @@
 import { uniqueName } from './uniqueName'
-import type { MediaFile } from './types'
+import type { MediaAsset } from './types'
 
 export async function writeOpfsFile(name: string, blob: Blob): Promise<void> {
   const root = await navigator.storage.getDirectory()
@@ -20,6 +20,19 @@ export async function deleteOpfsFile(name: string): Promise<void> {
   await root.removeEntry(name)
 }
 
+export async function listOpfsMediaAssets(): Promise<MediaAsset[]> {
+  const root = await navigator.storage.getDirectory()
+  const mediaAssets: MediaAsset[] = []
+  for await (const handle of root.values()) {
+    if (handle.kind !== 'file') {
+      continue
+    }
+    const file = await handle.getFile()
+    mediaAssets.push({ opfsName: handle.name, mimeType: file.type })
+  }
+  return mediaAssets
+}
+
 // FileSystemHandle.move() exists in Chrome but isn't in TS's DOM lib
 type MovableFileHandle = FileSystemFileHandle & { move(newName: string): Promise<void> }
 
@@ -29,9 +42,9 @@ export async function renameOpfsFile(oldName: string, newName: string): Promise<
   await (handle as MovableFileHandle).move(newName)
 }
 
-export function uniqueOpfsName(desiredName: string, mediaFiles: MediaFile[]): string {
+export function uniqueOpfsName(desiredName: string, mediaAssets: MediaAsset[]): string {
   return uniqueName(
     desiredName,
-    mediaFiles.map((file) => file.opfsName),
+    mediaAssets.map((mediaAsset) => mediaAsset.opfsName),
   )
 }

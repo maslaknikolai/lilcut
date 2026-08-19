@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAtom } from 'jotai'
-import { Files } from 'lucide-react'
-import { projectsAtom, selectedProjectIdAtom } from './atoms'
+import { Files, Scissors } from 'lucide-react'
+import { projectsAtom, selectedLibraryItemIdAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
 import { uniqueName } from './uniqueName'
@@ -17,10 +17,10 @@ type ProjectItemProps = {
 }
 
 export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
-  const [selectedProjectId, setSelectedProjectId] = useAtom(selectedProjectIdAtom)
+  const [selectedLibraryItemId, setSelectedLibraryItemId] = useAtom(selectedLibraryItemIdAtom)
   const [projects, setProjects] = useAtom(projectsAtom)
   const [editingName, setEditingName] = useState(project.name)
-  const isSelected = project.id === selectedProjectId
+  const isSelected = project.id === selectedLibraryItemId
 
   function commitRename() {
     const name = editingName.trim()
@@ -28,7 +28,14 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       setEditingName(project.name)
       return
     }
-    setProjects((prev) => prev.map((item) => (item.id === project.id ? { ...item, name } : item)))
+    setProjects((prev) =>
+      prev.map((item) => {
+        if (item.id !== project.id) {
+          return item
+        }
+        return { ...item, name }
+      }),
+    )
   }
 
   function handleRemove() {
@@ -44,7 +51,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       projects.map((item) => item.name),
     )
     setProjects((prev) => [{ id: cloneId, name: cloneName, clips: clonedClips }, ...prev])
-    setSelectedProjectId(cloneId)
+    setSelectedLibraryItemId(cloneId)
   }
 
   const selectionClassName = isSelected ? 'bg-neutral-200' : 'hover:bg-neutral-100'
@@ -56,10 +63,16 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      onClick={() => setSelectedProjectId(project.id)}
+      onClick={() => setSelectedLibraryItemId(project.id)}
       className={selectionClassName}
       dragHandleLabel={`Reorder ${project.name}`}
     >
+      <Scissors
+        size={14}
+        fill="currentColor"
+        className="mr-1.5 shrink-0 text-blue-500"
+      />
+
       <input
         value={editingName}
         onChange={(e) => setEditingName(e.target.value)}

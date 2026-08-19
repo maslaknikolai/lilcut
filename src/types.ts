@@ -1,6 +1,4 @@
-export type MediaFile = {
-  id: string
-  createdAt: number
+export type MediaAsset = {
   opfsName: string
   mimeType: string
 }
@@ -13,7 +11,9 @@ export type Project = {
 
 export type Clip = {
   id: string
-  mediaFileOpfsName: string
+  mediaAssetOpfsName: string
   cutStart?: number
   cutEnd?: number
 }
+
+export type LibraryItem = { type: 'project'; project: Project } | { type: 'media'; mediaAsset: MediaAsset }

@@ -1,8 +1,9 @@
 import { Fragment, useState, type ReactNode } from 'react'
 import { reorderById } from './reorderById'
 
-type SortingListProps<T extends { id: string }> = {
+type SortingListProps<T> = {
   items: T[]
+  getId: (item: T) => string
   onReorder: (next: T[]) => void
   renderItem: (
     item: T,
@@ -16,29 +17,32 @@ type SortingListProps<T extends { id: string }> = {
   ) => ReactNode
 }
 
-export function SortingList<T extends { id: string }>({ items, onReorder, renderItem }: SortingListProps<T>) {
+export function SortingList<T>({ items, getId, onReorder, renderItem }: SortingListProps<T>) {
   const [draggedId, setDraggedId] = useState<string | null>(null)
 
   function moveDraggedItem(targetId: string) {
     if (!draggedId || draggedId === targetId) {
       return
     }
-    onReorder(reorderById(items, draggedId, targetId))
+    onReorder(reorderById(items, getId, draggedId, targetId))
   }
 
   return (
-    <ul className="flex-1 overflow-y-auto">
-      {items.map((item) => (
-        <Fragment key={item.id}>
-          {renderItem(item, {
-            isDragging: item.id === draggedId,
-            onDragStart: () => setDraggedId(item.id),
-            onDragOver: () => moveDraggedItem(item.id),
-            onDrop: () => setDraggedId(null),
-            onDragEnd: () => setDraggedId(null),
-          })}
-        </Fragment>
-      ))}
+    <ul>
+      {items.map((item) => {
+        const id = getId(item)
+        return (
+          <Fragment key={id}>
+            {renderItem(item, {
+              isDragging: id === draggedId,
+              onDragStart: () => setDraggedId(id),
+              onDragOver: () => moveDraggedItem(id),
+              onDrop: () => setDraggedId(null),
+              onDragEnd: () => setDraggedId(null),
+            })}
+          </Fragment>
+        )
+      })}
     </ul>
   )
 }

@@ -1,6 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { ChevronLeft, ChevronRight, Pencil, X } from 'lucide-react'
-import { mediaFilesAtom, projectsAtom } from './atoms'
+import { mediaAssetsAtom, projectsAtom } from './atoms'
+import { updateProject } from './library'
 import type { TimelineClip } from './projectTimeline'
 import type { Project } from './types'
 
@@ -21,11 +22,11 @@ export function TimelineSegment({
   isCurrent,
   onEdit,
 }: SegmentProps) {
-  const mediaFiles = useAtomValue(mediaFilesAtom)
+  const mediaAssets = useAtomValue(mediaAssetsAtom)
   const setProjects = useSetAtom(projectsAtom)
 
-  const mediaFileExists = mediaFiles.some((file) => file.opfsName === timelineClip.mediaFileOpfsName)
-  const mediaFileName = mediaFileExists ? timelineClip.mediaFileOpfsName : 'Unknown file'
+  const mediaAssetExists = mediaAssets.some((mediaAsset) => mediaAsset.opfsName === timelineClip.mediaAssetOpfsName)
+  const mediaAssetName = mediaAssetExists ? timelineClip.mediaAssetOpfsName : 'Unknown file'
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
@@ -33,18 +34,16 @@ export function TimelineSegment({
 
   function removeClip() {
     setProjects((prev) =>
-      prev.map((p) =>
-        p.id === project.id ? { ...p, clips: p.clips.filter((clip) => clip.id !== timelineClip.id) } : p,
-      ),
+      updateProject(prev, project.id, (p) => {
+        const clips = p.clips.filter((clip) => clip.id !== timelineClip.id)
+        return { ...p, clips }
+      }),
     )
   }
 
   function moveClip(direction: -1 | 1) {
     setProjects((prev) =>
-      prev.map((p) => {
-        if (p.id !== project.id) {
-          return p
-        }
+      updateProject(prev, project.id, (p) => {
         const index = p.clips.findIndex((clip) => clip.id === timelineClip.id)
         const targetIndex = index + direction
         if (index === -1 || targetIndex < 0 || targetIndex >= p.clips.length) {
@@ -65,7 +64,7 @@ export function TimelineSegment({
       }`}
       style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >
-      <span className="truncate">{mediaFileName}</span>
+      <span className="truncate">{mediaAssetName}</span>
 
       <div className="absolute top-0.5 right-0.5 flex gap-0.5 opacity-0 group-hover:opacity-100">
         <button

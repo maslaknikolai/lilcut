@@ -1,19 +1,19 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { readOpfsFile } from './opfs'
-import type { MediaFile } from './types'
+import type { MediaAsset } from './types'
 
-export function useMediaFileVideoUrl(mediaFile: MediaFile | undefined): string | null {
+export function useMediaAssetVideoUrl(mediaAsset: MediaAsset | undefined): string | null {
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
 
-  const openMediaFile = useEffectEvent(() => {
-    if (!mediaFile) {
+  const openMediaAsset = useEffectEvent(() => {
+    if (!mediaAsset) {
       setVideoUrl(null)
       return () => {}
     }
 
     let url: string | null = null
     let isCancelled = false
-    readOpfsFile(mediaFile.opfsName).then((downloadedFile) => {
+    readOpfsFile(mediaAsset.opfsName).then((downloadedFile) => {
       if (isCancelled) {
         return
       }
@@ -29,7 +29,7 @@ export function useMediaFileVideoUrl(mediaFile: MediaFile | undefined): string |
     }
   })
 
-  useEffect(() => openMediaFile(), [mediaFile])
+  useEffect(() => openMediaAsset(), [mediaAsset])
 
   return videoUrl
 }
