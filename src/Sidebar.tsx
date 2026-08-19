@@ -10,7 +10,7 @@ import { StorageUsage } from './StorageUsage'
 import { UploadMediaAssetButton } from './UploadMediaAssetButton'
 import { useSyncSelectedLibraryItem } from './useSyncSelectedLibraryItem'
 
-export function LibrarySidebar() {
+export function Sidebar() {
   const library = useLibraryItems()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   useSyncSelectedLibraryItem()

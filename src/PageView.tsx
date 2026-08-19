@@ -3,7 +3,7 @@ import { Player } from './Player'
 import { ProjectPreview } from './ProjectPreview'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
-export function LibraryPage() {
+export function PageView() {
   const library = useLibraryItems()
   const [selectedLibraryItemId] = useSelectedLibraryItemId()
   const selectedLibraryItem = library.find((item) => libraryItemId(item) === selectedLibraryItemId)

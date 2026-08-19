@@ -2,8 +2,8 @@ import { HashRouter, Route, Routes } from 'react-router-dom'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
-import { LibraryPage } from './LibraryPage'
-import { LibrarySidebar } from './LibrarySidebar'
+import { PageView } from './PageView'
+import { Sidebar } from './Sidebar'
 import { RecordingPipWindow } from './RecordingPipWindow'
 import { ScreenRecordingProvider } from './ScreenRecordingContext'
 import { useSyncIndexedDbAtom } from './useSyncIndexedDbAtom'
@@ -14,8 +14,8 @@ function AppContent() {
     <ExportJobProvider>
       <ScreenRecordingProvider>
         <div className="flex h-svh overflow-hidden">
-          <LibrarySidebar />
-          <LibraryPage />
+          <Sidebar />
+          <PageView />
         </div>
 
         <div className="fixed top-2 right-2">
