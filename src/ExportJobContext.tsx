@@ -1,6 +1,5 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useNavigate } from 'react-router-dom'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
@@ -27,7 +26,6 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
   const mediaFiles = useAtomValue(mediaFilesAtom)
   const setMediaFiles = useSetAtom(mediaFilesAtom)
   const setSelectedMediaFileId = useSetAtom(selectedMediaFileIdAtom)
-  const navigate = useNavigate()
 
   const [isExporting, setIsExporting] = useState(false)
   const [isExportComplete, setIsExportComplete] = useState(false)
@@ -77,7 +75,6 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
           ...prev,
         ])
         setSelectedMediaFileId(exportedId)
-        navigate('/files')
         setIsExportComplete(true)
       }
     } catch (error) {
