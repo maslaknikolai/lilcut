@@ -6,6 +6,7 @@ import wasmURL from '@ffmpeg/core/wasm?url'
 import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
 import { uniqueOpfsName } from './opfs'
+import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
 import type { Project } from './types'
 import { ExportJobContext, type ExportJob } from './useExportJobContext'
 import { useMediaAssetActions } from './useMediaAssetActions'
@@ -50,7 +51,9 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       const ffmpeg = await loadFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
-      const blob = await exportProjectVideo(ffmpeg, project.clips, mediaAssets, {
+      const timelineClips = buildTimelineClips(project, mediaAssets)
+      const playbackClips = buildPlaybackClips(timelineClips)
+      const blob = await exportProjectVideo(ffmpeg, playbackClips, mediaAssets, {
         onProgress: (overallProgress) =>
           setJob((prev) => {
             if (prev.status !== 'exporting') {

@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai'
 import { mediaAssetsAtom } from './atoms'
 import { ClipEditorModal } from './ClipEditorModal'
 import { INSERT_CLIP_BUTTON_WIDTH_PX, InsertClipButton } from './InsertClipButton'
-import { buildTimeline, type TimelineClip } from './projectTimeline'
+import { buildTimelineClips, type TimelineClip } from './projectTimeline'
 import { TimelineSegment } from './TimelineSegment'
 import type { Project } from './types'
 
@@ -11,21 +11,21 @@ type ClipEditorState = { mode: 'create'; insertAt: number } | { mode: 'edit'; cl
 
 type TimelineProps = {
   project: Project
-  currentClipId: string | null
+  currentTimelineClipId: string | undefined
 }
 
-export function Timeline({ project, currentClipId }: TimelineProps) {
+export function Timeline({ project, currentTimelineClipId }: TimelineProps) {
   const [clipEditorState, setClipEditorState] = useState<ClipEditorState | null>(null)
   const mediaAssets = useAtomValue(mediaAssetsAtom)
 
-  const timeline = buildTimeline(project, mediaAssets)
-  const totalDuration = timeline.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
-  const insertButtonsWidth = (timeline.length + 1) * INSERT_CLIP_BUTTON_WIDTH_PX
+  const timelineClips = buildTimelineClips(project, mediaAssets)
+  const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
+  const insertButtonsWidth = (timelineClips.length + 1) * INSERT_CLIP_BUTTON_WIDTH_PX
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex h-12">
-        {timeline.flatMap((timelineClip, index) => [
+        {timelineClips.flatMap((timelineClip, index) => [
           <InsertClipButton
             key={`insert-${timelineClip.id}`}
             onClick={() => setClipEditorState({ mode: 'create', insertAt: index })}
@@ -35,13 +35,13 @@ export function Timeline({ project, currentClipId }: TimelineProps) {
             project={project}
             timelineClip={timelineClip}
             totalDuration={totalDuration}
-            clipCount={timeline.length}
+            clipCount={timelineClips.length}
             insertButtonsWidth={insertButtonsWidth}
-            isCurrent={timelineClip.id === currentClipId}
+            isCurrent={timelineClip.id === currentTimelineClipId}
             onEdit={() => setClipEditorState({ mode: 'edit', clip: timelineClip })}
           />,
         ])}
-        <InsertClipButton onClick={() => setClipEditorState({ mode: 'create', insertAt: timeline.length })} />
+        <InsertClipButton onClick={() => setClipEditorState({ mode: 'create', insertAt: timelineClips.length })} />
       </div>
 
       {clipEditorState && (

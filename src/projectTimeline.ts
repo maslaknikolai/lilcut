@@ -9,7 +9,7 @@ export type TimelineClip = {
   projectStart: number
 }
 
-export function buildTimeline(project: Project, mediaAssets: MediaAsset[]): TimelineClip[] {
+export function buildTimelineClips(project: Project, mediaAssets: MediaAsset[]): TimelineClip[] {
   let projectStart = 0
 
   return project.clips.map((clip) => {
@@ -31,11 +31,37 @@ export function buildTimeline(project: Project, mediaAssets: MediaAsset[]): Time
   })
 }
 
-export function findClipIndexAtTime(timeline: TimelineClip[], time: number): number {
-  for (let i = 0; i < timeline.length; i++) {
-    if (time < timeline[i].projectStart + timeline[i].duration) {
+// a timeline clip merged with any following clips that continue the same file
+// exactly where the previous one ended (a split, not a cut) — such spans play
+// and export as one solid segment, no seek or cut at the boundary
+export type PlaybackClip = TimelineClip
+
+export function buildPlaybackClips(timelineClips: TimelineClip[]): PlaybackClip[] {
+  const playbackClips: PlaybackClip[] = []
+
+  for (const timelineClip of timelineClips) {
+    const previousPlaybackClip = playbackClips[playbackClips.length - 1]
+    const isContinuation =
+      previousPlaybackClip !== undefined &&
+      previousPlaybackClip.mediaAssetOpfsName === timelineClip.mediaAssetOpfsName &&
+      previousPlaybackClip.cutEnd === timelineClip.cutStart
+
+    if (isContinuation) {
+      previousPlaybackClip.cutEnd = timelineClip.cutEnd
+      previousPlaybackClip.duration += timelineClip.duration
+    } else {
+      playbackClips.push({ ...timelineClip })
+    }
+  }
+
+  return playbackClips
+}
+
+export function findClipIndexAtTime(clips: TimelineClip[], time: number): number {
+  for (let i = 0; i < clips.length; i++) {
+    if (time < clips[i].projectStart + clips[i].duration) {
       return i
     }
   }
-  return Math.max(0, timeline.length - 1)
+  return Math.max(0, clips.length - 1)
 }

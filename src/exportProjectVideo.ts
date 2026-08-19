@@ -1,7 +1,8 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
 import { readOpfsFile } from './opfs'
-import type { Clip, MediaAsset } from './types'
+import type { PlaybackClip } from './projectTimeline'
+import type { MediaAsset } from './types'
 
 type ExportCallbacks = {
   onProgress: (overallProgress: number) => void
@@ -9,32 +10,26 @@ type ExportCallbacks = {
   isCancelled: () => boolean
 }
 
+// stream-copy export: no re-encoding, so cuts snap to the nearest keyframe.
+// Callers pass playback clips (buildPlaybackClips) so uncut spans of one
+// recording aren't split just to be concatenated again.
 export async function exportProjectVideo(
   ffmpeg: FFmpeg,
-  clips: Clip[],
+  playbackClips: PlaybackClip[],
   mediaAssets: MediaAsset[],
   { onProgress, onLog, isCancelled }: ExportCallbacks,
 ): Promise<Blob | null> {
-  const segments = clips.flatMap((clip) => {
-    const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === clip.mediaAssetOpfsName)
-    return mediaAsset ? [{ clip, mediaAsset }] : []
+  const segments = playbackClips.flatMap((playbackClip) => {
+    const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === playbackClip.mediaAssetOpfsName)
+    return mediaAsset ? [{ playbackClip, mediaAsset }] : []
   })
   if (segments.length === 0) {
     return null
   }
 
-  // each clip trim plus the final concat is one ffmpeg command;
-  // progress resets to 0 at the start of each command, so track how many of the
-  // total commands are already done to turn per-command progress into
-  // one overall percentage
-  const totalSteps = segments.length + 1
-  let completedSteps = 0
   function handleProgress({ progress }: { progress: number }) {
-    // ffmpeg's reported progress isn't guaranteed monotonic within a
-    // command (e.g. the concat step's duration estimate can get revised
-    // mid-run), so never let the displayed value move backwards
     const clampedProgress = Math.min(1, Math.max(0, progress))
-    onProgress((completedSteps + clampedProgress) / totalSteps)
+    onProgress(clampedProgress)
   }
   function handleLog({ message }: { message: string }) {
     onLog(message)
@@ -43,41 +38,50 @@ export async function exportProjectVideo(
   ffmpeg.on('log', handleLog)
 
   try {
-    const segmentNames: string[] = []
+    const inputNameByOpfsName = new Map<string, string>()
 
-    for (const [index, { clip, mediaAsset }] of segments.entries()) {
+    async function ensureInputFile(mediaAsset: MediaAsset): Promise<string> {
+      const existingName = inputNameByOpfsName.get(mediaAsset.opfsName)
+      if (existingName) {
+        return existingName
+      }
+      const extension = mediaAsset.opfsName.split('.').pop()
+      const inputName = `input_${inputNameByOpfsName.size}.${extension}`
+      const sourceFile = await readOpfsFile(mediaAsset.opfsName)
+      await ffmpeg.writeFile(inputName, await fetchFile(sourceFile))
+      inputNameByOpfsName.set(mediaAsset.opfsName, inputName)
+      return inputName
+    }
+
+    const inputSegments: { inputName: string; playbackClip: PlaybackClip }[] = []
+    for (const { playbackClip, mediaAsset } of segments) {
       if (isCancelled()) {
         return null
       }
-
-      const extension = mediaAsset.opfsName.split('.').pop()
-      const inputName = `input_${index}.${extension}`
-      const sourceFile = await readOpfsFile(mediaAsset.opfsName)
-      await ffmpeg.writeFile(inputName, await fetchFile(sourceFile))
-
-      // -ss/-to after -i decodes from the start for a frame-accurate cut,
-      // rather than snapping to the nearest keyframe
-      const args = ['-i', inputName, '-ss', String(clip.cutStart ?? 0)]
-      if (clip.cutEnd !== undefined) {
-        args.push('-to', String(clip.cutEnd))
-      }
-      const segmentName = `segment_${index}.mp4`
-      args.push('-c:v', 'libx264', '-c:a', 'aac', segmentName)
-      await ffmpeg.exec(args)
-      completedSteps += 1
-      await ffmpeg.deleteFile(inputName)
-      segmentNames.push(segmentName)
+      const inputName = await ensureInputFile(mediaAsset)
+      inputSegments.push({ inputName, playbackClip })
     }
 
-    if (isCancelled()) {
-      return null
-    }
+    const concatListName = 'project.ffconcat'
 
-    const concatListName = 'concat.txt'
-    const concatList = segmentNames.map((name) => `file '${name}'`).join('\n')
-    await ffmpeg.writeFile(concatListName, concatList)
-    await ffmpeg.exec(['-f', 'concat', '-safe', '0', '-i', concatListName, '-c', 'copy', 'output.mp4'])
-    completedSteps += 1
+    if (inputSegments.length === 1) {
+      const { inputName, playbackClip } = inputSegments[0]
+      await ffmpeg.exec([
+        '-ss', String(playbackClip.cutStart),
+        '-i', inputName,
+        '-t', String(playbackClip.cutEnd - playbackClip.cutStart),
+        '-c', 'copy',
+        'output.mp4',
+      ])
+    } else {
+      const concatEntries = inputSegments.map(({ inputName, playbackClip }) => {
+        return `file '${inputName}'\ninpoint ${playbackClip.cutStart}\noutpoint ${playbackClip.cutEnd}`
+      })
+      const concatList = `ffconcat version 1.0\n\n${concatEntries.join('\n\n')}\n`
+      await ffmpeg.writeFile(concatListName, concatList)
+      await ffmpeg.exec(['-f', 'concat', '-safe', '0', '-i', concatListName, '-c', 'copy', 'output.mp4'])
+      await ffmpeg.deleteFile(concatListName)
+    }
 
     if (isCancelled()) {
       return null
@@ -87,10 +91,9 @@ export async function exportProjectVideo(
     const bytes = typeof output === 'string' ? new TextEncoder().encode(output) : output
     const blob = new Blob([new Uint8Array(bytes)], { type: 'video/mp4' })
 
-    await ffmpeg.deleteFile(concatListName)
     await ffmpeg.deleteFile('output.mp4')
-    for (const name of segmentNames) {
-      await ffmpeg.deleteFile(name)
+    for (const inputName of inputNameByOpfsName.values()) {
+      await ffmpeg.deleteFile(inputName)
     }
 
     return blob
