@@ -157,21 +157,20 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
           )}
         </button>
 
+        <span className="shrink-0 text-xs text-neutral-500">
+          {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
+        </span>
+
         <CutHereButton
           project={project}
           projectTime={projectTime}
           currentTimelineClip={currentTimelineClip}
         />
 
-        <span className="w-24 shrink-0 text-xs text-neutral-500">
-          {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
-        </span>
-
-        <ConcatCompatibilityBadge playbackClips={playbackClips} />
-
         <div className="flex-1" />
 
         <ExportProjectButton project={project} />
+        <ConcatCompatibilityBadge playbackClips={playbackClips} />
       </div>
 
       <Scrubber
