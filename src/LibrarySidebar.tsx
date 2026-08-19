@@ -6,6 +6,7 @@ import { NewProjectButton } from './NewProjectButton'
 import { ProjectItem } from './ProjectItem'
 import { RecordControls } from './RecordControls'
 import { SortingList } from './SortingList'
+import { StorageUsage } from './StorageUsage'
 import { UploadMediaAssetButton } from './UploadMediaAssetButton'
 import { useSyncSelectedLibraryItem } from './useSyncSelectedLibraryItem'
 
@@ -16,10 +17,13 @@ export function LibrarySidebar() {
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r border-neutral-300">
-      <div className="flex items-center gap-1 border-b border-neutral-300 p-2">
-        <RecordControls />
-        <NewProjectButton />
-        <UploadMediaAssetButton />
+      <div className="flex items-center justify-between border-b border-neutral-300 p-2">
+        <div className="flex gap-1 items-center">
+          <RecordControls />
+          <NewProjectButton />
+          <UploadMediaAssetButton />
+        </div>
+        <StorageUsage />
       </div>
 
       <div className="flex-1 overflow-y-auto">

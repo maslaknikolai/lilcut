@@ -24,7 +24,7 @@ export function NewProjectButton() {
   return (
     <ActionButton
       onClick={handleClick}
-      className="bg-neutral-900 text-white hover:bg-neutral-800"
+      className="bg-blue-500 text-white hover:bg-blue-600"
     >
       <Plus size={14} />
     </ActionButton>
