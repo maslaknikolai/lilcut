@@ -29,7 +29,6 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
 
   const [job, setJob] = useState<ExportJob>({ status: 'idle' })
   const ffmpegInstanceRef = useRef<FFmpeg | null>(null)
@@ -72,10 +71,9 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       })
 
       if (blob) {
-        const exportedOpfsName = uniqueOpfsName(`Exported ${project.name}.mp4`, mediaAssets)
+        const exportedOpfsName = uniqueOpfsName(`${project.name}.mp4`, mediaAssets)
         await writeMediaAsset(exportedOpfsName, blob)
         setLibraryOrder((prev) => [exportedOpfsName, ...prev])
-        setSelectedLibraryItemId(exportedOpfsName)
         setJob({
           status: 'complete',
           projectName: project.name,

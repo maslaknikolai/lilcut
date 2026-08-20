@@ -1,36 +1,38 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { X } from 'lucide-react'
+import { Play, X } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { updateProject } from './library'
+import type { TimelineClip } from './projectTimeline'
 import { formatTimestamp } from './formatTimestamp'
 import { readOpfsFile } from './opfs'
 
-type EditingClip = {
-  id: string
-  mediaAssetOpfsName: string
-  cutStart: number
-  cutEnd: number
+function roundTime(time: number): number {
+  return Math.round(time * 100) / 100
 }
 
 type ClipEditorModalProps = {
   projectId: string
-  clip: EditingClip | null
+  clip: TimelineClip | null
   insertAt?: number
   onClose: () => void
 }
 
 export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEditorModalProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const projects = useAtomValue(projectsAtom)
   const setProjects = useSetAtom(projectsAtom)
 
   const [mediaAssetOpfsName, setMediaAssetOpfsName] = useState(
     clip?.mediaAssetOpfsName ?? mediaAssets[0]?.opfsName ?? '',
   )
-  const [cutStart, setCutStart] = useState(clip?.cutStart ?? 0)
-  const [cutEnd, setCutEnd] = useState(clip?.cutEnd ?? 0)
+  const [cutStart, setCutStart] = useState(roundTime(clip?.cutStart ?? 0))
+  const [cutEnd, setCutEnd] = useState(roundTime(clip?.cutEnd ?? 0))
+  const rawClip = projects.find((p) => p.id === projectId)?.clips.find((item) => item.id === clip?.id)
+  const [isToVideoEnd, setIsToVideoEnd] = useState(clip !== null && rawClip?.cutEnd === undefined)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const isPreviewingRef = useRef(false)
 
   const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === mediaAssetOpfsName)
 
@@ -68,10 +70,40 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
     }
   }
 
-  function handleSave() {
-    if (!mediaAssetOpfsName || cutEnd <= cutStart) {
+  function captureCutStart() {
+    const video = videoRef.current
+    if (!video) {
       return
     }
+    const roundedTime = roundTime(video.currentTime)
+    setCutStart(roundedTime)
+  }
+
+  function captureCutEnd() {
+    const video = videoRef.current
+    if (!video) {
+      return
+    }
+    const roundedTime = roundTime(video.currentTime)
+    setCutEnd(roundedTime)
+  }
+
+  function previewRange() {
+    const video = videoRef.current
+    if (!video) {
+      return
+    }
+    isPreviewingRef.current = true
+    video.currentTime = cutStart
+    video.play()
+  }
+
+  function handleSave() {
+    if (!mediaAssetOpfsName || (!isToVideoEnd && cutEnd <= cutStart)) {
+      return
+    }
+
+    const savedCutEnd = isToVideoEnd ? undefined : cutEnd
 
     setProjects((prev) =>
       updateProject(prev, projectId, (project) => {
@@ -79,11 +111,11 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           return {
             ...project,
             clips: project.clips.map((item) =>
-              item.id === clip.id ? { ...item, mediaAssetOpfsName, cutStart, cutEnd } : item,
+              item.id === clip.id ? { ...item, mediaAssetOpfsName, cutStart, cutEnd: savedCutEnd } : item,
             ),
           }
         }
-        const newClip = { id: crypto.randomUUID(), mediaAssetOpfsName, cutStart, cutEnd }
+        const newClip = { id: crypto.randomUUID(), mediaAssetOpfsName, cutStart, cutEnd: savedCutEnd }
         const targetIndex = insertAt ?? project.clips.length
         return {
           ...project,
@@ -101,7 +133,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-lg flex-col gap-3 rounded bg-slate-800 p-4 shadow-lg"
+        className="flex h-full w-full flex-col gap-3 rounded bg-slate-800 p-4 shadow-lg"
       >
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold text-slate-100">{clip ? 'Edit clip' : 'New clip'}</span>
@@ -139,35 +171,51 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           </select>
         </label>
 
-        {videoUrl && (
+        {videoUrl ? (
           <video
             ref={videoRef}
             src={videoUrl}
             controls
-            className="max-h-64 w-full"
+            className="min-h-0 w-full flex-1"
             onLoadedMetadata={(e) => {
               if (!clip && cutEnd === 0) {
-                setCutEnd(e.currentTarget.duration)
+                setCutEnd(roundTime(e.currentTarget.duration))
               }
             }}
+            onTimeUpdate={(e) => {
+              if (isPreviewingRef.current && !isToVideoEnd && e.currentTarget.currentTime >= cutEnd) {
+                e.currentTarget.pause()
+              }
+            }}
+            onPause={() => {
+              isPreviewingRef.current = false
+            }}
           />
+        ) : (
+          <div className="flex-1" />
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
             Start ({formatTimestamp(cutStart)})
             <div className="flex gap-1">
               <input
                 type="number"
                 min={0}
-                step={0.1}
+                step={0.01}
                 value={cutStart}
-                onChange={(e) => setCutStart(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  setCutStart(value)
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = value
+                  }
+                }}
                 className="w-full rounded border border-slate-700 px-2 py-1"
               />
               <button
                 type="button"
-                onClick={() => videoRef.current && setCutStart(videoRef.current.currentTime)}
+                onClick={captureCutStart}
                 className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
               >
                 Use current
@@ -175,29 +223,55 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             </div>
           </label>
 
-          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
-            End ({formatTimestamp(cutEnd)})
+          <div className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+            End ({isToVideoEnd ? 'video end' : formatTimestamp(cutEnd)})
             <div className="flex gap-1">
               <input
                 type="number"
                 min={0}
-                step={0.1}
+                step={0.01}
                 value={cutEnd}
-                onChange={(e) => setCutEnd(Number(e.target.value))}
-                className="w-full rounded border border-slate-700 px-2 py-1"
+                disabled={isToVideoEnd}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  setCutEnd(value)
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = value
+                  }
+                }}
+                className="w-full rounded border border-slate-700 px-2 py-1 disabled:opacity-50"
               />
               <button
                 type="button"
-                onClick={() => videoRef.current && setCutEnd(videoRef.current.currentTime)}
-                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
+                onClick={captureCutEnd}
+                disabled={isToVideoEnd}
+                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Use current
               </button>
             </div>
-          </label>
+            <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-400">
+              <input
+                type="checkbox"
+                checked={isToVideoEnd}
+                onChange={(e) => setIsToVideoEnd(e.target.checked)}
+              />
+              To the end of the video
+            </label>
+          </div>
         </div>
 
         <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={previewRange}
+            disabled={!videoUrl || (!isToVideoEnd && cutEnd <= cutStart)}
+            className="mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Play size={14} />
+            Preview range
+          </button>
+
           <button
             type="button"
             onClick={onClose}
@@ -208,7 +282,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={handleSave}
-            disabled={!mediaAssetOpfsName || cutEnd <= cutStart}
+            disabled={!mediaAssetOpfsName || (!isToVideoEnd && cutEnd <= cutStart)}
             className="cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save
