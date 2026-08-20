@@ -21,7 +21,7 @@ export function ConcatCompatibilityBadge({ playbackClips }: ConcatCompatibilityB
           : 'Clips have mismatched stream parameters — stream-copy export may produce a broken file'
       }
     >
-      {isConcatCompatible ? '● lossless' : '● mixed formats'}
+      {isConcatCompatible ? '●' : '● mixed formats'}
     </span>
   )
 }
