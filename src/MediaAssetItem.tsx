@@ -42,7 +42,7 @@ export function MediaAssetItem({
     URL.revokeObjectURL(url)
   }
 
-  const selectionClassName = isSelected ? 'bg-neutral-800' : 'hover:bg-neutral-900'
+  const selectionClassName = isSelected ? 'bg-slate-800' : 'hover:bg-slate-900'
 
   return (
     <SortingItem
@@ -60,12 +60,12 @@ export function MediaAssetItem({
         className="mr-1.5 shrink-0 text-violet-500"
       />
 
-      <span className="min-w-0 flex-1 truncate py-2 text-xs text-neutral-100">{mediaAsset.opfsName}</span>
+      <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{mediaAsset.opfsName}</span>
 
       <button
         type="button"
         onClick={handleDownload}
-        className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-100"
+        className="cursor-pointer px-1.5 text-slate-500 hover:text-slate-100"
         aria-label={`Download ${mediaAsset.opfsName}`}
       >
         <Download size={16} />

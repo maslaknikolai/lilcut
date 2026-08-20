@@ -144,7 +144,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
             onPause={() => setIsPlaying(false)}
           />
         ) : (
-          <span className="text-neutral-400">No clips yet</span>
+          <span className="text-slate-400">No clips yet</span>
         )}
       </div>
 
@@ -153,7 +153,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
           type="button"
           onClick={togglePlayback}
           disabled={timelineClips.length === 0}
-          className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-neutral-300 hover:bg-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -169,7 +169,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
           )}
         </button>
 
-        <span className="shrink-0 text-xs text-neutral-500">
+        <span className="shrink-0 text-xs text-slate-500">
           {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
         </span>
 

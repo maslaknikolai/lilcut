@@ -9,7 +9,7 @@ export function ExportJobWidget() {
   }
 
   return (
-    <div className="flex items-center gap-3 rounded bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-900">
+    <div className="flex items-center gap-3 rounded bg-slate-100 px-3 py-1 text-sm font-medium text-slate-900">
       {job.status === 'exporting' ? (
         <>
           <span>

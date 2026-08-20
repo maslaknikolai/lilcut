@@ -1,5 +1,5 @@
 @import 'tailwindcss';
 
 body {
-  @apply bg-[#0d1127] text-neutral-100;
+  @apply bg-blue-950 text-slate-100;
 }

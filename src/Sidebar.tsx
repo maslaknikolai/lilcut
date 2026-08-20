@@ -14,10 +14,10 @@ export function Sidebar() {
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
   return (
-    <div className="flex w-80 shrink-0 flex-col border-r border-neutral-700">
-      <header className="flex flex-col gap-2 border-b border-neutral-700 p-2">
+    <div className="flex w-80 shrink-0 flex-col border-r border-slate-700">
+      <header className="flex flex-col gap-2 border-b border-slate-700 p-2">
         <span className="text-lg font-bold tracking-tight">lilcut</span>
-        <span className="text-sm font-medium text-neutral-400">Library</span>
+        <span className="text-sm font-medium text-slate-400">Library</span>
         <div className="flex gap-1 items-center">
           <RecordControls isWithLabel />
           <NewProjectButton isWithLabel />
@@ -46,7 +46,7 @@ export function Sidebar() {
         />
       </div>
 
-      <div className="border-t border-neutral-700 p-2">
+      <div className="border-t border-slate-700 p-2">
         <StorageUsage />
       </div>
     </div>

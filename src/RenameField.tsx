@@ -35,7 +35,7 @@ export function RenameField({ initialValue, onCommit, className }: RenameFieldPr
         }
       }}
       className={tcn(
-        'w-full rounded bg-transparent px-2 py-2 text-sm font-medium outline-none hover:bg-neutral-900 focus:bg-neutral-900',
+        'w-full rounded bg-transparent px-2 py-2 text-sm font-medium outline-none hover:bg-slate-900 focus:bg-slate-900',
         className,
       )}
     />

@@ -17,7 +17,7 @@ export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
   return (
     <ActionButton
       onClick={() => (isPaused ? resume() : pause())}
-      className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50"
+      className="bg-slate-800 text-slate-300 hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {isPaused ? (
         <Play

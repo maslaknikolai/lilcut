@@ -38,7 +38,7 @@ export function Scrubber({ projectTime, totalDuration, onSeek }: ScrubberProps) 
   return (
     <div
       onMouseDown={handleSeekStart}
-      className="relative grow-0 shrink-0 h-4 cursor-pointer overflow-hidden rounded-full bg-neutral-700"
+      className="relative grow-0 shrink-0 h-4 cursor-pointer overflow-hidden rounded-full bg-slate-700"
     >
       <div
         className="absolute inset-y-0 left-0 bg-blue-600"

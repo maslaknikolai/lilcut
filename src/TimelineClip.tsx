@@ -62,7 +62,7 @@ export function TimelineClip({
   return (
     <div
       className={`group relative flex min-w-0 items-center overflow-hidden rounded px-6 text-xs font-medium ${
-        isCurrent ? 'bg-neutral-100 text-neutral-900' : 'bg-neutral-500 text-white'
+        isCurrent ? 'bg-slate-100 text-slate-900' : 'bg-slate-500 text-white'
       }`}
       style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >

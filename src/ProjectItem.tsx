@@ -40,7 +40,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     setSelectedLibraryItemId(cloneId)
   }
 
-  const selectionClassName = isSelected ? 'bg-neutral-800' : 'hover:bg-neutral-900'
+  const selectionClassName = isSelected ? 'bg-slate-800' : 'hover:bg-slate-900'
 
   return (
     <SortingItem
@@ -58,12 +58,12 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
         className="mr-1.5 shrink-0 text-blue-500"
       />
 
-      <span className="min-w-0 flex-1 truncate py-2 text-xs text-neutral-100">{project.name}</span>
+      <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{project.name}</span>
 
       <button
         type="button"
         onClick={handleClone}
-        className="cursor-pointer px-1.5 text-neutral-500 hover:text-neutral-100"
+        className="cursor-pointer px-1.5 text-slate-500 hover:text-slate-100"
         aria-label={`Clone ${project.name}`}
       >
         <Files size={16} />

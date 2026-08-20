@@ -17,7 +17,7 @@ export function InsertClipButton({ onClick, className }: InsertClipButtonProps) 
         onClick()
       }}
       className={tcn(
-        'flex w-4 shrink-0 cursor-pointer items-center justify-center rounded text-neutral-600 hover:bg-neutral-800 hover:text-neutral-100',
+        'flex w-4 shrink-0 cursor-pointer items-center justify-center rounded text-slate-600 hover:bg-slate-800 hover:text-slate-100',
         'absolute',
         className,
       )}

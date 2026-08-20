@@ -36,12 +36,12 @@ export function StorageUsage() {
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs text-neutral-500">
+      <span className="text-xs text-slate-500">
         {formatBytes(storageEstimate.usage)} used / {formatBytes(available)} available
       </span>
-      <div className="h-1 overflow-hidden rounded-full bg-neutral-800">
+      <div className="h-1 overflow-hidden rounded-full bg-slate-800">
         <div
-          className="h-full rounded-full bg-neutral-600"
+          className="h-full rounded-full bg-slate-600"
           style={{ width: `${Math.min(100, usedRatio * 100)}%` }}
         />
       </div>

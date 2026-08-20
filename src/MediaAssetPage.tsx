@@ -62,7 +62,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
             className="max-h-full max-w-full"
           />
         ) : (
-          <span className="text-neutral-400">Loading…</span>
+          <span className="text-slate-400">Loading…</span>
         )}
       </div>
     </div>

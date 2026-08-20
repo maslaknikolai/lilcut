@@ -101,26 +101,26 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-lg flex-col gap-3 rounded bg-neutral-800 p-4 shadow-lg"
+        className="flex w-full max-w-lg flex-col gap-3 rounded bg-slate-800 p-4 shadow-lg"
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-neutral-100">{clip ? 'Edit clip' : 'New clip'}</span>
+          <span className="text-sm font-semibold text-slate-100">{clip ? 'Edit clip' : 'New clip'}</span>
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer text-neutral-500 hover:text-neutral-100"
+            className="cursor-pointer text-slate-500 hover:text-slate-100"
             aria-label="Close"
           >
             <X size={16} />
           </button>
         </div>
 
-        <label className="flex flex-col gap-1 text-sm text-neutral-300">
+        <label className="flex flex-col gap-1 text-sm text-slate-300">
           File
           <select
             value={mediaAssetOpfsName}
             onChange={(e) => handleMediaAssetChange(e.target.value)}
-            className="rounded border border-neutral-700 px-2 py-1"
+            className="rounded border border-slate-700 px-2 py-1"
           >
             <option
               value=""
@@ -154,7 +154,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
         )}
 
         <div className="flex items-center gap-2">
-          <label className="flex flex-1 flex-col gap-1 text-sm text-neutral-300">
+          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
             Start ({formatTimestamp(cutStart)})
             <div className="flex gap-1">
               <input
@@ -163,19 +163,19 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
                 step={0.1}
                 value={cutStart}
                 onChange={(e) => setCutStart(Number(e.target.value))}
-                className="w-full rounded border border-neutral-700 px-2 py-1"
+                className="w-full rounded border border-slate-700 px-2 py-1"
               />
               <button
                 type="button"
                 onClick={() => videoRef.current && setCutStart(videoRef.current.currentTime)}
-                className="shrink-0 cursor-pointer rounded border border-neutral-700 px-2 text-xs text-neutral-300 hover:bg-neutral-900"
+                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
               >
                 Use current
               </button>
             </div>
           </label>
 
-          <label className="flex flex-1 flex-col gap-1 text-sm text-neutral-300">
+          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
             End ({formatTimestamp(cutEnd)})
             <div className="flex gap-1">
               <input
@@ -184,12 +184,12 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
                 step={0.1}
                 value={cutEnd}
                 onChange={(e) => setCutEnd(Number(e.target.value))}
-                className="w-full rounded border border-neutral-700 px-2 py-1"
+                className="w-full rounded border border-slate-700 px-2 py-1"
               />
               <button
                 type="button"
                 onClick={() => videoRef.current && setCutEnd(videoRef.current.currentTime)}
-                className="shrink-0 cursor-pointer rounded border border-neutral-700 px-2 text-xs text-neutral-300 hover:bg-neutral-900"
+                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
               >
                 Use current
               </button>
@@ -201,7 +201,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded px-3 py-1.5 text-sm text-neutral-300 hover:bg-neutral-900"
+            className="cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900"
           >
             Cancel
           </button>
@@ -209,7 +209,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={handleSave}
             disabled={!mediaAssetOpfsName || cutEnd <= cutStart}
-            className="cursor-pointer rounded bg-neutral-100 px-3 py-1.5 text-sm font-medium text-neutral-900 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save
           </button>
