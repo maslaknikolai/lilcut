@@ -2,7 +2,11 @@ import { Pause, Play } from 'lucide-react'
 import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
-export function PauseResumeButton() {
+type PauseResumeButtonProps = {
+  isWithLabel?: boolean
+}
+
+export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
   const { recording, pause, resume } = useScreenRecordingContext()
 
   if (recording.status === 'idle') {
@@ -26,6 +30,7 @@ export function PauseResumeButton() {
           fill="currentColor"
         />
       )}
+      {isWithLabel && <span>{isPaused ? 'Resume' : 'Pause'}</span>}
     </ActionButton>
   )
 }

@@ -1,11 +1,15 @@
 import { PauseResumeButton } from './PauseResumeButton'
 import { RecordButton } from './RecordButton'
 
-export function RecordControls() {
+type RecordControlsProps = {
+  isWithLabel?: boolean
+}
+
+export function RecordControls({ isWithLabel }: RecordControlsProps) {
   return (
     <>
-      <RecordButton />
-      <PauseResumeButton />
+      <RecordButton isWithLabel={isWithLabel} />
+      <PauseResumeButton isWithLabel={isWithLabel} />
     </>
   )
 }

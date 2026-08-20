@@ -1,7 +1,8 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { Pause, Play } from 'lucide-react'
-import { mediaAssetsAtom } from './atoms'
+import { mediaAssetsAtom, projectsAtom } from './atoms'
+import { RenameField } from './RenameField'
 import { ConcatCompatibilityBadge } from './ConcatCompatibilityBadge'
 import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
@@ -18,6 +19,7 @@ type ProjectPreviewProps = {
 
 export function ProjectPage({ project }: ProjectPreviewProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const setProjects = useSetAtom(projectsAtom)
   const timelineClips = buildTimelineClips(project, mediaAssets)
   const playbackClips = buildPlaybackClips(timelineClips)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
@@ -110,8 +112,18 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
     }
   }
 
+  function renameProject(name: string) {
+    setProjects((prev) => prev.map((item) => (item.id === project.id ? { ...item, name } : item)))
+  }
+
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
+      <RenameField
+        key={project.id}
+        initialValue={project.name}
+        onCommit={renameProject}
+      />
+
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {videoUrl ? (
           <video

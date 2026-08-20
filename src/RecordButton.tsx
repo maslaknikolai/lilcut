@@ -2,7 +2,11 @@ import { Circle, Square } from 'lucide-react'
 import { ActionButton } from './ActionButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
-export function RecordButton() {
+type RecordButtonProps = {
+  isWithLabel?: boolean
+}
+
+export function RecordButton({ isWithLabel }: RecordButtonProps) {
   const { recording, start, stop } = useScreenRecordingContext()
   const isRecording = recording.status !== 'idle'
 
@@ -19,6 +23,7 @@ export function RecordButton() {
           fill="currentColor"
         />
       )}
+      {isWithLabel && <span>{isRecording ? 'Stop' : 'Record'}</span>}
     </ActionButton>
   )
 }

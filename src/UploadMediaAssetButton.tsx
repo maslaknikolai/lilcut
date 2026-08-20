@@ -7,7 +7,11 @@ import { ActionButton } from './ActionButton'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
-export function UploadMediaAssetButton() {
+type UploadMediaAssetButtonProps = {
+  isWithLabel?: boolean
+}
+
+export function UploadMediaAssetButton({ isWithLabel }: UploadMediaAssetButtonProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
@@ -35,6 +39,7 @@ export function UploadMediaAssetButton() {
         className="border-neutral-700 text-neutral-300 hover:bg-neutral-900"
       >
         <Upload size={14} />
+        {isWithLabel && <span>Upload</span>}
       </ActionButton>
 
       <input

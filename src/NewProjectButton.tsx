@@ -5,7 +5,11 @@ import { ActionButton } from './ActionButton'
 import { uniqueName } from './uniqueName'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
-export function NewProjectButton() {
+type NewProjectButtonProps = {
+  isWithLabel?: boolean
+}
+
+export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
@@ -27,6 +31,7 @@ export function NewProjectButton() {
       className="bg-blue-500 text-white hover:bg-blue-600"
     >
       <Plus size={14} />
+      {isWithLabel && <span>New project</span>}
     </ActionButton>
   )
 }

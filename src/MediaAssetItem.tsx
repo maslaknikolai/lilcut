@@ -1,7 +1,4 @@
-import { useState } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
 import { Download, FilePlay } from 'lucide-react'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
 import { SortingItem } from './SortingItem'
@@ -27,44 +24,8 @@ export function MediaAssetItem({
   onDragEnd,
 }: MediaAssetItemProps) {
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const { renameMediaAsset, deleteMediaAsset } = useMediaAssetActions()
-  const setProjects = useSetAtom(projectsAtom)
-  const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const [editingOpfsName, setEditingOpfsName] = useState(mediaAsset.opfsName)
-  const [isNameTaken, setIsNameTaken] = useState(false)
+  const { deleteMediaAsset } = useMediaAssetActions()
   const isSelected = mediaAsset.opfsName === selectedLibraryItemId
-
-  async function commitRename() {
-    const opfsName = editingOpfsName.trim()
-    if (!opfsName || opfsName === mediaAsset.opfsName) {
-      setEditingOpfsName(mediaAsset.opfsName)
-      return
-    }
-    const isTaken = mediaAssets.some((item) => item.opfsName !== mediaAsset.opfsName && item.opfsName === opfsName)
-    if (isTaken) {
-      setEditingOpfsName(mediaAsset.opfsName)
-      setIsNameTaken(true)
-      setTimeout(() => setIsNameTaken(false), 1500)
-      return
-    }
-    await renameMediaAsset(mediaAsset.opfsName, opfsName)
-    setProjects((prev) =>
-      prev.map((project) => {
-        const clips = project.clips.map((clip) => {
-          if (clip.mediaAssetOpfsName !== mediaAsset.opfsName) {
-            return clip
-          }
-          return { ...clip, mediaAssetOpfsName: opfsName }
-        })
-        return { ...project, clips }
-      }),
-    )
-    setLibraryOrder((prev) => prev.map((id) => (id === mediaAsset.opfsName ? opfsName : id)))
-    if (selectedLibraryItemId === mediaAsset.opfsName) {
-      setSelectedLibraryItemId(opfsName)
-    }
-  }
 
   async function handleRemove() {
     await deleteMediaAsset(mediaAsset.opfsName)
@@ -99,22 +60,7 @@ export function MediaAssetItem({
         className="mr-1.5 shrink-0 text-violet-500"
       />
 
-      <input
-        value={editingOpfsName}
-        onChange={(e) => setEditingOpfsName(e.target.value)}
-        onBlur={commitRename}
-        spellCheck={false}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.currentTarget.blur()
-          }
-          if (e.key === 'Escape') {
-            setEditingOpfsName(mediaAsset.opfsName)
-            e.currentTarget.blur()
-          }
-        }}
-        className={`min-w-0 flex-1 bg-transparent py-2 text-xs text-neutral-100 outline-none ${isNameTaken ? 'ring-1 ring-red-500' : ''}`}
-      />
+      <span className="min-w-0 flex-1 truncate py-2 text-xs text-neutral-100">{mediaAsset.opfsName}</span>
 
       <button
         type="button"

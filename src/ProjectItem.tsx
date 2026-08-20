@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
@@ -21,24 +20,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const [editingName, setEditingName] = useState(project.name)
   const isSelected = project.id === selectedLibraryItemId
-
-  function commitRename() {
-    const name = editingName.trim()
-    if (!name || name === project.name) {
-      setEditingName(project.name)
-      return
-    }
-    setProjects((prev) =>
-      prev.map((item) => {
-        if (item.id !== project.id) {
-          return item
-        }
-        return { ...item, name }
-      }),
-    )
-  }
 
   function handleRemove() {
     setProjects((prev) => prev.filter((item) => item.id !== project.id))
@@ -76,21 +58,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
         className="mr-1.5 shrink-0 text-blue-500"
       />
 
-      <input
-        value={editingName}
-        onChange={(e) => setEditingName(e.target.value)}
-        onBlur={commitRename}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.currentTarget.blur()
-          }
-          if (e.key === 'Escape') {
-            setEditingName(project.name)
-            e.currentTarget.blur()
-          }
-        }}
-        className="min-w-0 flex-1 bg-transparent py-2 text-xs text-neutral-100 outline-none"
-      />
+      <span className="min-w-0 flex-1 truncate py-2 text-xs text-neutral-100">{project.name}</span>
 
       <button
         type="button"
