@@ -1,5 +1,5 @@
 import { useAtom, useSetAtom } from 'jotai'
-import { Plus } from 'lucide-react'
+import { Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ActionButton } from './ActionButton'
 import { uniqueName } from './uniqueName'
@@ -30,7 +30,7 @@ export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
       onClick={handleClick}
       className="border-slate-700 text-blue-400 hover:bg-slate-900"
     >
-      <Plus size={14} />
+      <Scissors size={14} />
       {isWithLabel && <span>New project</span>}
     </ActionButton>
   )

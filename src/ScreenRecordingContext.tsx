@@ -1,7 +1,9 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { uniqueOpfsName } from './opfs'
+import { stripExtension } from './stripExtension'
+import { uniqueName } from './uniqueName'
 import type { Clip, Project } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
@@ -40,7 +42,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [recording, setRecording] = useState<RecordingState>({ status: 'idle' })
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
-  const setProjects = useSetAtom(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const recorderRef = useRef<MediaRecorder | null>(null)
@@ -75,7 +77,11 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     }
 
     const projectId = crypto.randomUUID()
-    const newProject: Project = { id: projectId, name: `Project: ${opfsName}`, clips }
+    const name = uniqueName(
+      stripExtension(opfsName),
+      projects.map((project) => project.name),
+    )
+    const newProject: Project = { id: projectId, name, clips }
     setProjects((prev) => [newProject, ...prev])
 
     setLibraryOrder((prev) => [opfsName, projectId, ...prev])

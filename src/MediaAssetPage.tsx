@@ -1,8 +1,12 @@
 import { useState } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { Scissors } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
+import { ActionButton } from './ActionButton'
 import { RenameField } from './RenameField'
+import { stripExtension } from './stripExtension'
 import type { MediaAsset } from './types'
+import { uniqueName } from './uniqueName'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
@@ -15,7 +19,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const videoUrl = useMediaAssetVideoUrl(mediaAsset)
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { renameMediaAsset } = useMediaAssetActions()
-  const setProjects = useSetAtom(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [isNameTaken, setIsNameTaken] = useState(false)
@@ -45,6 +49,18 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
     }
   }
 
+  function createProjectFromMediaAsset() {
+    const projectId = crypto.randomUUID()
+    const name = uniqueName(
+      stripExtension(mediaAsset.opfsName),
+      projects.map((project) => project.name),
+    )
+    const clip = { id: crypto.randomUUID(), mediaAssetOpfsName: mediaAsset.opfsName }
+    setProjects((prev) => [{ id: projectId, name, clips: [clip] }, ...prev])
+    setLibraryOrder((prev) => [projectId, ...prev])
+    setSelectedLibraryItemId(projectId)
+  }
+
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden p-4">
       <RenameField
@@ -53,6 +69,16 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
         onCommit={commitRename}
         className={isNameTaken ? 'ring-1 ring-red-500' : ''}
       />
+
+      <div className="flex">
+        <ActionButton
+          onClick={createProjectFromMediaAsset}
+          className="border-slate-700 text-blue-400 hover:bg-slate-900"
+        >
+          <Scissors size={14} />
+          <span>Use video in new project</span>
+        </ActionButton>
+      </div>
 
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {videoUrl ? (
