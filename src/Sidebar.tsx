@@ -15,14 +15,17 @@ export function Sidebar() {
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r border-neutral-700">
-      <div className="flex items-center justify-between border-b border-neutral-700 p-2">
-        <div className="flex gap-1 items-center">
-          <RecordControls />
-          <NewProjectButton />
-          <UploadMediaAssetButton />
+      <header className="flex flex-col gap-2 border-b border-neutral-700 p-2">
+        <span className="text-lg font-bold tracking-tight">lilcut</span>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-neutral-400">Library</span>
+          <div className="flex gap-1 items-center">
+            <RecordControls />
+            <NewProjectButton />
+            <UploadMediaAssetButton />
+          </div>
         </div>
-        <StorageUsage />
-      </div>
+      </header>
 
       <div className="flex-1 overflow-y-auto">
         <SortingList
@@ -43,6 +46,10 @@ export function Sidebar() {
             )
           }
         />
+      </div>
+
+      <div className="border-t border-neutral-700 p-2">
+        <StorageUsage />
       </div>
     </div>
   )
