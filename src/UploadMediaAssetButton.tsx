@@ -32,7 +32,7 @@ export function UploadMediaAssetButton() {
     <>
       <ActionButton
         onClick={() => inputRef.current?.click()}
-        className="border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+        className="border-neutral-700 text-neutral-300 hover:bg-neutral-900"
       >
         <Upload size={14} />
       </ActionButton>

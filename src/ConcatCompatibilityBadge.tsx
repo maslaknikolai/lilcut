@@ -14,7 +14,7 @@ export function ConcatCompatibilityBadge({ playbackClips }: ConcatCompatibilityB
 
   return (
     <span
-      className={`shrink-0 text-xs ${isConcatCompatible ? 'text-green-600' : 'text-amber-600'}`}
+      className={`shrink-0 text-xs ${isConcatCompatible ? 'text-green-400' : 'text-amber-400'}`}
       title={
         isConcatCompatible
           ? 'All clips share codec, resolution, and audio parameters — export copies streams without re-encoding'

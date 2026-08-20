@@ -29,7 +29,7 @@ export function PageView() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center text-center text-neutral-600">
+    <div className="flex flex-1 items-center justify-center text-center text-neutral-400">
       {library.length === 0 ? 'Record or add your first file' : 'Select a project or file'}
     </div>
   )

@@ -9,7 +9,7 @@ export function ExportJobWidget() {
   }
 
   return (
-    <div className="flex items-center gap-3 rounded bg-neutral-900 px-3 py-1 text-sm font-medium text-white">
+    <div className="flex items-center gap-3 rounded bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-900">
       {job.status === 'exporting' ? (
         <>
           <span>
@@ -18,7 +18,7 @@ export function ExportJobWidget() {
           <button
             type="button"
             onClick={cancelExport}
-            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
+            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-black/10"
           >
             <OctagonX size={14} />
             Cancel
@@ -30,7 +30,7 @@ export function ExportJobWidget() {
           <button
             type="button"
             onClick={dismissExport}
-            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-white/10"
+            className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-black/10"
             aria-label="Dismiss"
           >
             <X size={14} />

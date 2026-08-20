@@ -16,8 +16,8 @@ export function Sidebar() {
   useSyncSelectedLibraryItem()
 
   return (
-    <div className="flex w-80 shrink-0 flex-col border-r border-neutral-300">
-      <div className="flex items-center justify-between border-b border-neutral-300 p-2">
+    <div className="flex w-80 shrink-0 flex-col border-r border-neutral-700">
+      <div className="flex items-center justify-between border-b border-neutral-700 p-2">
         <div className="flex gap-1 items-center">
           <RecordControls />
           <NewProjectButton />

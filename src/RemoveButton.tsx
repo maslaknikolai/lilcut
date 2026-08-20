@@ -25,7 +25,7 @@ export function RemoveButton({ label, onRemove }: RemoveButtonProps) {
       onClick={handleClick}
       onBlur={() => setIsConfirming(false)}
       className={`cursor-pointer px-1.5 pr-2 text-sm font-medium ${
-        isConfirming ? 'text-red-700' : 'text-neutral-500 hover:text-red-700'
+        isConfirming ? 'text-red-400' : 'text-neutral-500 hover:text-red-400'
       }`}
       aria-label={isConfirming ? `Confirm removing ${label}` : `Remove ${label}`}
     >

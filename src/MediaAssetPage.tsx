@@ -9,7 +9,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const videoUrl = useMediaAssetVideoUrl(mediaAsset)
 
   if (!videoUrl) {
-    return <div className="flex flex-1 items-center justify-center text-center text-neutral-600">Loading…</div>
+    return <div className="flex flex-1 items-center justify-center text-center text-neutral-400">Loading…</div>
   }
 
   return (

@@ -42,7 +42,7 @@ export function SortingItem({
         e.preventDefault()
         onDrop()
       }}
-      className={`flex items-center border-b border-neutral-300 transition-transform ${className} ${dragClassName}`}
+      className={`flex items-center border-b border-neutral-700 transition-transform ${className} ${dragClassName}`}
     >
       <span
         draggable
@@ -51,7 +51,7 @@ export function SortingItem({
           onDragStart()
         }}
         onDragEnd={onDragEnd}
-        className="cursor-grab px-1 text-neutral-400 hover:text-neutral-600"
+        className="cursor-grab px-1 text-neutral-600 hover:text-neutral-400"
         aria-label={dragHandleLabel}
       >
         <GripVertical size={16} />

@@ -39,9 +39,9 @@ export function StorageUsage() {
       <span className="text-xs text-neutral-500">
         {formatBytes(storageEstimate.usage)} used / {formatBytes(available)} available
       </span>
-      <div className="h-1 overflow-hidden rounded-full bg-neutral-200">
+      <div className="h-1 overflow-hidden rounded-full bg-neutral-800">
         <div
-          className="h-full rounded-full bg-neutral-400"
+          className="h-full rounded-full bg-neutral-600"
           style={{ width: `${Math.min(100, usedRatio * 100)}%` }}
         />
       </div>

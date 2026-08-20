@@ -14,7 +14,7 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
       type="button"
       onClick={() => startExport(project)}
       disabled={isExporting || project.clips.length === 0}
-      className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+      className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-neutral-700 px-3 py-1.5 text-sm font-medium text-neutral-300 hover:bg-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {isExporting ? 'Exporting…' : 'Export mp4'}
     </button>

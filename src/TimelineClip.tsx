@@ -32,9 +32,6 @@ export function TimelineClip({
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
-  // totalDuration can be 0 when no clip's duration is known (e.g. its file is
-  // missing) — fall back to splitting width evenly so segments stay visible
-  // and clickable instead of collapsing to zero
   const durationRatio = totalDuration > 0 ? timelineClip.duration / totalDuration : 1 / clipCount
 
   function removeClip() {
@@ -64,8 +61,8 @@ export function TimelineClip({
 
   return (
     <div
-      className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${
-        isCurrent ? 'bg-neutral-100' : 'bg-neutral-500'
+      className={`group relative flex min-w-0 items-center overflow-hidden rounded px-6 text-xs font-medium ${
+        isCurrent ? 'bg-neutral-100 text-neutral-900' : 'bg-neutral-500 text-white'
       }`}
       style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >
@@ -77,7 +74,7 @@ export function TimelineClip({
       )}
       <span className="truncate">{mediaAssetName}</span>
 
-      <div className="absolute top-0.5 right-0.5 flex gap-0.5 opacity-0 group-hover:opacity-100">
+      <div className="absolute top-0.5 right-6 flex gap-0.5 opacity-0 group-hover:opacity-100">
         <button
           type="button"
           onClick={(e) => {
