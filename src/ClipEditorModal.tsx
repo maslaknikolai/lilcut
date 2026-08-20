@@ -36,6 +36,21 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
 
   const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === mediaAssetOpfsName)
 
+  const otherProjectClips = projects
+    .filter((project) => project.id !== projectId)
+    .flatMap((project) => project.clips.map((projectClip) => ({ project, projectClip })))
+
+  function applyOtherProjectClip(clipId: string) {
+    const source = otherProjectClips.find(({ projectClip }) => projectClip.id === clipId)
+    if (!source) {
+      return
+    }
+    setMediaAssetOpfsName(source.projectClip.mediaAssetOpfsName)
+    setCutStart(roundTime(source.projectClip.cutStart ?? 0))
+    setCutEnd(roundTime(source.projectClip.cutEnd ?? 0))
+    setIsToVideoEnd(source.projectClip.cutEnd === undefined)
+  }
+
   const openMediaAsset = useEffectEvent(() => {
     if (!mediaAsset) {
       setVideoUrl(null)
@@ -146,6 +161,34 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             <X size={16} />
           </button>
         </div>
+
+        {otherProjectClips.length > 0 && (
+          <label className="flex flex-col gap-1 text-sm text-slate-300">
+            Copy file and range from another project's clip
+            <select
+              value=""
+              onChange={(e) => applyOtherProjectClip(e.target.value)}
+              className="rounded border border-slate-700 px-2 py-1"
+            >
+              <option
+                value=""
+                disabled
+              >
+                Select a clip
+              </option>
+              {otherProjectClips.map(({ project, projectClip }) => (
+                <option
+                  key={projectClip.id}
+                  value={projectClip.id}
+                >
+                  {project.name} — {projectClip.mediaAssetOpfsName} (
+                  {formatTimestamp(roundTime(projectClip.cutStart ?? 0))}–
+                  {projectClip.cutEnd === undefined ? 'end' : formatTimestamp(roundTime(projectClip.cutEnd))})
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
 
         <label className="flex flex-col gap-1 text-sm text-slate-300">
           File
@@ -285,7 +328,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             disabled={!mediaAssetOpfsName || (!isToVideoEnd && cutEnd <= cutStart)}
             className="cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Save
+            {clip ? 'Save' : 'Add'}
           </button>
         </div>
       </div>

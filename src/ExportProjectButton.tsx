@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { LoaderCircle } from 'lucide-react'
+import { FilePlay, LoaderCircle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { mediaAssetsAtom } from './atoms'
 import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
@@ -22,8 +22,7 @@ const TOOLTIP_TEXTS = {
   probeFailed: 'Could not inspect the clips — export will pick the safe re-encoding path',
   compatible:
     'All clips share codec, resolution, and audio parameters — export copies the streams without re-encoding (fast, lossless)',
-  incompatible:
-    'Clips have mismatched stream parameters — export will re-encode them to shared parameters (slower)',
+  incompatible: 'Clips have mismatched stream parameters — export will re-encode them to shared parameters (slower)',
 }
 
 export function ExportProjectButton({ project }: ExportProjectButtonProps) {
@@ -41,8 +40,10 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
           type="button"
           onClick={() => startExport(project)}
           disabled={isExporting || project.clips.length === 0}
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm font-medium text-violet-400 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
+          <FilePlay size={14} />
+          {isExporting ? 'Exporting…' : 'Export mp4'}
           {concatCompatibility === 'probing' ? (
             <LoaderCircle
               size={14}
@@ -51,7 +52,6 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
           ) : (
             <span className={INDICATOR_CLASS_NAMES[concatCompatibility]}>●</span>
           )}
-          {isExporting ? 'Exporting…' : 'Export mp4'}
         </button>
       </TooltipTrigger>
 

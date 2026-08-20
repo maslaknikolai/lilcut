@@ -63,17 +63,17 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden p-4">
-      <RenameField
-        key={mediaAsset.opfsName}
-        initialValue={mediaAsset.opfsName}
-        onCommit={commitRename}
-        className={isNameTaken ? 'ring-1 ring-red-500' : ''}
-      />
+      <div className="flex items-center gap-2">
+        <RenameField
+          key={mediaAsset.opfsName}
+          initialValue={mediaAsset.opfsName}
+          onCommit={commitRename}
+          className={isNameTaken ? 'ring-1 ring-red-500' : ''}
+        />
 
-      <div className="flex">
         <ActionButton
           onClick={createProjectFromMediaAsset}
-          className="border-slate-700 text-blue-400 hover:bg-slate-900"
+          className="border-slate-700 px-3 py-1.5 text-blue-400 hover:bg-slate-900"
         >
           <Scissors size={14} />
           <span>Use video in new project</span>
