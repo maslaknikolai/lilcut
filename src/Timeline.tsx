@@ -3,11 +3,11 @@ import { useAtomValue } from 'jotai'
 import { mediaAssetsAtom } from './atoms'
 import { ClipEditorModal } from './ClipEditorModal'
 import { INSERT_CLIP_BUTTON_WIDTH_PX, InsertClipButton } from './InsertClipButton'
-import { buildTimelineClips, type TimelineClip } from './projectTimeline'
-import { TimelineSegment } from './TimelineSegment'
+import { buildTimelineClips, type TimelineClip as TimelineClipT } from './projectTimeline'
+import { TimelineClip } from './TimelineClip'
 import type { Project } from './types'
 
-type ClipEditorState = { mode: 'create'; insertAt: number } | { mode: 'edit'; clip: TimelineClip }
+type ClipEditorState = { mode: 'create'; insertAt: number } | { mode: 'edit'; clip: TimelineClipT }
 
 type TimelineProps = {
   project: Project
@@ -30,7 +30,7 @@ export function Timeline({ project, currentTimelineClipId }: TimelineProps) {
             key={`insert-${timelineClip.id}`}
             onClick={() => setClipEditorState({ mode: 'create', insertAt: index })}
           />,
-          <TimelineSegment
+          <TimelineClip
             key={timelineClip.id}
             project={project}
             timelineClip={timelineClip}

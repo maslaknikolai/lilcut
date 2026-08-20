@@ -15,7 +15,7 @@ type SegmentProps = {
   onEdit: () => void
 }
 
-export function TimelineSegment({
+export function TimelineClip({
   project,
   timelineClip,
   totalDuration,
@@ -65,7 +65,7 @@ export function TimelineSegment({
   return (
     <div
       className={`group relative flex min-w-0 items-center overflow-hidden rounded px-2 text-xs font-medium text-white ${
-        isCurrent ? 'bg-neutral-900' : 'bg-neutral-500'
+        isCurrent ? 'bg-neutral-100' : 'bg-neutral-500'
       }`}
       style={{ flex: `0 0 calc((100% - ${insertButtonsWidth}px) * ${durationRatio})` }}
     >
