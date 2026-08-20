@@ -1,23 +1,16 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import coreURL from '@ffmpeg/core?url'
-import wasmURL from '@ffmpeg/core/wasm?url'
+import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
+import { loadFfmpeg } from './loadFfmpeg'
 import { readOpfsFile } from './opfs'
 
-// own instance, separate from the export one: cancelling an export terminates
-// that worker, which must not kill an in-flight probe
-let ffprobePromise: Promise<FFmpeg> | null = null
+let ffmpegPromise: Promise<FFmpeg> | null = null
 
-function loadFfprobe(): Promise<FFmpeg> {
-  ffprobePromise ??= (async () => {
-    const ffmpeg = new FFmpeg()
-    await ffmpeg.load({ coreURL, wasmURL })
-    return ffmpeg
-  })()
-  return ffprobePromise
+function loadProbeFfmpeg(): Promise<FFmpeg> {
+  ffmpegPromise ??= loadFfmpeg()
+  return ffmpegPromise
 }
 
-type ProbedStream = {
+export type ProbedStream = {
   codec_type: string
   codec_name: string
   width?: number
@@ -27,46 +20,34 @@ type ProbedStream = {
   channels?: number
 }
 
-const signatureCache = new Map<string, Promise<string>>()
-let probeCounter = 0
+export async function probeStreams(opfsName: string): Promise<ProbedStream[]> {
+  const ffmpeg = await loadProbeFfmpeg()
+  const file = await readOpfsFile(opfsName)
 
-// the stream parameters that must match across sources for `-c copy` concat
-// to produce a valid file
-export function getFormatSignature(opfsName: string): Promise<string> {
-  const cachedSignature = signatureCache.get(opfsName)
-  if (cachedSignature) {
-    return cachedSignature
-  }
+  const probeId = crypto.randomUUID()
+  const extension = opfsName.split('.').pop()
+  const inputName = `probe_${probeId}.${extension}`
+  const outputName = `probe_${probeId}.json`
 
-  const signaturePromise = (async () => {
-    const ffmpeg = await loadFfprobe()
-    const file = await readOpfsFile(opfsName)
+  await ffmpeg.writeFile(inputName, await fetchFile(file))
+  await ffmpeg.ffprobe(['-v', 'error', '-show_streams', '-print_format', 'json', inputName, '-o', outputName])
+  const output = await ffmpeg.readFile(outputName)
+  const outputText = typeof output === 'string' ? output : new TextDecoder().decode(output)
+  await ffmpeg.deleteFile(inputName)
+  await ffmpeg.deleteFile(outputName)
 
-    // unique per-call names: probes for different files can be in flight at once
-    const probeIndex = probeCounter++
-    const extension = opfsName.split('.').pop()
-    const inputName = `probe_${probeIndex}.${extension}`
-    const outputName = `probe_${probeIndex}.json`
+  const { streams } = JSON.parse(outputText) as { streams: ProbedStream[] }
+  return streams
+}
 
-    await ffmpeg.writeFile(inputName, await fetchFile(file))
-    await ffmpeg.ffprobe(['-v', 'error', '-show_streams', '-print_format', 'json', inputName, '-o', outputName])
-    const output = await ffmpeg.readFile(outputName)
-    const outputText = typeof output === 'string' ? output : new TextDecoder().decode(output)
-    await ffmpeg.deleteFile(inputName)
-    await ffmpeg.deleteFile(outputName)
-
-    const { streams } = JSON.parse(outputText) as { streams: ProbedStream[] }
-    return streams
-      .map((stream) => {
-        if (stream.codec_type === 'video') {
-          return `video:${stream.codec_name}:${stream.width}x${stream.height}:${stream.pix_fmt}`
-        }
-        return `${stream.codec_type}:${stream.codec_name}:${stream.sample_rate}:${stream.channels}`
-      })
-      .join('|')
-  })()
-
-  signaturePromise.catch(() => signatureCache.delete(opfsName))
-  signatureCache.set(opfsName, signaturePromise)
-  return signaturePromise
+export async function getFormatSignature(opfsName: string): Promise<string> {
+  const streams = await probeStreams(opfsName)
+  return streams
+    .map((stream) => {
+      if (stream.codec_type === 'video') {
+        return `video:${stream.codec_name}:${stream.width}x${stream.height}:${stream.pix_fmt}`
+      }
+      return `${stream.codec_type}:${stream.codec_name}:${stream.sample_rate}:${stream.channels}`
+    })
+    .join('|')
 }

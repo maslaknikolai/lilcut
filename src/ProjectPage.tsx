@@ -1,6 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipsPlayer } from './ClipsPlayer'
+import { ExportProjectButton } from './ExportProjectButton'
 import { RenameField } from './RenameField'
 import type { Project } from './types'
 
@@ -18,12 +19,14 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
 
   return (
     <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden">
-      <div className="p-4">
+      <div className="flex items-center gap-2 p-4">
         <RenameField
           key={project.id}
           initialValue={project.name}
           onCommit={renameProject}
         />
+
+        <ExportProjectButton project={project} />
       </div>
 
       <ClipsPlayer

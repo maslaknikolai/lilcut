@@ -1,27 +1,19 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { FFmpeg } from '@ffmpeg/ffmpeg'
-import coreURL from '@ffmpeg/core?url'
-import wasmURL from '@ffmpeg/core/wasm?url'
+import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { exportProjectVideo } from './exportProjectVideo'
+import { loadFfmpeg } from './loadFfmpeg'
 import { uniqueOpfsName } from './opfs'
 import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
 import type { Project } from './types'
 import { ExportJobContext, type ExportJob } from './useExportJobContext'
 import { useMediaAssetActions } from './useMediaAssetActions'
-import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 let ffmpegPromise: Promise<FFmpeg> | null = null
 
-// single-threaded core: no SharedArrayBuffer, so no cross-origin-isolation
-// headers needed on the server — trades away multi-threaded speed for that
-function loadFfmpeg(): Promise<FFmpeg> {
-  ffmpegPromise ??= (async () => {
-    const ffmpeg = new FFmpeg()
-    await ffmpeg.load({ coreURL, wasmURL })
-    return ffmpeg
-  })()
+function loadExportFfmpeg(): Promise<FFmpeg> {
+  ffmpegPromise ??= loadFfmpeg()
   return ffmpegPromise
 }
 
@@ -47,7 +39,7 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     setJob({ status: 'exporting', projectName: project.name, progress: 0, logLines: [] })
 
     try {
-      const ffmpeg = await loadFfmpeg()
+      const ffmpeg = await loadExportFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
       const timelineClips = buildTimelineClips(project, mediaAssets)
@@ -94,8 +86,6 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       return
     }
     isCancelledRef.current = true
-    // terminate kills the worker outright, so the cached instance/promise
-    // can't be reused — next export has to spin up a fresh one
     ffmpegInstanceRef.current?.terminate()
     ffmpegInstanceRef.current = null
     ffmpegPromise = null

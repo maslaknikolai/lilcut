@@ -1,8 +1,6 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { Pause, Play } from 'lucide-react'
-import { ConcatCompatibilityBadge } from './ConcatCompatibilityBadge'
 import { CutHereButton } from './CutHereButton'
-import { ExportProjectButton } from './ExportProjectButton'
 import { formatTimestamp } from './formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './projectTimeline'
 import { Timeline } from './Timeline'
@@ -216,10 +214,6 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
           currentTimelineClip={currentTimelineClip}
         />
 
-        <div className="flex-1" />
-
-        <ExportProjectButton project={project} />
-        <ConcatCompatibilityBadge playbackClips={playbackClips} />
       </div>
 
       <Timeline
