@@ -15,13 +15,14 @@ export function Sidebar() {
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r border-slate-700">
-      <header className="flex flex-col gap-2 border-b border-slate-700 p-2">
+      <header className="flex flex-col gap-1 border-b border-slate-700 p-2">
         <span className="text-lg font-bold tracking-tight">lilcut</span>
-        <span className="text-sm font-medium text-slate-400">Library</span>
-        <div className="flex gap-1 items-center">
+        <div className="flex flex-wrap gap-1 items-center">
           <RecordControls isWithLabel />
-          <NewProjectButton isWithLabel />
           <UploadMediaAssetButton isWithLabel />
+        </div>
+        <div className="flex flex-wrap gap-1 items-center">
+          <NewProjectButton isWithLabel />
         </div>
       </header>
 

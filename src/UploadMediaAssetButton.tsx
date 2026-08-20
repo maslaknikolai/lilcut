@@ -36,10 +36,10 @@ export function UploadMediaAssetButton({ isWithLabel }: UploadMediaAssetButtonPr
     <>
       <ActionButton
         onClick={() => inputRef.current?.click()}
-        className="border-slate-700 text-slate-300 hover:bg-slate-900"
+        className="border-slate-700 text-violet-400 hover:bg-slate-900"
       >
         <Upload size={14} />
-        {isWithLabel && <span>Upload</span>}
+        {isWithLabel && <span>Upload video</span>}
       </ActionButton>
 
       <input

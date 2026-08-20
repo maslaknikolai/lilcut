@@ -8,29 +8,23 @@ export function PageView() {
   const [selectedLibraryItemId] = useSelectedLibraryItemId()
   const selectedLibraryItem = library.find((item) => libraryItemId(item) === selectedLibraryItemId)
 
-  if (selectedLibraryItem?.type === 'project') {
-    return (
-      <div
-        key={selectedLibraryItem.project.id}
-        className="flex flex-1 flex-col p-4"
-      >
-        <ProjectPage project={selectedLibraryItem.project} />
-      </div>
-    )
-  }
-
-  if (selectedLibraryItem?.type === 'media') {
-    return (
-      <MediaAssetPage
-        key={selectedLibraryItem.mediaAsset.opfsName}
-        mediaAsset={selectedLibraryItem.mediaAsset}
-      />
-    )
-  }
-
   return (
-    <div className="flex flex-1 items-center justify-center text-center text-slate-400">
-      {library.length === 0 ? 'Record or add your first file' : 'Select a project or file'}
+    <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden bg-slate-950">
+      {selectedLibraryItem?.type === 'project' ? (
+        <ProjectPage
+          key={selectedLibraryItem.project.id}
+          project={selectedLibraryItem.project}
+        />
+      ) : selectedLibraryItem?.type === 'media' ? (
+        <MediaAssetPage
+          key={selectedLibraryItem.mediaAsset.opfsName}
+          mediaAsset={selectedLibraryItem.mediaAsset}
+        />
+      ) : (
+        <div className="flex flex-1 items-center justify-center text-center text-slate-400">
+          {library.length === 0 ? 'Record or add your first file' : 'Select a project or file'}
+        </div>
+      )}
     </div>
   )
 }

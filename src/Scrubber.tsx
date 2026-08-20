@@ -14,6 +14,8 @@ export function Scrubber({ projectTime, totalDuration, onSeek }: ScrubberProps) 
       return
     }
     event.preventDefault()
+    // inside DragScrollArea — keep seeking from also panning the scroller
+    event.stopPropagation()
 
     const track = event.currentTarget.getBoundingClientRect()
 

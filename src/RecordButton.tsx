@@ -13,7 +13,7 @@ export function RecordButton({ isWithLabel }: RecordButtonProps) {
   return (
     <ActionButton
       onClick={() => (isRecording ? stop() : start())}
-      className="bg-red-700 text-white hover:bg-red-800"
+      className="border-slate-700 text-red-400 hover:bg-slate-900"
     >
       {isRecording ? (
         <Square size={14} />
@@ -23,7 +23,7 @@ export function RecordButton({ isWithLabel }: RecordButtonProps) {
           fill="currentColor"
         />
       )}
-      {isWithLabel && <span>{isRecording ? 'Stop' : 'Record'}</span>}
+      {isWithLabel && <span>{isRecording ? 'Stop' : 'Record screen'}</span>}
     </ActionButton>
   )
 }

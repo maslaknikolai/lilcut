@@ -1,5 +1,6 @@
 import { GripVertical } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
 // swapped in as the browser's native drag preview so only our own scaled
 // item shows while dragging, not the default ghost icon
@@ -42,7 +43,7 @@ export function SortingItem({
         e.preventDefault()
         onDrop()
       }}
-      className={`flex items-center border-b border-slate-700 transition-transform ${className} ${dragClassName}`}
+      className={cn('flex items-center border-b border-slate-700 transition-transform', className, dragClassName)}
     >
       <span
         draggable

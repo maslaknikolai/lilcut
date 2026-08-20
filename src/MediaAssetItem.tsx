@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import { Download, FilePlay } from 'lucide-react'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
@@ -42,7 +43,7 @@ export function MediaAssetItem({
     URL.revokeObjectURL(url)
   }
 
-  const selectionClassName = isSelected ? 'bg-slate-800' : 'hover:bg-slate-900'
+  const selectionClassName = cn('cursor-pointer', isSelected ? 'bg-slate-800' : 'hover:bg-slate-900')
 
   return (
     <SortingItem

@@ -28,7 +28,7 @@ export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
   return (
     <ActionButton
       onClick={handleClick}
-      className="bg-blue-500 text-white hover:bg-blue-600"
+      className="border-slate-700 text-blue-400 hover:bg-slate-900"
     >
       <Plus size={14} />
       {isWithLabel && <span>New project</span>}

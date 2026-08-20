@@ -1,4 +1,5 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
@@ -11,21 +12,23 @@ import { useSyncMediaAssets } from './useSyncMediaAssets'
 
 function AppContent() {
   return (
-    <ExportJobProvider>
-      <ScreenRecordingProvider>
-        <div className="flex h-svh overflow-hidden">
-          <Sidebar />
-          <PageView />
-        </div>
+    <TooltipProvider>
+      <ExportJobProvider>
+        <ScreenRecordingProvider>
+          <div className="flex h-svh overflow-hidden">
+            <Sidebar />
+            <PageView />
+          </div>
 
-        <div className="fixed top-2 right-2">
-          <ExportJobWidget />
-        </div>
+          <div className="fixed top-2 right-2">
+            <ExportJobWidget />
+          </div>
 
-        <RecordingPipWindow />
-        {/* TODO <Modal />  */}
-      </ScreenRecordingProvider>
-    </ExportJobProvider>
+          <RecordingPipWindow />
+          {/* TODO <Modal />  */}
+        </ScreenRecordingProvider>
+      </ExportJobProvider>
+    </TooltipProvider>
   )
 }
 

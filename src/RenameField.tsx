@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { tcn } from './tcn'
+import { cn } from '@/lib/utils'
 
 type RenameFieldProps = {
   initialValue: string
@@ -34,7 +34,7 @@ export function RenameField({ initialValue, onCommit, className }: RenameFieldPr
           e.currentTarget.blur()
         }
       }}
-      className={tcn(
+      className={cn(
         'w-full rounded bg-transparent px-2 py-2 text-sm font-medium outline-none hover:bg-slate-900 focus:bg-slate-900',
         className,
       )}

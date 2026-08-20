@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
@@ -40,7 +41,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     setSelectedLibraryItemId(cloneId)
   }
 
-  const selectionClassName = isSelected ? 'bg-slate-800' : 'hover:bg-slate-900'
+  const selectionClassName = cn('cursor-pointer', isSelected ? 'bg-slate-800' : 'hover:bg-slate-900')
 
   return (
     <SortingItem
