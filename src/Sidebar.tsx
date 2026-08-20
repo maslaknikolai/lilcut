@@ -8,12 +8,10 @@ import { RecordControls } from './RecordControls'
 import { SortingList } from './SortingList'
 import { StorageUsage } from './StorageUsage'
 import { UploadMediaAssetButton } from './UploadMediaAssetButton'
-import { useSyncSelectedLibraryItem } from './useSyncSelectedLibraryItem'
 
 export function Sidebar() {
   const library = useLibraryItems()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  useSyncSelectedLibraryItem()
 
   return (
     <div className="flex w-80 shrink-0 flex-col border-r border-neutral-700">
