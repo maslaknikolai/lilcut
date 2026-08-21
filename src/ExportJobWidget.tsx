@@ -1,4 +1,4 @@
-import { OctagonX, X } from 'lucide-react'
+import { FilePlay, OctagonX, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useExportJobContext } from './useExportJobContext'
 
@@ -30,9 +30,13 @@ export function ExportJobWidget() {
           <Link
             to={`/${encodeURIComponent(job.exportedOpfsName)}`}
             onClick={dismissExport}
-            className="hover:underline"
+            className="flex items-center gap-1.5 hover:underline"
           >
-            Exported "{job.projectName}"
+            <FilePlay
+              size={14}
+              className="shrink-0 text-violet-500"
+            />
+            {job.exportedOpfsName}
           </Link>
           <button
             type="button"
