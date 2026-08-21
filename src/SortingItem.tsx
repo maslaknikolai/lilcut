@@ -52,7 +52,7 @@ export function SortingItem({
           onDragStart()
         }}
         onDragEnd={onDragEnd}
-        className="cursor-grab px-1 text-slate-600 hover:text-slate-400"
+        className="touch-target cursor-grab px-1 text-slate-600 hover:text-slate-400"
         aria-label={dragHandleLabel}
       >
         <GripVertical size={16} />

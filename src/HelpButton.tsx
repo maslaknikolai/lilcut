@@ -9,7 +9,7 @@ export function HelpButton() {
     <button
       type="button"
       onClick={() => setActiveModal({ type: 'help' })}
-      className="cursor-pointer rounded p-1 text-slate-500 hover:bg-slate-900 hover:text-slate-200"
+      className="touch-target cursor-pointer rounded p-1 text-slate-500 hover:bg-slate-900 hover:text-slate-200"
       aria-label="Help"
     >
       <CircleHelp size={16} />

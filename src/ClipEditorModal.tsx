@@ -157,7 +157,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer text-slate-500 hover:text-slate-100"
+            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100"
             aria-label="Close"
           >
             <X size={16} />
@@ -169,7 +169,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <select
             value={mediaAssetOpfsName}
             onChange={(e) => handleMediaAssetChange(e.target.value)}
-            className="rounded border border-slate-700 px-2 py-1"
+            className="min-h-10 rounded border border-slate-700 px-2 py-1"
           >
             <option
               value=""
@@ -253,12 +253,12 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
                     videoRef.current.currentTime = value
                   }
                 }}
-                className="w-full rounded border border-slate-700 px-2 py-1"
+                className="min-h-10 w-full rounded border border-slate-700 px-2 py-1"
               />
               <button
                 type="button"
                 onClick={captureCutStart}
-                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
+                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
               >
                 Use current
               </button>
@@ -281,18 +281,18 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
                     videoRef.current.currentTime = value
                   }
                 }}
-                className="w-full rounded border border-slate-700 px-2 py-1 disabled:opacity-50"
+                className="min-h-10 w-full rounded border border-slate-700 px-2 py-1 disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={captureCutEnd}
                 disabled={isToVideoEnd}
-                className="shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Use current
               </button>
             </div>
-            <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-400">
+            <label className="touch-target flex cursor-pointer items-center gap-1.5 text-xs text-slate-400">
               <input
                 type="checkbox"
                 checked={isToVideoEnd}
@@ -305,13 +305,13 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
 
         {otherProjectClips.length > 0 && (
           <details>
-            <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+            <summary className="touch-target cursor-pointer text-xs text-slate-400 hover:text-slate-200">
               Copy file and range from another project's clip
             </summary>
             <select
               value=""
               onChange={(e) => applyOtherProjectClip(e.target.value)}
-              className="mt-1 w-full rounded border border-slate-700 px-2 py-1 text-sm text-slate-300"
+              className="mt-1 min-h-10 w-full rounded border border-slate-700 px-2 py-1 text-sm text-slate-300"
             >
               <option
                 value=""
@@ -338,7 +338,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={previewRange}
             disabled={!videoUrl || (!isToVideoEnd && cutEnd <= cutStart)}
-            className="mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+            className="touch-target mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Play size={14} />
             Preview range
@@ -347,7 +347,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900"
+            className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900"
           >
             Cancel
           </button>
@@ -355,7 +355,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={handleSave}
             disabled={!mediaAssetOpfsName || (!isToVideoEnd && cutEnd <= cutStart)}
-            className="cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {clip ? 'Save' : 'Add'}
           </button>

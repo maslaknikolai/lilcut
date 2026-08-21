@@ -19,7 +19,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="cursor-pointer text-slate-500 hover:text-slate-100"
+            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100"
             aria-label="Close"
           >
             <X size={16} />

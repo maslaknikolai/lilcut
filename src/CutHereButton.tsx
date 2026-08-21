@@ -58,7 +58,7 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
       type="button"
       onClick={cutHere}
       disabled={!isCutPossible}
-      className="flex shrink-0 cursor-pointer items-center gap-1 rounded p-1.5 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+      className="touch-target flex shrink-0 cursor-pointer items-center gap-1 rounded p-1.5 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <Scissors size={14} />
       Cut Here
