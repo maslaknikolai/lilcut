@@ -1,4 +1,5 @@
 import { useAtom, useSetAtom } from 'jotai'
+import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { isSidebarOpenAtom, libraryOrderAtom } from './atoms'
 import { HelpButton } from './HelpButton'
@@ -38,11 +39,6 @@ export function Sidebar() {
             <HelpButton />
           </div>
           <h2 className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
-          <div className="flex flex-wrap gap-1 items-center">
-            <RecordControls />
-            <UploadMediaAssetButton />
-            <NewProjectButton />
-          </div>
         </header>
 
         <div className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-gutter-stable">
@@ -60,9 +56,27 @@ export function Sidebar() {
           />
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-slate-700 p-4">
+        <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
+          <div className="flex flex-wrap gap-1 items-center">
+            <RecordControls />
+            <UploadMediaAssetButton />
+            <NewProjectButton />
+          </div>
+
           <StorageUsage />
-          <LibraryTransferControls />
+
+          <details className="group">
+            <summary className="touch-target flex cursor-pointer list-none items-center gap-1 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
+              <ChevronRight
+                size={14}
+                className="transition-transform group-open:rotate-90"
+              />
+              Transfer library
+            </summary>
+            <div className="pt-2">
+              <LibraryTransferControls />
+            </div>
+          </details>
         </div>
       </div>
     </>
