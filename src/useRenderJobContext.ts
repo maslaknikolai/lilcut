@@ -2,22 +2,22 @@ import { createContext, useContext } from 'react'
 import { invariant } from './invariant'
 import type { Project } from './types'
 
-export type ExportJob =
+export type RenderJob =
   | { status: 'idle' }
-  | { status: 'exporting'; projectName: string; progress: number; logLines: string[] }
-  | { status: 'complete'; projectName: string; exportedOpfsName: string }
+  | { status: 'rendering'; projectName: string; progress: number; logLines: string[] }
+  | { status: 'complete'; projectName: string; renderedOpfsName: string }
 
-type ExportJobContextValue = {
-  job: ExportJob
-  startExport: (project: Project) => void
-  cancelExport: () => void
-  dismissExport: () => void
+type RenderJobContextValue = {
+  job: RenderJob
+  startRender: (project: Project) => void
+  cancelRender: () => void
+  dismissRender: () => void
 }
 
-export const ExportJobContext = createContext<ExportJobContextValue | null>(null)
+export const RenderJobContext = createContext<RenderJobContextValue | null>(null)
 
-export function useExportJobContext() {
-  const context = useContext(ExportJobContext)
-  invariant(context, 'useExportJobContext must be used within an ExportJobProvider')
+export function useRenderJobContext() {
+  const context = useContext(RenderJobContext)
+  invariant(context, 'useRenderJobContext must be used within an RenderJobProvider')
   return context
 }

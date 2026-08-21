@@ -6,9 +6,9 @@ import { GhostButton } from './GhostButton'
 import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
 import type { Project } from './types'
 import { useConcatCompatibility } from './useConcatCompatibility'
-import { useExportJobContext } from './useExportJobContext'
+import { useRenderJobContext } from './useRenderJobContext'
 
-type ExportProjectButtonProps = {
+type RenderProjectButtonProps = {
   project: Project
 }
 
@@ -20,16 +20,16 @@ const INDICATOR_CLASS_NAMES = {
 
 const TOOLTIP_TEXTS = {
   probing: 'Checking whether clips share stream parameters…',
-  probeFailed: 'Could not inspect the clips — export will pick the safe re-encoding path',
+  probeFailed: 'Could not inspect the clips — rendering will pick the safe re-encoding path',
   compatible:
-    'All clips share codec, resolution, and audio parameters — export copies the streams without re-encoding (fast, lossless)',
-  incompatible: 'Clips have mismatched stream parameters — export will re-encode them to shared parameters (slower)',
+    'All clips share codec, resolution, and audio parameters — rendering copies the streams without re-encoding (fast, lossless)',
+  incompatible: 'Clips have mismatched stream parameters — rendering will re-encode them to shared parameters (slower)',
 }
 
-export function ExportProjectButton({ project }: ExportProjectButtonProps) {
-  const { job, startExport } = useExportJobContext()
+export function RenderProjectButton({ project }: RenderProjectButtonProps) {
+  const { job, startRender } = useRenderJobContext()
   const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const isExporting = job.status === 'exporting'
+  const isRendering = job.status === 'rendering'
 
   const playbackClips = buildPlaybackClips(buildTimelineClips(project, mediaAssets))
   const concatCompatibility = useConcatCompatibility(playbackClips)
@@ -38,12 +38,12 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <GhostButton
-          onClick={() => startExport(project)}
-          disabled={isExporting || project.clips.length === 0}
+          onClick={() => startRender(project)}
+          disabled={isRendering || project.clips.length === 0}
           className="shrink-0 px-3 text-violet-400"
         >
           <FilePlay size={14} />
-          {isExporting ? 'Exporting…' : 'Export .mp4'}
+          {isRendering ? 'Rendering…' : 'Render .mp4'}
           {project.clips.length > 0 &&
             (concatCompatibility === 'probing' ? (
               <LoaderCircle

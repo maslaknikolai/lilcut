@@ -2,32 +2,32 @@ import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
-import { exportProjectVideo } from './exportProjectVideo'
+import { renderProjectVideo } from './renderProjectVideo'
 import { loadFfmpeg } from './loadFfmpeg'
 import { uniqueOpfsName } from './opfs'
 import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
 import type { Project } from './types'
-import { ExportJobContext, type ExportJob } from './useExportJobContext'
+import { RenderJobContext, type RenderJob } from './useRenderJobContext'
 import { useMediaAssetActions } from './useMediaAssetActions'
 
 let ffmpegPromise: Promise<FFmpeg> | null = null
 
-function loadExportFfmpeg(): Promise<FFmpeg> {
+function loadRenderFfmpeg(): Promise<FFmpeg> {
   ffmpegPromise ??= loadFfmpeg()
   return ffmpegPromise
 }
 
-export function ExportJobProvider({ children }: { children: ReactNode }) {
+export function RenderJobProvider({ children }: { children: ReactNode }) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
-  const [job, setJob] = useState<ExportJob>({ status: 'idle' })
+  const [job, setJob] = useState<RenderJob>({ status: 'idle' })
   const ffmpegInstanceRef = useRef<FFmpeg | null>(null)
   const isCancelledRef = useRef(false)
 
-  const startExport = useEffectEvent(async (project: Project) => {
-    if (job.status === 'exporting') {
+  const startRender = useEffectEvent(async (project: Project) => {
+    if (job.status === 'rendering') {
       return
     }
 
@@ -36,25 +36,25 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     }
 
     isCancelledRef.current = false
-    setJob({ status: 'exporting', projectName: project.name, progress: 0, logLines: [] })
+    setJob({ status: 'rendering', projectName: project.name, progress: 0, logLines: [] })
 
     try {
-      const ffmpeg = await loadExportFfmpeg()
+      const ffmpeg = await loadRenderFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
       const timelineClips = buildTimelineClips(project, mediaAssets)
       const playbackClips = buildPlaybackClips(timelineClips)
-      const blob = await exportProjectVideo(ffmpeg, playbackClips, mediaAssets, {
+      const blob = await renderProjectVideo(ffmpeg, playbackClips, mediaAssets, {
         onProgress: (overallProgress) =>
           setJob((prev) => {
-            if (prev.status !== 'exporting') {
+            if (prev.status !== 'rendering') {
               return prev
             }
             return { ...prev, progress: Math.max(prev.progress, overallProgress) }
           }),
         onLog: (message) =>
           setJob((prev) => {
-            if (prev.status !== 'exporting') {
+            if (prev.status !== 'rendering') {
               return prev
             }
             return { ...prev, logLines: [...prev.logLines, message] }
@@ -63,27 +63,27 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
       })
 
       if (blob) {
-        const exportedOpfsName = uniqueOpfsName(`${project.name}.mp4`, mediaAssets)
-        await writeMediaAsset(exportedOpfsName, blob)
-        setLibraryOrder((prev) => [exportedOpfsName, ...prev])
+        const renderedOpfsName = uniqueOpfsName(`${project.name}.mp4`, mediaAssets)
+        await writeMediaAsset(renderedOpfsName, blob)
+        setLibraryOrder((prev) => [renderedOpfsName, ...prev])
         setJob({
           status: 'complete',
           projectName: project.name,
-          exportedOpfsName,
+          renderedOpfsName,
         })
       }
     } catch (error) {
       if (!isCancelledRef.current) {
-        console.error('Export failed', error)
+        console.error('Render failed', error)
       }
     } finally {
       ffmpegInstanceRef.current = null
-      setJob((prev) => (prev.status === 'exporting' ? { status: 'idle' } : prev))
+      setJob((prev) => (prev.status === 'rendering' ? { status: 'idle' } : prev))
     }
   })
 
-  const cancelExport = useEffectEvent(() => {
-    if (job.status !== 'exporting') {
+  const cancelRender = useEffectEvent(() => {
+    if (job.status !== 'rendering') {
       return
     }
     isCancelledRef.current = true
@@ -93,20 +93,20 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
     setJob({ status: 'idle' })
   })
 
-  const dismissExport = useEffectEvent(() => {
+  const dismissRender = useEffectEvent(() => {
     setJob((prev) => (prev.status === 'complete' ? { status: 'idle' } : prev))
   })
 
   return (
-    <ExportJobContext.Provider
+    <RenderJobContext.Provider
       value={{
         job,
-        startExport,
-        cancelExport,
-        dismissExport,
+        startRender,
+        cancelRender,
+        dismissRender,
       }}
     >
       {children}
-    </ExportJobContext.Provider>
+    </RenderJobContext.Provider>
   )
 }

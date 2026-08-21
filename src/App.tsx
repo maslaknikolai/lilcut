@@ -1,8 +1,8 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { libraryOrderAtom, projectsAtom } from './atoms'
-import { ExportJobProvider } from './ExportJobContext'
-import { ExportJobWidget } from './ExportJobWidget'
+import { RenderJobProvider } from './RenderJobContext'
+import { RenderJobWidget } from './RenderJobWidget'
 import { Modals } from './Modals'
 import { OpenSidebarButton } from './OpenSidebarButton'
 import { PageView } from './PageView'
@@ -15,7 +15,7 @@ import { useSyncMediaAssets } from './useSyncMediaAssets'
 function AppContent() {
   return (
     <TooltipProvider>
-      <ExportJobProvider>
+      <RenderJobProvider>
         <ScreenRecordingProvider>
           <div className="flex h-svh overflow-hidden">
             <Sidebar />
@@ -25,13 +25,13 @@ function AppContent() {
           <OpenSidebarButton />
 
           <div className="fixed top-2 right-2">
-            <ExportJobWidget />
+            <RenderJobWidget />
           </div>
 
           <RecordingPipWindow />
           <Modals />
         </ScreenRecordingProvider>
-      </ExportJobProvider>
+      </RenderJobProvider>
     </TooltipProvider>
   )
 }

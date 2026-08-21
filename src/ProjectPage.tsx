@@ -2,7 +2,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipsPlayer } from './ClipsPlayer'
-import { ExportProjectButton } from './ExportProjectButton'
+import { RenderProjectButton } from './RenderProjectButton'
 import { RenameField } from './RenameField'
 import type { Project } from './types'
 
@@ -31,7 +31,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
           onCommit={renameProject}
         />
 
-        <ExportProjectButton project={project} />
+        <RenderProjectButton project={project} />
       </div>
 
       <ClipsPlayer

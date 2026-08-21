@@ -1,9 +1,9 @@
 import { FilePlay, OctagonX, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useExportJobContext } from './useExportJobContext'
+import { useRenderJobContext } from './useRenderJobContext'
 
-export function ExportJobWidget() {
-  const { job, cancelExport, dismissExport } = useExportJobContext()
+export function RenderJobWidget() {
+  const { job, cancelRender, dismissRender } = useRenderJobContext()
 
   if (job.status === 'idle') {
     return null
@@ -11,14 +11,14 @@ export function ExportJobWidget() {
 
   return (
     <div className="flex items-center gap-3 rounded bg-slate-100 px-3 py-1 text-sm font-medium text-slate-900">
-      {job.status === 'exporting' ? (
+      {job.status === 'rendering' ? (
         <>
           <span>
-            Exporting "{job.projectName}": {Math.round(job.progress * 100)}%
+            Rendering "{job.projectName}": {Math.round(job.progress * 100)}%
           </span>
           <button
             type="button"
-            onClick={cancelExport}
+            onClick={cancelRender}
             className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-black/10 active:bg-black/20"
           >
             <OctagonX size={14} />
@@ -28,19 +28,19 @@ export function ExportJobWidget() {
       ) : (
         <>
           <Link
-            to={`/${encodeURIComponent(job.exportedOpfsName)}`}
-            onClick={dismissExport}
+            to={`/${encodeURIComponent(job.renderedOpfsName)}`}
+            onClick={dismissRender}
             className="flex items-center gap-1.5 hover:underline"
           >
             <FilePlay
               size={14}
               className="shrink-0 text-violet-500"
             />
-            {job.exportedOpfsName}
+            {job.renderedOpfsName}
           </Link>
           <button
             type="button"
-            onClick={dismissExport}
+            onClick={dismissRender}
             className="flex cursor-pointer items-center gap-1 rounded px-2 py-1 hover:bg-black/10 active:bg-black/20"
             aria-label="Dismiss"
           >

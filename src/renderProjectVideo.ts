@@ -6,7 +6,7 @@ import { readOpfsFile } from './opfs'
 import type { PlaybackClip } from './projectTimeline'
 import type { MediaAsset } from './types'
 
-type ExportCallbacks = {
+type RenderCallbacks = {
   onProgress: (overallProgress: number) => void
   onLog: (message: string) => void
   isCancelled: () => boolean
@@ -21,16 +21,16 @@ type InputSegment = {
 // Callers pass playback clips (buildPlaybackClips) so uncut spans of one
 // recording aren't split just to be concatenated again.
 //
-// Two export strategies, picked by probing the sources:
+// Two render strategies, picked by probing the sources:
 // - compatible formats → stream copy: lossless and fast, cuts snap to the
 //   nearest keyframe
 // - mixed formats → every segment is decoded and re-encoded to shared
 //   parameters, then the normalized pieces are concatenated losslessly
-export async function exportProjectVideo(
+export async function renderProjectVideo(
   ffmpeg: FFmpeg,
   playbackClips: PlaybackClip[],
   mediaAssets: MediaAsset[],
-  { onProgress, onLog, isCancelled }: ExportCallbacks,
+  { onProgress, onLog, isCancelled }: RenderCallbacks,
 ): Promise<Blob | null> {
   const segments = playbackClips.flatMap((playbackClip) => {
     const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === playbackClip.mediaAssetOpfsName)
