@@ -9,7 +9,14 @@ type ClipTrimBarProps = {
   onRangeChange: (cutStart: number, cutEnd: number | undefined) => void
 }
 
-export function ClipTrimBar({ duration, cutStart, cutEnd, isToVideoEnd, currentTime, onRangeChange }: ClipTrimBarProps) {
+export function ClipTrimBar({
+  duration,
+  cutStart,
+  cutEnd,
+  isToVideoEnd,
+  currentTime,
+  onRangeChange,
+}: ClipTrimBarProps) {
   if (duration <= 0) {
     return null
   }

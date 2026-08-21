@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
+import { useSetAtom } from 'jotai'
 import { cn } from '@/lib/utils'
+import { isSidebarOpenAtom } from './atoms'
 import { SortingItem } from './SortingItem'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
@@ -27,6 +29,7 @@ export function LibraryItem({
   children,
 }: LibraryItemProps) {
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
+  const setIsSidebarOpen = useSetAtom(isSidebarOpenAtom)
   const isSelected = id === selectedLibraryItemId
 
   const selectionClassName = cn('cursor-pointer gap-1.5', isSelected ? 'bg-blue-800/40' : 'hover:bg-blue-900/40')
@@ -38,7 +41,10 @@ export function LibraryItem({
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      onClick={() => setSelectedLibraryItemId(id)}
+      onClick={() => {
+        setSelectedLibraryItemId(id)
+        setIsSidebarOpen(false)
+      }}
       className={selectionClassName}
       dragHandleLabel={`Reorder ${name}`}
     >
