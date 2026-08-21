@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef } from 'react'
 
-export function useScrollCurrentIntoView(isCurrent: boolean) {
-  const rootRef = useRef<HTMLDivElement>(null)
+export function useScrollCurrentIntoView<T extends HTMLElement = HTMLDivElement>(isCurrent: boolean) {
+  const rootRef = useRef<T>(null)
 
   const scrollCurrentIntoView = useEffectEvent(() => {
     if (isCurrent) {

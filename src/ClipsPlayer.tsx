@@ -159,6 +159,25 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
     setProjectTime(Math.max(currentPlaybackClip.projectStart, unclampedProjectTime))
   }
 
+  //
+  const longPressTimeoutRef = useRef<number | null>(null)
+  const isLongPressingRef = useRef(false)
+
+  function endLongPress(isClickComing: boolean) {
+    if (longPressTimeoutRef.current !== null) {
+      clearTimeout(longPressTimeoutRef.current)
+      longPressTimeoutRef.current = null
+    }
+    if (isLongPressingRef.current) {
+      if (videoRef.current) {
+        videoRef.current.playbackRate = 1
+      }
+      if (!isClickComing) {
+        isLongPressingRef.current = false
+      }
+    }
+  }
+
   function togglePlayback() {
     const video = videoRef.current
     if (!video) {
@@ -211,7 +230,25 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
           <video
             ref={videoRef}
             src={videoUrl}
-            className="max-h-full max-w-full"
+            onClick={() => {
+              if (isLongPressingRef.current) {
+                isLongPressingRef.current = false
+                return
+              }
+              togglePlayback()
+            }}
+            onPointerDown={() => {
+              longPressTimeoutRef.current = window.setTimeout(() => {
+                isLongPressingRef.current = true
+                if (videoRef.current) {
+                  videoRef.current.playbackRate = 2
+                }
+              }, 400)
+            }}
+            onPointerUp={() => endLongPress(true)}
+            onPointerLeave={() => endLongPress(false)}
+            onPointerCancel={() => endLongPress(false)}
+            className="max-h-full max-w-full cursor-pointer touch-none select-none"
             onLoadedMetadata={(e) => {
               const timeIntoClip = projectTime - currentPlaybackClip.projectStart
               const fileTime = currentPlaybackClip.cutStart + timeIntoClip
@@ -221,6 +258,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
                 willResume: isPlaying,
               })
               e.currentTarget.currentTime = fileTime
+              e.currentTarget.playbackRate = isLongPressingRef.current ? 2 : 1
               // a source switch resets the <video> to paused —
               // resume if playback was running when the previous source ended
 

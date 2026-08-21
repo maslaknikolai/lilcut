@@ -9,7 +9,7 @@ import { Scrubber } from './Scrubber'
 import { TimelineClip } from './TimelineClip'
 import type { Project } from './types'
 import { useKeyPress } from './useKeyPress'
-import { WheelZoomArea } from './WheelZoomArea'
+import { ZoomArea } from './ZoomArea'
 
 type TimelineProps = {
   project: Project
@@ -95,7 +95,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
       ref={scrollerRef}
       className="overflow-x-scroll pb-10 px-4"
     >
-      <WheelZoomArea
+      <ZoomArea
         onZoom={handleZoom}
         className="flex w-fit min-w-full flex-col gap-4"
       >
@@ -106,7 +106,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
         />
 
         {timelineClips.length ? (
-          <div className="flex h-12 gap-px">
+          <div className="flex h-20 gap-px md:h-12">
             {timelineClips.flatMap((timelineClip, index) => [
               <InsertClipButton
                 key={`insert-${timelineClip.id}`}
@@ -128,13 +128,13 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
           <button
             type="button"
             onClick={() => openClipCreator(0)}
-            className="h-12 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200"
+            className="h-20 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 md:h-12"
           >
             <Plus size={14} />
             Add clip
           </button>
         )}
-      </WheelZoomArea>
+      </ZoomArea>
     </DragScrollArea>
   )
 }

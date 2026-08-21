@@ -1,5 +1,5 @@
 import { GripVertical } from 'lucide-react'
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import { cn } from '@/lib/utils'
 
 // swapped in as the browser's native drag preview so only our own scaled
@@ -8,6 +8,7 @@ const transparentDragImage = new Image()
 transparentDragImage.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
 
 type SortingItemProps = {
+  ref?: Ref<HTMLLIElement>
   isDragging: boolean
   onDragStart: () => void
   onDragOver: () => void
@@ -20,6 +21,7 @@ type SortingItemProps = {
 }
 
 export function SortingItem({
+  ref,
   isDragging,
   onDragStart,
   onDragOver,
@@ -34,6 +36,7 @@ export function SortingItem({
 
   return (
     <li
+      ref={ref}
       onClick={onClick}
       onDragOver={(e) => {
         e.preventDefault()

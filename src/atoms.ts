@@ -15,5 +15,4 @@ export type ActiveModal =
 
 export const activeModalAtom = atom<ActiveModal>(null)
 
-// mobile-only sidebar drawer state; on md+ the sidebar is always visible
-export const isSidebarOpenAtom = atom(false)
+export const isSidebarOpenAtom = atom(true)

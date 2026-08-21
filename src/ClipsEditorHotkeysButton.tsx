@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Keyboard, Space } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
@@ -7,11 +7,18 @@ function Kbd({ children }: { children: ReactNode }) {
 }
 
 export function ClipsEditorHotkeysButton() {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+
   return (
-    <Tooltip disableHoverableContent>
+    <Tooltip
+      disableHoverableContent
+      open={isTooltipOpen}
+      onOpenChange={setIsTooltipOpen}
+    >
       <TooltipTrigger asChild>
         <button
           type="button"
+          onClick={() => setIsTooltipOpen((prev) => !prev)}
           className="cursor-pointer rounded p-1.5 text-slate-500 hover:bg-slate-900 hover:text-slate-200"
           aria-label="Editor hotkeys"
         >

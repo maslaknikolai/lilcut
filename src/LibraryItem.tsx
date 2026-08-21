@@ -3,6 +3,7 @@ import { useSetAtom } from 'jotai'
 import { cn } from '@/lib/utils'
 import { isSidebarOpenAtom } from './atoms'
 import { SortingItem } from './SortingItem'
+import { useScrollCurrentIntoView } from './useScrollCurrentIntoView'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type LibraryItemProps = {
@@ -31,9 +32,11 @@ export function LibraryItem({
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const setIsSidebarOpen = useSetAtom(isSidebarOpenAtom)
   const isSelected = id === selectedLibraryItemId
+  const rootRef = useScrollCurrentIntoView<HTMLLIElement>(isSelected)
 
   return (
     <SortingItem
+      ref={rootRef}
       isDragging={isDragging}
       onDragStart={onDragStart}
       onDragOver={onDragOver}

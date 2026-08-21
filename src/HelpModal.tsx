@@ -26,17 +26,42 @@ export function HelpModal({ onClose }: HelpModalProps) {
           </button>
         </div>
 
-        <div className="flex flex-col gap-2 text-sm text-slate-300">
-          <p>lilcut is a simple video editor that works entirely in your browser. Your videos stay on your computer.</p>
-          <p className="">
-            Found a bug or have an idea? Email{' '}
-            <a
-              href="mailto:nikomaslak@gmail.com"
-              className="text-blue-400 hover:underline"
-            >
-              nikomaslak@gmail.com
-            </a>
-          </p>
+        <div className="flex flex-col gap-4 text-sm text-slate-300">
+          <section>
+            <p>
+              lilcut is a simple open-source screen recorder and video editor that runs entirely in your browser. Your
+              videos never leave your device.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="mb-1 font-medium text-white">How it works</h3>
+            <p>
+              Record your screen or import videos, trim and rearrange clips, then export the result. Media files are
+              stored locally in your browser.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="mb-1 font-medium text-white">Privacy & storage</h3>
+            <p>
+              lilcut doesn't upload your recordings to a server. Clearing browser site data may remove locally stored
+              files and projects.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="mb-1 font-medium text-white">Feedback</h3>
+            <p>
+              Found a bug or have an idea? Email{' '}
+              <a
+                href="mailto:nikomaslak@gmail.com"
+                className="text-blue-400 hover:underline"
+              >
+                nikomaslak@gmail.com
+              </a>
+            </p>
+          </section>
         </div>
       </div>
     </div>
