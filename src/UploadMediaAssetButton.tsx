@@ -35,7 +35,7 @@ export function UploadMediaAssetButton() {
           size={14}
           className="text-violet-400"
         />
-        <span>Add video</span>
+        <span>Import video</span>
       </GhostButton>
 
       <input

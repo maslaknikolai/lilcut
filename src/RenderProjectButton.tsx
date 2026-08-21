@@ -43,7 +43,7 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
           className="shrink-0 px-3 text-violet-400"
         >
           <FilePlay size={14} />
-          {isExporting ? 'Exporting…' : 'Export mp4'}
+          {isExporting ? 'Exporting…' : 'Export .mp4'}
           {project.clips.length > 0 &&
             (concatCompatibility === 'probing' ? (
               <LoaderCircle
