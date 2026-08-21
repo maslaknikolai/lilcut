@@ -9,21 +9,9 @@ import { useRedirectAfterRemove } from './useRedirectAfterRemove'
 
 type MediaAssetItemProps = {
   mediaAsset: MediaAsset
-  isDragging: boolean
-  onDragStart: () => void
-  onDragOver: () => void
-  onDrop: () => void
-  onDragEnd: () => void
 }
 
-export function MediaAssetItem({
-  mediaAsset,
-  isDragging,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
-}: MediaAssetItemProps) {
+export function MediaAssetItem({ mediaAsset }: MediaAssetItemProps) {
   const { deleteMediaAsset } = useMediaAssetActions()
   const redirectAfterRemove = useRedirectAfterRemove()
 
@@ -52,11 +40,6 @@ export function MediaAssetItem({
           className="shrink-0 text-violet-500"
         />
       }
-      isDragging={isDragging}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
       actions={
         <>
           <SidebarItemAction

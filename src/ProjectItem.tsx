@@ -11,14 +11,9 @@ import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type ProjectItemProps = {
   project: Project
-  isDragging: boolean
-  onDragStart: () => void
-  onDragOver: () => void
-  onDrop: () => void
-  onDragEnd: () => void
 }
 
-export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
+export function ProjectItem({ project }: ProjectItemProps) {
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
@@ -52,11 +47,6 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
           className="shrink-0 text-blue-500"
         />
       }
-      isDragging={isDragging}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
       actions={
         <>
           <SidebarItemAction

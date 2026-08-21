@@ -1,48 +1,56 @@
-import { Fragment, useState, type ReactNode } from 'react'
-import { reorderById } from './reorderById'
+import { Fragment, type ReactNode } from 'react'
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 type SortingListProps<T> = {
   items: T[]
   getId: (item: T) => string
   onReorder: (next: T[]) => void
-  renderItem: (
-    item: T,
-    dragProps: {
-      isDragging: boolean
-      onDragStart: () => void
-      onDragOver: () => void
-      onDrop: () => void
-      onDragEnd: () => void
-    },
-  ) => ReactNode
+  renderItem: (item: T) => ReactNode
 }
 
 export function SortingList<T>({ items, getId, onReorder, renderItem }: SortingListProps<T>) {
-  const [draggedId, setDraggedId] = useState<string | null>(null)
+  // a small distance threshold keeps plain clicks on the drag handle from
+  // starting a drag
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
-  function moveDraggedItem(targetId: string) {
-    if (!draggedId || draggedId === targetId) {
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) {
       return
     }
-    onReorder(reorderById(items, getId, draggedId, targetId))
+    const ids = items.map(getId)
+    const oldIndex = ids.indexOf(String(active.id))
+    const newIndex = ids.indexOf(String(over.id))
+    if (oldIndex === -1 || newIndex === -1) {
+      return
+    }
+    onReorder(arrayMove(items, oldIndex, newIndex))
   }
 
   return (
-    <ul>
-      {items.map((item) => {
-        const id = getId(item)
-        return (
-          <Fragment key={id}>
-            {renderItem(item, {
-              isDragging: id === draggedId,
-              onDragStart: () => setDraggedId(id),
-              onDragOver: () => moveDraggedItem(id),
-              onDrop: () => setDraggedId(null),
-              onDragEnd: () => setDraggedId(null),
-            })}
-          </Fragment>
-        )
-      })}
-    </ul>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={items.map(getId)}
+        strategy={verticalListSortingStrategy}
+      >
+        <ul>
+          {items.map((item) => (
+            <Fragment key={getId(item)}>{renderItem(item)}</Fragment>
+          ))}
+        </ul>
+      </SortableContext>
+    </DndContext>
   )
 }

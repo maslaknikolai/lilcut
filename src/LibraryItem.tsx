@@ -10,25 +10,10 @@ type LibraryItemProps = {
   id: string
   name: string
   icon: ReactNode
-  isDragging: boolean
-  onDragStart: () => void
-  onDragOver: () => void
-  onDrop: () => void
-  onDragEnd: () => void
   actions?: ReactNode
 }
 
-export function LibraryItem({
-  id,
-  name,
-  icon,
-  isDragging,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
-  actions,
-}: LibraryItemProps) {
+export function LibraryItem({ id, name, icon, actions }: LibraryItemProps) {
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const setIsSidebarOpen = useSetAtom(isSidebarOpenAtom)
   const isSelected = id === selectedLibraryItemId
@@ -37,11 +22,7 @@ export function LibraryItem({
   return (
     <SortingItem
       ref={rootRef}
-      isDragging={isDragging}
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
+      id={id}
       onClick={() => {
         setSelectedLibraryItemId(id)
         setIsSidebarOpen(false)

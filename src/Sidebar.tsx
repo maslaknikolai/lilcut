@@ -50,17 +50,11 @@ export function Sidebar() {
             items={library}
             getId={libraryItemId}
             onReorder={(next) => setLibraryOrder(next.map(libraryItemId))}
-            renderItem={(item, dragProps) =>
+            renderItem={(item) =>
               item.type === 'project' ? (
-                <ProjectItem
-                  project={item.project}
-                  {...dragProps}
-                />
+                <ProjectItem project={item.project} />
               ) : (
-                <MediaAssetItem
-                  mediaAsset={item.mediaAsset}
-                  {...dragProps}
-                />
+                <MediaAssetItem mediaAsset={item.mediaAsset} />
               )
             }
           />
