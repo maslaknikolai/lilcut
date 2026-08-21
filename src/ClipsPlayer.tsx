@@ -7,6 +7,12 @@ import { Timeline } from './Timeline'
 import type { MediaAsset, Project } from './types'
 import { useMediaAssetVideoUrls } from './useMediaAssetVideoUrls'
 
+// find problems by filtering the console for [player]; verbose ticks are
+// deliberately not logged — every entry is a transition or a suppressed race
+function logPlayer(message: string, ...details: unknown[]) {
+  console.debug(`[player] ${message}`, ...details)
+}
+
 type ClipsPlayerProps = {
   project: Project
   mediaAssets: MediaAsset[]
@@ -84,11 +90,11 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
     if (!video || !currentPlaybackClip) {
       return
     }
-    console.log('WIPWIP handleVideoTimeUpdate', video.readyState, video.currentTime)
     // a src swap resets currentTime to 0 and fires timeupdate before the new
     // file's metadata arrives; translating that 0 against the new clip's
     // timings would seek backwards and flip the clip switch into a loop
     if (video.readyState === 0) {
+      logPlayer('timeupdate ignored: element mid src-swap (readyState 0)')
       return
     }
 
@@ -96,15 +102,22 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
     // position — translating it against the new clip's timings would also
     // jump backwards and flip the clip switch
     if (video.seeking) {
+      logPlayer('timeupdate ignored: seek in flight', { currentTime: video.currentTime })
       return
     }
 
     if (video.currentTime >= currentPlaybackClip.cutEnd) {
       const nextPlaybackClip = playbackClips[currentPlaybackClipIndex + 1]
       if (nextPlaybackClip) {
-        console.log('WIPWIP handleVideoTimeUpdate nextPlaybackClip', nextPlaybackClip, currentPlaybackClip)
+        logPlayer('clip switch', {
+          from: currentPlaybackClip.mediaAssetOpfsName,
+          to: nextPlaybackClip.mediaAssetOpfsName,
+          isFileSwap: nextPlaybackClip.mediaAssetOpfsName !== currentPlaybackClip.mediaAssetOpfsName,
+          overshoot: video.currentTime - currentPlaybackClip.cutEnd,
+        })
         setProjectTime(nextPlaybackClip.projectStart)
       } else {
+        logPlayer('end of project: parked and paused')
         const clipEndProjectTime = currentPlaybackClip.projectStart + currentPlaybackClip.duration
         setProjectTime(clipEndProjectTime)
         video.pause()
@@ -121,6 +134,11 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
     // loops; clamping to the clip's start makes the flip impossible
     const timeIntoClip = video.currentTime - currentPlaybackClip.cutStart
     const unclampedProjectTime = currentPlaybackClip.projectStart + timeIntoClip
+    if (unclampedProjectTime < currentPlaybackClip.projectStart) {
+      logPlayer('seek undershot the clip start, clamped', {
+        undershoot: currentPlaybackClip.projectStart - unclampedProjectTime,
+      })
+    }
     setProjectTime(Math.max(currentPlaybackClip.projectStart, unclampedProjectTime))
   }
 
@@ -148,15 +166,13 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
             src={videoUrl}
             className="max-h-full max-w-full"
             onLoadedMetadata={(e) => {
-              console.log(
-                'WIPWIP onLoadedMetadata',
-                currentPlaybackClip,
-                projectTime,
-                e.currentTarget.currentTime,
-                isPlaying,
-              )
               const timeIntoClip = projectTime - currentPlaybackClip.projectStart
               const fileTime = currentPlaybackClip.cutStart + timeIntoClip
+              logPlayer('new src ready: positioning', {
+                file: currentPlaybackClip.mediaAssetOpfsName,
+                fileTime,
+                willResume: isPlaying,
+              })
               e.currentTarget.currentTime = fileTime
               // a source switch resets the <video> to paused —
               // resume if playback was running when the previous source ended
@@ -166,7 +182,10 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
               }
             }}
             onTimeUpdate={handleVideoTimeUpdate}
-            onPlay={() => setIsPlaying(true)}
+            onPlay={() => {
+              logPlayer('playing')
+              setIsPlaying(true)
+            }}
             onPause={(e) => {
               // a src swap resets the element (readyState 0); a pause fired
               // mid-swap is the reset, not the user. A pause flagged `ended`
@@ -174,7 +193,13 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
               // file is still committing — also not the user; losing the
               // isPlaying intent there would leave the next file paused
               if (e.currentTarget.readyState !== 0 && !e.currentTarget.ended) {
+                logPlayer('paused')
                 setIsPlaying(false)
+              } else {
+                logPlayer('pause ignored: src-swap reset or old file ran out', {
+                  readyState: e.currentTarget.readyState,
+                  ended: e.currentTarget.ended,
+                })
               }
             }}
           />
