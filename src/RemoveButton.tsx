@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { SidebarItemAction } from './SidebarItemAction'
 
 type RemoveButtonProps = {
   label: string
@@ -9,8 +11,7 @@ type RemoveButtonProps = {
 export function RemoveButton({ label, onRemove }: RemoveButtonProps) {
   const [isConfirming, setIsConfirming] = useState(false)
 
-  function handleClick(e: React.MouseEvent) {
-    e.stopPropagation()
+  function handleClick() {
     if (isConfirming) {
       setIsConfirming(false)
       onRemove()
@@ -20,16 +21,14 @@ export function RemoveButton({ label, onRemove }: RemoveButtonProps) {
   }
 
   return (
-    <button
-      type="button"
+    <SidebarItemAction
       onClick={handleClick}
       onBlur={() => setIsConfirming(false)}
-      className={`cursor-pointer px-1.5 pr-2 text-sm font-medium ${
-        isConfirming ? 'text-red-400' : 'text-slate-500 hover:text-red-400'
-      }`}
-      aria-label={isConfirming ? `Confirm removing ${label}` : `Remove ${label}`}
+      label={isConfirming ? `Confirm removing ${label}` : `Remove ${label}`}
+      tooltip={isConfirming ? 'Click again to confirm' : 'Remove'}
+      className={cn('pr-2 text-sm font-medium', isConfirming ? 'text-red-400' : 'hover:text-red-400')}
     >
       {isConfirming ? 'Confirm?' : <Trash2 size={16} />}
-    </button>
+    </SidebarItemAction>
   )
 }

@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { Download, FilePlay } from 'lucide-react'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
+import { SidebarItemAction } from './SidebarItemAction'
 import { SortingItem } from './SortingItem'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
@@ -32,8 +33,7 @@ export function MediaAssetItem({
     await deleteMediaAsset(mediaAsset.opfsName)
   }
 
-  async function handleDownload(e: React.MouseEvent) {
-    e.stopPropagation()
+  async function handleDownload() {
     const downloadedFile = await readOpfsFile(mediaAsset.opfsName)
     const url = URL.createObjectURL(downloadedFile)
     const link = document.createElement('a')
@@ -63,14 +63,13 @@ export function MediaAssetItem({
 
       <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{mediaAsset.opfsName}</span>
 
-      <button
-        type="button"
+      <SidebarItemAction
         onClick={handleDownload}
-        className="cursor-pointer px-1.5 text-slate-500 hover:text-slate-100"
-        aria-label={`Download ${mediaAsset.opfsName}`}
+        label={`Download ${mediaAsset.opfsName}`}
+        tooltip="Download file"
       >
         <Download size={16} />
-      </button>
+      </SidebarItemAction>
 
       <RemoveButton
         label={mediaAsset.opfsName}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
 import { RenameField } from './RenameField'
@@ -16,7 +16,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const videoUrl = useMediaAssetVideoUrl(mediaAsset)
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { renameMediaAsset } = useMediaAssetActions()
-  const setProjects = useSetAtom(projectsAtom)
+  const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [isNameTaken, setIsNameTaken] = useState(false)
@@ -46,6 +46,10 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
     }
   }
 
+  const projectsUsingAsset = projects.filter((project) =>
+    project.clips.some((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName),
+  )
+
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden p-4">
       <div className="flex items-center gap-2">
@@ -58,7 +62,6 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
 
         <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
       </div>
-
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {videoUrl ? (
           <video
@@ -70,6 +73,21 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           <span className="text-slate-400">Loading…</span>
         )}
       </div>
+      {projectsUsingAsset.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          Used in:
+          {projectsUsingAsset.map((project) => (
+            <button
+              key={project.id}
+              type="button"
+              onClick={() => setSelectedLibraryItemId(project.id)}
+              className="cursor-pointer text-blue-400 hover:underline"
+            >
+              {project.name}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { RemoveButton } from './RemoveButton'
+import { SidebarItemAction } from './SidebarItemAction'
 import { SortingItem } from './SortingItem'
 import { uniqueName } from './uniqueName'
 import type { Project } from './types'
@@ -28,8 +29,7 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     setLibraryOrder((prev) => prev.filter((id) => id !== project.id))
   }
 
-  function handleClone(e: React.MouseEvent) {
-    e.stopPropagation()
+  function handleClone() {
     const cloneId = crypto.randomUUID()
     const clonedClips = project.clips.map((clip) => ({ ...clip, id: crypto.randomUUID() }))
     const cloneName = uniqueName(
@@ -61,14 +61,13 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
 
       <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{project.name}</span>
 
-      <button
-        type="button"
+      <SidebarItemAction
         onClick={handleClone}
-        className="cursor-pointer px-1.5 text-slate-500 hover:text-slate-100"
-        aria-label={`Clone ${project.name}`}
+        label={`Clone ${project.name}`}
+        tooltip="Clone project"
       >
         <Files size={16} />
-      </button>
+      </SidebarItemAction>
 
       <RemoveButton
         label={project.name}
