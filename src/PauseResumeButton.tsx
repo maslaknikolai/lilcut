@@ -11,7 +11,10 @@ export function PauseResumeButton() {
   const isPaused = recording.status === 'paused'
 
   return (
-    <GhostButton onClick={() => (isPaused ? resume() : pause())}>
+    <GhostButton
+      onClick={() => (isPaused ? resume() : pause())}
+      className="text-slate-200"
+    >
       {isPaused ? (
         <Play
           size={14}

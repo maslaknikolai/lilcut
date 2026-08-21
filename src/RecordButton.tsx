@@ -9,7 +9,11 @@ export function RecordButton() {
   return (
     <GhostButton onClick={() => (isRecording ? stop() : start())}>
       {isRecording ? (
-        <Square size={14} />
+        <Square
+          size={14}
+          className="text-red-400"
+          fill="currentColor"
+        />
       ) : (
         <Circle
           size={14}
