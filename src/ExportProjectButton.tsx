@@ -40,7 +40,7 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
         <GhostButton
           onClick={() => startExport(project)}
           disabled={isExporting || project.clips.length === 0}
-          className="shrink-0 px-3 py-1.5 text-violet-400"
+          className="shrink-0 px-3 text-violet-400"
         >
           <FilePlay size={14} />
           {isExporting ? 'Exporting…' : 'Export mp4'}

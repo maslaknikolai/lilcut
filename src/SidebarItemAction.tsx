@@ -22,7 +22,10 @@ export function SidebarItemAction({ onClick, label, tooltip, className, onBlur, 
       }}
       onBlur={onBlur}
       aria-label={label}
-      className={cn('touch-target cursor-pointer px-1.5 text-slate-500 hover:text-slate-100 active:text-white', className)}
+      className={cn(
+        'touch-target cursor-pointer px-1.5 text-slate-500 hover:text-slate-100 active:text-white',
+        className,
+      )}
     >
       {children}
     </button>

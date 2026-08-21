@@ -31,7 +31,7 @@ export function CreateProjectFromMediaAssetButton({ mediaAsset }: CreateProjectF
   return (
     <GhostButton
       onClick={createProjectFromMediaAsset}
-      className="px-3 py-1.5 text-blue-400"
+      className="px-3 text-blue-400"
     >
       <Scissors size={14} />
       <span>Use video in new project</span>

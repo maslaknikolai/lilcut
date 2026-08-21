@@ -63,19 +63,28 @@ export function LibraryTransferControls() {
     // 'sv' locale formats as ISO-like "2026-08-20 15:42:11"; colons are
     // invalid in filenames on some systems
     const timestamp = new Date().toLocaleString('sv').replaceAll(':', '-')
-    const fileHandle = await window
-      .showSaveFilePicker({
-        suggestedName: `lilcut-library-${timestamp}.zip`,
-        types: [{ description: 'Zip archive', accept: { 'application/zip': ['.zip'] } }],
-      })
-      // the picker throws on cancel
-      .catch(() => null)
-    if (!fileHandle) {
+    const suggestedName = `lilcut-library-${timestamp}.zip`
+
+    const isPickerSupported = 'showSaveFilePicker' in window
+    const fileHandle = isPickerSupported
+      ? await window
+          .showSaveFilePicker({
+            suggestedName,
+            types: [{ description: 'Zip archive', accept: { 'application/zip': ['.zip'] } }],
+          })
+          // the picker throws on cancel
+          .catch(() => null)
+      : null
+    if (isPickerSupported && !fileHandle) {
       return
     }
 
     setIsTransferring(true)
-    const writable = await fileHandle.createWritable()
+    const writable = fileHandle ? await fileHandle.createWritable() : null
+    // without the picker (mobile, Safari, Firefox) the zip is
+    // buffered in memory and saved via a download link — fine until a library
+    // outgrows RAM; a service-worker streaming download if that ever happens
+    const bufferedChunks: BlobPart[] = []
     try {
       let finishZip!: () => void
       let failZip!: (error: Error) => void
@@ -90,9 +99,16 @@ export function LibraryTransferControls() {
           failZip(error)
           return
         }
-        writeChain = writeChain.then(() => writable.write(chunk))
-        if (isFinal) {
-          writeChain.then(finishZip, failZip)
+        if (writable) {
+          writeChain = writeChain.then(() => writable.write(chunk))
+          if (isFinal) {
+            writeChain.then(finishZip, failZip)
+          }
+        } else {
+          bufferedChunks.push(chunk)
+          if (isFinal) {
+            finishZip()
+          }
         }
       })
 
@@ -119,9 +135,19 @@ export function LibraryTransferControls() {
 
       zip.end()
       await zipDone
-      await writable.close()
+      if (writable) {
+        await writable.close()
+      } else {
+        const blob = new Blob(bufferedChunks, { type: 'application/zip' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = suggestedName
+        link.click()
+        URL.revokeObjectURL(url)
+      }
     } catch (error) {
-      await writable.abort()
+      await writable?.abort()
       throw error
     } finally {
       setIsTransferring(false)
@@ -261,7 +287,7 @@ export function LibraryTransferControls() {
   }
 
   const isLibraryEmpty = mediaAssets.length + projects.length === 0
-  const controlClassName = 'flex-1 text-slate-400 hover:text-slate-200 active:text-slate-100'
+  const controlClassName = 'flex-1 py-2 text-slate-400 hover:text-slate-200 active:text-slate-100'
 
   return (
     <div className="flex gap-1">
@@ -271,7 +297,7 @@ export function LibraryTransferControls() {
         className={controlClassName}
       >
         <FolderDown size={14} />
-        Export
+        Export .zip
       </GhostButton>
 
       <GhostButton
@@ -280,7 +306,7 @@ export function LibraryTransferControls() {
         className={controlClassName}
       >
         <FolderUp size={14} />
-        Import
+        Import .zip
       </GhostButton>
 
       <GhostButton
