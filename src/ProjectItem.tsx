@@ -6,6 +6,7 @@ import { RemoveButton } from './RemoveButton'
 import { SidebarItemAction } from './SidebarItemAction'
 import { uniqueName } from './uniqueName'
 import type { Project } from './types'
+import { useRedirectAfterRemove } from './useRedirectAfterRemove'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type ProjectItemProps = {
@@ -21,10 +22,12 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
+  const redirectAfterRemove = useRedirectAfterRemove()
 
   function handleRemove() {
     setProjects((prev) => prev.filter((item) => item.id !== project.id))
     setLibraryOrder((prev) => prev.filter((id) => id !== project.id))
+    redirectAfterRemove(project.id)
   }
 
   function handleClone() {

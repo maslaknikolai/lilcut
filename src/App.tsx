@@ -1,11 +1,10 @@
-import { useSetAtom } from 'jotai'
-import { Menu } from 'lucide-react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { isSidebarOpenAtom, libraryOrderAtom, projectsAtom } from './atoms'
+import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
 import { Modals } from './Modals'
+import { OpenSidebarButton } from './OpenSidebarButton'
 import { PageView } from './PageView'
 import { Sidebar } from './Sidebar'
 import { RecordingPipWindow } from './RecordingPipWindow'
@@ -14,8 +13,6 @@ import { useSyncIndexedDbAtom } from './useSyncIndexedDbAtom'
 import { useSyncMediaAssets } from './useSyncMediaAssets'
 
 function AppContent() {
-  const setIsSidebarOpen = useSetAtom(isSidebarOpenAtom)
-
   return (
     <TooltipProvider>
       <ExportJobProvider>
@@ -25,14 +22,7 @@ function AppContent() {
             <PageView />
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(true)}
-            aria-label="Open sidebar"
-            className="touch-target fixed bottom-2 left-2 z-20 cursor-pointer rounded border border-slate-700 bg-slate-900 p-2 text-slate-300 active:bg-slate-800 md:hidden"
-          >
-            <Menu size={20} />
-          </button>
+          <OpenSidebarButton />
 
           <div className="fixed top-2 right-2">
             <ExportJobWidget />

@@ -37,6 +37,7 @@ export function Sidebar() {
             <span className="text-lg font-bold tracking-tight">lilcut</span>
             <HelpButton />
           </div>
+          <h2 className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
           <div className="flex flex-wrap gap-1 items-center">
             <RecordControls />
             <UploadMediaAssetButton />

@@ -5,6 +5,7 @@ import { RemoveButton } from './RemoveButton'
 import { SidebarItemAction } from './SidebarItemAction'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
+import { useRedirectAfterRemove } from './useRedirectAfterRemove'
 
 type MediaAssetItemProps = {
   mediaAsset: MediaAsset
@@ -24,9 +25,11 @@ export function MediaAssetItem({
   onDragEnd,
 }: MediaAssetItemProps) {
   const { deleteMediaAsset } = useMediaAssetActions()
+  const redirectAfterRemove = useRedirectAfterRemove()
 
   async function handleRemove() {
     await deleteMediaAsset(mediaAsset.opfsName)
+    redirectAfterRemove(mediaAsset.opfsName)
   }
 
   async function handleDownload() {
