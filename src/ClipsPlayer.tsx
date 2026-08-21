@@ -1,6 +1,9 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useSetAtom } from 'jotai'
 import { Pause, Play } from 'lucide-react'
+import { projectsAtom } from './atoms'
 import { CutHereButton } from './CutHereButton'
+import { updateProject } from './library'
 import { formatTimestamp } from './formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './projectTimeline'
 import { Timeline } from './Timeline'
@@ -19,9 +22,9 @@ function arrowSeekStep(event: KeyboardEvent): number {
     return 30
   }
   if (event.shiftKey) {
-    return 1
+    return 0.01
   }
-  return 0.01
+  return 1
 }
 
 type ClipsPlayerProps = {
@@ -34,13 +37,15 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
   const playbackClips = buildPlaybackClips(timelineClips)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
+  const setProjects = useSetAtom(projectsAtom)
   const [projectTime, setProjectTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const currentPlaybackClipIndex = findClipIndexAtTime(playbackClips, projectTime)
   const currentPlaybackClip = playbackClips[currentPlaybackClipIndex]
-  const currentTimelineClip = timelineClips[findClipIndexAtTime(timelineClips, projectTime)]
+  const currentTimelineClipIndex = findClipIndexAtTime(timelineClips, projectTime)
+  const currentTimelineClip = timelineClips[currentTimelineClipIndex]
   const currentMediaAsset = mediaAssets.find(
     (mediaAsset) => mediaAsset.opfsName === currentPlaybackClip?.mediaAssetOpfsName,
   )
@@ -168,9 +173,35 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
     }
   }
 
+  function removeCurrentClip() {
+    if (!currentTimelineClip) {
+      return
+    }
+    seekToProjectTime(currentTimelineClip.projectStart)
+    setProjects((prev) =>
+      updateProject(prev, project.id, (p) => {
+        const clips = p.clips.filter((clip) => clip.id !== currentTimelineClip.id)
+        return { ...p, clips }
+      }),
+    )
+  }
+
+  function handleArrowPress(event: KeyboardEvent, direction: -1 | 1) {
+    if (event.altKey) {
+      const targetTimelineClip = timelineClips[currentTimelineClipIndex + direction]
+      if (targetTimelineClip) {
+        seekToProjectTime(targetTimelineClip.projectStart)
+      }
+      return
+    }
+    seekToProjectTime(projectTime + direction * arrowSeekStep(event))
+  }
+
   useKeyPress('Space', togglePlayback)
-  useKeyPress('ArrowLeft', (event) => seekToProjectTime(projectTime - arrowSeekStep(event)))
-  useKeyPress('ArrowRight', (event) => seekToProjectTime(projectTime + arrowSeekStep(event)))
+  useKeyPress('ArrowLeft', (event) => handleArrowPress(event, -1))
+  useKeyPress('ArrowRight', (event) => handleArrowPress(event, 1))
+  useKeyPress('Backspace', removeCurrentClip)
+  useKeyPress('Delete', removeCurrentClip)
 
   return (
     <>
@@ -253,7 +284,6 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
           projectTime={projectTime}
           currentTimelineClip={currentTimelineClip}
         />
-
       </div>
 
       <Timeline
