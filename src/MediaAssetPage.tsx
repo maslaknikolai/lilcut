@@ -73,7 +73,6 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
         </div>
 
         <div className="flex items-center gap-1 pt-2">
-          <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
           <MediaAssetActions mediaAsset={mediaAsset} />
         </div>
       </div>
@@ -88,25 +87,29 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           <span className="text-slate-400">Loading…</span>
         )}
       </div>
-      {projectsUsingAsset.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 max-h-32 overflow-y-auto">
-          Used in projects:
-          {projectsUsingAsset.map((project) => (
-            <button
-              key={project.id}
-              type="button"
-              onClick={() => setSelectedLibraryItemId(project.id)}
-              className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500 active:border-slate-400 active:bg-slate-900"
-            >
-              <Scissors
-                size={14}
-                className="shrink-0 text-blue-500"
-              />
-              {project.name}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 max-h-32 overflow-y-auto">
+        {projectsUsingAsset.length > 0 && (
+          <>
+            Used in projects:
+            {projectsUsingAsset.map((project) => (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setSelectedLibraryItemId(project.id)}
+                className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500 active:border-slate-400 active:bg-slate-900"
+              >
+                <Scissors
+                  size={14}
+                  className="shrink-0 text-blue-500"
+                />
+                {project.name}
+              </button>
+            ))}
+          </>
+        )}
+
+        <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+      </div>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { CutHereButton } from './CutHereButton'
 import { updateProject } from './library'
 import { formatTimestamp } from './formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './projectTimeline'
+import { RenderProjectButton } from './RenderProjectButton'
 import { Timeline } from './Timeline'
 import type { MediaAsset, Project } from './types'
 import { useMediaAssetVideoUrls } from './useMediaAssetVideoUrls'
@@ -330,6 +331,8 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
               projectTime={projectTime}
               currentTimelineClip={currentTimelineClip}
             />
+
+            <RenderProjectButton project={project} />
           </div>
 
           <ClipsEditorHotkeysButton />
