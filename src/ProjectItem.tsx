@@ -1,10 +1,9 @@
-import { cn } from '@/lib/utils'
 import { useAtom, useSetAtom } from 'jotai'
 import { Files, Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
+import { LibraryItem } from './LibraryItem'
 import { RemoveButton } from './RemoveButton'
 import { SidebarItemAction } from './SidebarItemAction'
-import { SortingItem } from './SortingItem'
 import { uniqueName } from './uniqueName'
 import type { Project } from './types'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
@@ -19,10 +18,9 @@ type ProjectItemProps = {
 }
 
 export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDrop, onDragEnd }: ProjectItemProps) {
-  const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
+  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const isSelected = project.id === selectedLibraryItemId
 
   function handleRemove() {
     setProjects((prev) => prev.filter((item) => item.id !== project.id))
@@ -41,26 +39,22 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
     setSelectedLibraryItemId(cloneId)
   }
 
-  const selectionClassName = cn('cursor-pointer', isSelected ? 'bg-slate-800' : 'hover:bg-slate-900')
-
   return (
-    <SortingItem
+    <LibraryItem
+      id={project.id}
+      name={project.name}
+      icon={
+        <Scissors
+          size={14}
+          className="shrink-0 text-blue-500"
+        />
+      }
       isDragging={isDragging}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      onClick={() => setSelectedLibraryItemId(project.id)}
-      className={selectionClassName}
-      dragHandleLabel={`Reorder ${project.name}`}
     >
-      <Scissors
-        size={14}
-        className="mr-1.5 shrink-0 text-blue-500"
-      />
-
-      <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{project.name}</span>
-
       <SidebarItemAction
         onClick={handleClone}
         label={`Clone ${project.name}`}
@@ -73,6 +67,6 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
         label={project.name}
         onRemove={handleRemove}
       />
-    </SortingItem>
+    </LibraryItem>
   )
 }

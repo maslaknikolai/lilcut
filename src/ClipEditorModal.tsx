@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Play, X } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
+import { ClipTrimBar } from './ClipTrimBar'
 import { updateProject } from './library'
 import type { TimelineClip } from './projectTimeline'
 import { formatTimestamp } from './formatTimestamp'
@@ -31,6 +32,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
   const rawClip = projects.find((p) => p.id === projectId)?.clips.find((item) => item.id === clip?.id)
   const [isToVideoEnd, setIsToVideoEnd] = useState(clip !== null && rawClip?.cutEnd === undefined)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [currentTime, setCurrentTime] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const isPreviewingRef = useRef(false)
 
@@ -162,34 +164,6 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           </button>
         </div>
 
-        {otherProjectClips.length > 0 && (
-          <label className="flex flex-col gap-1 text-sm text-slate-300">
-            Copy file and range from another project's clip
-            <select
-              value=""
-              onChange={(e) => applyOtherProjectClip(e.target.value)}
-              className="rounded border border-slate-700 px-2 py-1"
-            >
-              <option
-                value=""
-                disabled
-              >
-                Select a clip
-              </option>
-              {otherProjectClips.map(({ project, projectClip }) => (
-                <option
-                  key={projectClip.id}
-                  value={projectClip.id}
-                >
-                  {project.name} — {projectClip.mediaAssetOpfsName} (
-                  {formatTimestamp(roundTime(projectClip.cutStart ?? 0))}–
-                  {projectClip.cutEnd === undefined ? 'end' : formatTimestamp(roundTime(projectClip.cutEnd))})
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
-
         <label className="flex flex-col gap-1 text-sm text-slate-300">
           File
           <select
@@ -226,6 +200,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
               }
             }}
             onTimeUpdate={(e) => {
+              setCurrentTime(e.currentTarget.currentTime)
               if (isPreviewingRef.current && !isToVideoEnd && e.currentTarget.currentTime >= cutEnd) {
                 e.currentTarget.pause()
               }
@@ -236,6 +211,30 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           />
         ) : (
           <div className="flex-1" />
+        )}
+
+        {mediaAsset && (
+          <ClipTrimBar
+            duration={mediaAsset.duration}
+            cutStart={cutStart}
+            cutEnd={cutEnd}
+            isToVideoEnd={isToVideoEnd}
+            currentTime={currentTime}
+            onRangeChange={(newCutStart, newCutEnd) => {
+              let seekTarget: number | null = null
+              if (newCutStart !== cutStart) {
+                setCutStart(roundTime(newCutStart))
+                seekTarget = newCutStart
+              }
+              if (newCutEnd !== undefined && newCutEnd !== cutEnd) {
+                setCutEnd(roundTime(newCutEnd))
+                seekTarget = newCutEnd
+              }
+              if (seekTarget !== null && videoRef.current) {
+                videoRef.current.currentTime = seekTarget
+              }
+            }}
+          />
         )}
 
         <div className="flex items-start gap-2">
@@ -303,6 +302,36 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             </label>
           </div>
         </div>
+
+        {otherProjectClips.length > 0 && (
+          <details>
+            <summary className="cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+              Copy file and range from another project's clip
+            </summary>
+            <select
+              value=""
+              onChange={(e) => applyOtherProjectClip(e.target.value)}
+              className="mt-1 w-full rounded border border-slate-700 px-2 py-1 text-sm text-slate-300"
+            >
+              <option
+                value=""
+                disabled
+              >
+                Select a clip
+              </option>
+              {otherProjectClips.map(({ project, projectClip }) => (
+                <option
+                  key={projectClip.id}
+                  value={projectClip.id}
+                >
+                  {project.name} — {projectClip.mediaAssetOpfsName} (
+                  {formatTimestamp(roundTime(projectClip.cutStart ?? 0))}–
+                  {projectClip.cutEnd === undefined ? 'end' : formatTimestamp(roundTime(projectClip.cutEnd))})
+                </option>
+              ))}
+            </select>
+          </details>
+        )}
 
         <div className="flex justify-end gap-2">
           <button

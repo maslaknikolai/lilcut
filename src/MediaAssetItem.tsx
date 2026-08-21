@@ -1,12 +1,10 @@
-import { cn } from '@/lib/utils'
 import { Download, FilePlay } from 'lucide-react'
+import { LibraryItem } from './LibraryItem'
 import { readOpfsFile } from './opfs'
 import { RemoveButton } from './RemoveButton'
 import { SidebarItemAction } from './SidebarItemAction'
-import { SortingItem } from './SortingItem'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
-import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
 type MediaAssetItemProps = {
   mediaAsset: MediaAsset
@@ -25,9 +23,7 @@ export function MediaAssetItem({
   onDrop,
   onDragEnd,
 }: MediaAssetItemProps) {
-  const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const { deleteMediaAsset } = useMediaAssetActions()
-  const isSelected = mediaAsset.opfsName === selectedLibraryItemId
 
   async function handleRemove() {
     await deleteMediaAsset(mediaAsset.opfsName)
@@ -43,26 +39,22 @@ export function MediaAssetItem({
     URL.revokeObjectURL(url)
   }
 
-  const selectionClassName = cn('cursor-pointer', isSelected ? 'bg-slate-800' : 'hover:bg-slate-900')
-
   return (
-    <SortingItem
+    <LibraryItem
+      id={mediaAsset.opfsName}
+      name={mediaAsset.opfsName}
+      icon={
+        <FilePlay
+          size={14}
+          className="shrink-0 text-violet-500"
+        />
+      }
       isDragging={isDragging}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      onClick={() => setSelectedLibraryItemId(mediaAsset.opfsName)}
-      className={selectionClassName}
-      dragHandleLabel={`Reorder ${mediaAsset.opfsName}`}
     >
-      <FilePlay
-        size={14}
-        className="mr-1.5 shrink-0 text-violet-500"
-      />
-
-      <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{mediaAsset.opfsName}</span>
-
       <SidebarItemAction
         onClick={handleDownload}
         label={`Download ${mediaAsset.opfsName}`}
@@ -75,6 +67,6 @@ export function MediaAssetItem({
         label={mediaAsset.opfsName}
         onRemove={handleRemove}
       />
-    </SortingItem>
+    </LibraryItem>
   )
 }

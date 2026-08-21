@@ -93,7 +93,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
   return (
     <DragScrollArea
       ref={scrollerRef}
-      className="overflow-x-scroll pb-1 px-4"
+      className="overflow-x-scroll pb-10 px-4"
     >
       <WheelZoomArea
         onZoom={handleZoom}
@@ -119,6 +119,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
                 pxPerSecond={pxPerSecond ?? 0}
                 isCurrent={timelineClip.id === currentTimelineClipId}
                 onEdit={() => openClipEditor(timelineClip)}
+                onSeekToStart={() => onSeek(timelineClip.projectStart)}
               />,
             ])}
             {timelineClips.length > 0 && <InsertClipButton onClick={() => openClipCreator(timelineClips.length)} />}

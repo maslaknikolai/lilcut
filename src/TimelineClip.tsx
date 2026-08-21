@@ -14,9 +14,10 @@ type SegmentProps = {
   pxPerSecond: number
   isCurrent: boolean
   onEdit: () => void
+  onSeekToStart: () => void
 }
 
-export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, onEdit }: SegmentProps) {
+export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, onEdit, onSeekToStart }: SegmentProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const setProjects = useSetAtom(projectsAtom)
   const rootRef = useScrollCurrentIntoView(isCurrent)
@@ -71,6 +72,7 @@ export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, on
       <TooltipTrigger asChild>
         <div
           ref={rootRef}
+          onDoubleClick={onSeekToStart}
           className={`relative flex shrink-0 items-center rounded text-xs font-medium ${
             isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white'
           }`}
