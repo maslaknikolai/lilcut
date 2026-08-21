@@ -3,6 +3,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { libraryOrderAtom, projectsAtom } from './atoms'
 import { ExportJobProvider } from './ExportJobContext'
 import { ExportJobWidget } from './ExportJobWidget'
+import { Modals } from './Modals'
 import { PageView } from './PageView'
 import { Sidebar } from './Sidebar'
 import { RecordingPipWindow } from './RecordingPipWindow'
@@ -25,7 +26,7 @@ function AppContent() {
           </div>
 
           <RecordingPipWindow />
-          {/* TODO <Modal />  */}
+          <Modals />
         </ScreenRecordingProvider>
       </ExportJobProvider>
     </TooltipProvider>

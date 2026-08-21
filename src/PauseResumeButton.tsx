@@ -1,5 +1,5 @@
 import { Pause, Play } from 'lucide-react'
-import { ActionButton } from './ActionButton'
+import { GhostButton } from './GhostButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
 type PauseResumeButtonProps = {
@@ -15,10 +15,9 @@ export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
   const isPaused = recording.status === 'paused'
 
   return (
-    <ActionButton
+    <GhostButton
       onClick={() => (isPaused ? resume() : pause())}
-      className="border-slate-700 text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
-    >
+          >
       {isPaused ? (
         <Play
           size={14}
@@ -31,6 +30,6 @@ export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
         />
       )}
       {isWithLabel && <span>{isPaused ? 'Resume' : 'Pause'}</span>}
-    </ActionButton>
+    </GhostButton>
   )
 }

@@ -8,25 +8,25 @@ export function useMediaAssetActions() {
   const setMediaAssets = useSetAtom(mediaAssetsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
-  async function refresh() {
+  async function refreshMediaAssets() {
     setMediaAssets(await listOpfsMediaAssets())
   }
 
   async function writeMediaAsset(name: string, blob: Blob): Promise<void> {
     await writeOpfsFile(name, blob)
-    await refresh()
+    await refreshMediaAssets()
   }
 
   async function deleteMediaAsset(name: string): Promise<void> {
     await deleteOpfsFile(name)
-    await refresh()
+    await refreshMediaAssets()
     setLibraryOrder((prev) => prev.filter((id) => id !== name))
   }
 
   async function renameMediaAsset(oldName: string, newName: string): Promise<void> {
     await renameOpfsFile(oldName, newName)
-    await refresh()
+    await refreshMediaAssets()
   }
 
-  return { writeMediaAsset, deleteMediaAsset, renameMediaAsset }
+  return { writeMediaAsset, deleteMediaAsset, renameMediaAsset, refreshMediaAssets }
 }

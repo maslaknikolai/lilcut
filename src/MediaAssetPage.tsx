@@ -1,12 +1,9 @@
 import { useState } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { Scissors } from 'lucide-react'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
-import { ActionButton } from './ActionButton'
+import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
 import { RenameField } from './RenameField'
-import { stripExtension } from './stripExtension'
 import type { MediaAsset } from './types'
-import { uniqueName } from './uniqueName'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
@@ -19,7 +16,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const videoUrl = useMediaAssetVideoUrl(mediaAsset)
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { renameMediaAsset } = useMediaAssetActions()
-  const [projects, setProjects] = useAtom(projectsAtom)
+  const setProjects = useSetAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [isNameTaken, setIsNameTaken] = useState(false)
@@ -49,18 +46,6 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
     }
   }
 
-  function createProjectFromMediaAsset() {
-    const projectId = crypto.randomUUID()
-    const name = uniqueName(
-      stripExtension(mediaAsset.opfsName),
-      projects.map((project) => project.name),
-    )
-    const clip = { id: crypto.randomUUID(), mediaAssetOpfsName: mediaAsset.opfsName }
-    setProjects((prev) => [{ id: projectId, name, clips: [clip] }, ...prev])
-    setLibraryOrder((prev) => [projectId, ...prev])
-    setSelectedLibraryItemId(projectId)
-  }
-
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden p-4">
       <div className="flex items-center gap-2">
@@ -71,13 +56,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           className={isNameTaken ? 'ring-1 ring-red-500' : ''}
         />
 
-        <ActionButton
-          onClick={createProjectFromMediaAsset}
-          className="border-slate-700 px-3 py-1.5 text-blue-400 hover:bg-slate-900"
-        >
-          <Scissors size={14} />
-          <span>Use video in new project</span>
-        </ActionButton>
+        <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
       </div>
 
       <div className="flex flex-1 items-center justify-center overflow-hidden">

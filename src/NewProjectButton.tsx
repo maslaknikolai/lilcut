@@ -1,7 +1,7 @@
 import { useAtom, useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from './atoms'
-import { ActionButton } from './ActionButton'
+import { GhostButton } from './GhostButton'
 import { uniqueName } from './uniqueName'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
@@ -26,12 +26,12 @@ export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
   }
 
   return (
-    <ActionButton
+    <GhostButton
       onClick={handleClick}
-      className="border-slate-700 text-blue-400 hover:bg-slate-900"
+      className="text-blue-400"
     >
       <Scissors size={14} />
       {isWithLabel && <span>New project</span>}
-    </ActionButton>
+    </GhostButton>
   )
 }

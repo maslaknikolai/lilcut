@@ -1,6 +1,12 @@
 import { uniqueName } from './uniqueName'
 import type { MediaAsset } from './types'
 
+export async function createOpfsWritable(name: string): Promise<FileSystemWritableFileStream> {
+  const root = await navigator.storage.getDirectory()
+  const handle = await root.getFileHandle(name, { create: true })
+  return handle.createWritable()
+}
+
 export async function writeOpfsFile(name: string, blob: Blob): Promise<void> {
   const root = await navigator.storage.getDirectory()
   const handle = await root.getFileHandle(name, { create: true })

@@ -1,6 +1,8 @@
 import { useSetAtom } from 'jotai'
 import { libraryOrderAtom } from './atoms'
+import { HelpButton } from './HelpButton'
 import { libraryItemId, useLibraryItems } from './library'
+import { LibraryTransferControls } from './LibraryTransferControls'
 import { MediaAssetItem } from './MediaAssetItem'
 import { NewProjectButton } from './NewProjectButton'
 import { ProjectItem } from './ProjectItem'
@@ -14,19 +16,20 @@ export function Sidebar() {
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
   return (
-    <div className="flex w-80 shrink-0 flex-col border-r border-slate-700">
+    <div className="flex w-85 shrink-0 flex-col border-r border-slate-700">
       <header className="flex flex-col gap-1 border-b border-slate-700 p-2">
-        <span className="text-lg font-bold tracking-tight">lilcut</span>
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-bold tracking-tight">lilcut</span>
+          <HelpButton />
+        </div>
         <div className="flex flex-wrap gap-1 items-center">
           <RecordControls isWithLabel />
           <UploadMediaAssetButton isWithLabel />
-        </div>
-        <div className="flex flex-wrap gap-1 items-center">
           <NewProjectButton isWithLabel />
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto [scrollbar-color:var(--color-slate-600)_transparent] scrollbar-gutter-stable scrollbar-thin">
         <SortingList
           items={library}
           getId={libraryItemId}
@@ -47,8 +50,9 @@ export function Sidebar() {
         />
       </div>
 
-      <div className="border-t border-slate-700 p-2">
+      <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
         <StorageUsage />
+        <LibraryTransferControls />
       </div>
     </div>
   )

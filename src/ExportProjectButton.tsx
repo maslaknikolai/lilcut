@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai'
 import { FilePlay, LoaderCircle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { mediaAssetsAtom } from './atoms'
+import { GhostButton } from './GhostButton'
 import { buildPlaybackClips, buildTimelineClips } from './projectTimeline'
 import type { Project } from './types'
 import { useConcatCompatibility } from './useConcatCompatibility'
@@ -36,23 +37,23 @@ export function ExportProjectButton({ project }: ExportProjectButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
-          type="button"
+        <GhostButton
           onClick={() => startExport(project)}
           disabled={isExporting || project.clips.length === 0}
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm font-medium text-violet-400 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 px-3 py-1.5 text-sm text-violet-400"
         >
           <FilePlay size={14} />
           {isExporting ? 'Exporting…' : 'Export mp4'}
-          {concatCompatibility === 'probing' ? (
-            <LoaderCircle
-              size={14}
-              className="animate-spin text-slate-500"
-            />
-          ) : (
-            <span className={INDICATOR_CLASS_NAMES[concatCompatibility]}>●</span>
-          )}
-        </button>
+          {project.clips.length > 0 &&
+            (concatCompatibility === 'probing' ? (
+              <LoaderCircle
+                size={14}
+                className="animate-spin text-slate-500"
+              />
+            ) : (
+              <span className={INDICATOR_CLASS_NAMES[concatCompatibility]}>●</span>
+            ))}
+        </GhostButton>
       </TooltipTrigger>
 
       <TooltipContent>{TOOLTIP_TEXTS[concatCompatibility]}</TooltipContent>

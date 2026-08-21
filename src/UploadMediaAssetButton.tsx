@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { uniqueOpfsName } from './opfs'
-import { ActionButton } from './ActionButton'
+import { GhostButton } from './GhostButton'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
@@ -34,13 +34,13 @@ export function UploadMediaAssetButton({ isWithLabel }: UploadMediaAssetButtonPr
 
   return (
     <>
-      <ActionButton
+      <GhostButton
         onClick={() => inputRef.current?.click()}
-        className="border-slate-700 text-violet-400 hover:bg-slate-900"
+        className="text-violet-400"
       >
         <Upload size={14} />
         {isWithLabel && <span>Upload video</span>}
-      </ActionButton>
+      </GhostButton>
 
       <input
         ref={inputRef}
