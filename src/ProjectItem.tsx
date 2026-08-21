@@ -54,19 +54,22 @@ export function ProjectItem({ project, isDragging, onDragStart, onDragOver, onDr
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-    >
-      <SidebarItemAction
-        onClick={handleClone}
-        label={`Clone ${project.name}`}
-        tooltip="Clone project"
-      >
-        <Files size={16} />
-      </SidebarItemAction>
+      actions={
+        <>
+          <SidebarItemAction
+            onClick={handleClone}
+            label={`Clone ${project.name}`}
+            tooltip="Clone project"
+          >
+            <Files size={16} />
+          </SidebarItemAction>
 
-      <RemoveButton
-        label={project.name}
-        onRemove={handleRemove}
-      />
-    </LibraryItem>
+          <RemoveButton
+            label={project.name}
+            onRemove={handleRemove}
+          />
+        </>
+      }
+    />
   )
 }

@@ -54,19 +54,22 @@ export function MediaAssetItem({
       onDragOver={onDragOver}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-    >
-      <SidebarItemAction
-        onClick={handleDownload}
-        label={`Download ${mediaAsset.opfsName}`}
-        tooltip="Download file"
-      >
-        <Download size={16} />
-      </SidebarItemAction>
+      actions={
+        <>
+          <SidebarItemAction
+            onClick={handleDownload}
+            label={`Download ${mediaAsset.opfsName}`}
+            tooltip="Download file"
+          >
+            <Download size={16} />
+          </SidebarItemAction>
 
-      <RemoveButton
-        label={mediaAsset.opfsName}
-        onRemove={handleRemove}
-      />
-    </LibraryItem>
+          <RemoveButton
+            label={mediaAsset.opfsName}
+            onRemove={handleRemove}
+          />
+        </>
+      }
+    />
   )
 }

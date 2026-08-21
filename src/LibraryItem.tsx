@@ -14,7 +14,7 @@ type LibraryItemProps = {
   onDragOver: () => void
   onDrop: () => void
   onDragEnd: () => void
-  children?: ReactNode
+  actions?: ReactNode
 }
 
 export function LibraryItem({
@@ -26,13 +26,11 @@ export function LibraryItem({
   onDragOver,
   onDrop,
   onDragEnd,
-  children,
+  actions,
 }: LibraryItemProps) {
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const setIsSidebarOpen = useSetAtom(isSidebarOpenAtom)
   const isSelected = id === selectedLibraryItemId
-
-  const selectionClassName = cn('cursor-pointer gap-1.5', isSelected ? 'bg-blue-800/40' : 'hover:bg-blue-900/40')
 
   return (
     <SortingItem
@@ -45,14 +43,14 @@ export function LibraryItem({
         setSelectedLibraryItemId(id)
         setIsSidebarOpen(false)
       }}
-      className={selectionClassName}
+      className={cn('cursor-pointer gap-1.5 py-1', isSelected ? 'bg-blue-800/40' : 'hover:bg-blue-900/40')}
       dragHandleLabel={`Reorder ${name}`}
     >
       {icon}
 
       <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{name}</span>
 
-      {children}
+      <div className="flex items-stretch gap-1 self-stretch">{actions}</div>
     </SortingItem>
   )
 }
