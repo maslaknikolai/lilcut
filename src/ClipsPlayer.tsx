@@ -237,7 +237,8 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
               }
               togglePlayback()
             }}
-            onPointerDown={() => {
+            onPointerDown={(e) => {
+              e.preventDefault()
               longPressTimeoutRef.current = window.setTimeout(() => {
                 isLongPressingRef.current = true
                 if (videoRef.current) {
