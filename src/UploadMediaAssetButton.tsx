@@ -1,16 +1,11 @@
 import { useRef, type ChangeEvent } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
-import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
 import { GhostButton } from './GhostButton'
-import { uniqueName } from './uniqueName'
-import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
+import { useUploadMediaAssets } from './useUploadMediaAssets'
 
 export function UploadMediaAssetButton() {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const { writeMediaAsset } = useMediaAssetActions()
-  const setLibraryOrder = useSetAtom(libraryOrderAtom)
+  const uploadMediaAssets = useUploadMediaAssets()
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -21,16 +16,7 @@ export function UploadMediaAssetButton() {
       return
     }
 
-    const knownOpfsNames = mediaAssets.map((mediaAsset) => mediaAsset.opfsName)
-    const uploadedOpfsNames: string[] = []
-    for (const file of files) {
-      const opfsName = uniqueName(file.name, knownOpfsNames)
-      knownOpfsNames.push(opfsName)
-      await writeMediaAsset(opfsName, file)
-      uploadedOpfsNames.push(opfsName)
-    }
-
-    setLibraryOrder((prev) => [...uploadedOpfsNames, ...prev])
+    const uploadedOpfsNames = await uploadMediaAssets(files)
     setSelectedLibraryItemId(uploadedOpfsNames[0])
   }
 

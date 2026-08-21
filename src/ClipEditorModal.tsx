@@ -1,12 +1,14 @@
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, type ChangeEvent } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { Play, X } from 'lucide-react'
+import { Play, Upload, X } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipTrimBar } from './ClipTrimBar'
 import { updateProject } from './library'
 import type { TimelineClip } from './projectTimeline'
 import { formatTimestamp } from './formatTimestamp'
+import { GhostButton } from './GhostButton'
 import { readOpfsFile } from './opfs'
+import { useUploadMediaAssets } from './useUploadMediaAssets'
 
 function roundTime(time: number): number {
   return Math.round(time * 100) / 100
@@ -85,6 +87,19 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
       setCutStart(0)
       setCutEnd(0)
     }
+  }
+
+  const uploadInputRef = useRef<HTMLInputElement>(null)
+  const uploadMediaAssets = useUploadMediaAssets()
+
+  async function handleUploadChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) {
+      return
+    }
+    const [uploadedOpfsName] = await uploadMediaAssets([file])
+    handleMediaAssetChange(uploadedOpfsName)
   }
 
   function captureCutStart() {
@@ -166,26 +181,47 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
 
         <label className="flex flex-col gap-1 text-sm text-slate-300">
           File
-          <select
-            value={mediaAssetOpfsName}
-            onChange={(e) => handleMediaAssetChange(e.target.value)}
-            className="min-h-10 rounded border border-slate-700 px-2 py-1"
-          >
-            <option
-              value=""
-              disabled
+          <div className="flex gap-1">
+            <select
+              value={mediaAssetOpfsName}
+              onChange={(e) => handleMediaAssetChange(e.target.value)}
+              className="min-h-10 min-w-0 flex-1 rounded border border-slate-700 px-2 py-1"
             >
-              Select a file
-            </option>
-            {mediaAssets.map((mediaAsset) => (
               <option
-                key={mediaAsset.opfsName}
-                value={mediaAsset.opfsName}
+                value=""
+                disabled
               >
-                {mediaAsset.opfsName}
+                Select a file
               </option>
-            ))}
-          </select>
+              {mediaAssets.map((mediaAsset) => (
+                <option
+                  key={mediaAsset.opfsName}
+                  value={mediaAsset.opfsName}
+                >
+                  {mediaAsset.opfsName}
+                </option>
+              ))}
+            </select>
+
+            <GhostButton
+              onClick={() => uploadInputRef.current?.click()}
+              className="shrink-0 px-2"
+            >
+              <Upload
+                size={14}
+                className="text-violet-400"
+              />
+              Import video
+            </GhostButton>
+
+            <input
+              ref={uploadInputRef}
+              type="file"
+              accept="video/*"
+              onChange={handleUploadChange}
+              className="hidden"
+            />
+          </div>
         </label>
 
         {videoUrl ? (
