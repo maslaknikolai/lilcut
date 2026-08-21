@@ -4,6 +4,7 @@ import { projectsAtom } from './atoms'
 import { updateProject } from './library'
 import { type TimelineClip } from './projectTimeline'
 import type { Project } from './types'
+import { useKeyPress } from './useKeyPress'
 
 type ProjectPreviewProps = {
   project: Project
@@ -50,6 +51,8 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
     )
   }
 
+  useKeyPress('KeyC', cutHere)
+
   return (
     <button
       type="button"
@@ -59,6 +62,7 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
     >
       <Scissors size={14} />
       Cut Here
+      <kbd className="rounded border border-slate-700 px-1 text-[10px] text-slate-500">C</kbd>
     </button>
   )
 }

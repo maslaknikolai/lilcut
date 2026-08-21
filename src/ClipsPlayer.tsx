@@ -6,11 +6,22 @@ import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './p
 import { Timeline } from './Timeline'
 import type { MediaAsset, Project } from './types'
 import { useMediaAssetVideoUrls } from './useMediaAssetVideoUrls'
+import { useKeyPress } from './useKeyPress'
 
 // find problems by filtering the console for [player]; verbose ticks are
 // deliberately not logged — every entry is a transition or a suppressed race
 function logPlayer(message: string, ...details: unknown[]) {
   console.debug(`[player] ${message}`, ...details)
+}
+
+function arrowSeekStep(event: KeyboardEvent): number {
+  if (event.metaKey || event.ctrlKey) {
+    return 30
+  }
+  if (event.shiftKey) {
+    return 1
+  }
+  return 0.01
 }
 
 type ClipsPlayerProps = {
@@ -156,6 +167,10 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
       video.pause()
     }
   }
+
+  useKeyPress('Space', togglePlayback)
+  useKeyPress('ArrowLeft', (event) => seekToProjectTime(projectTime - arrowSeekStep(event)))
+  useKeyPress('ArrowRight', (event) => seekToProjectTime(projectTime + arrowSeekStep(event)))
 
   return (
     <>

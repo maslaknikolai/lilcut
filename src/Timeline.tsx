@@ -8,6 +8,7 @@ import { buildTimelineClips, type TimelineClip as TimelineClipT } from './projec
 import { Scrubber } from './Scrubber'
 import { TimelineClip } from './TimelineClip'
 import type { Project } from './types'
+import { useKeyPress } from './useKeyPress'
 import { WheelZoomArea } from './WheelZoomArea'
 
 type TimelineProps = {
@@ -74,6 +75,8 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
     pendingScrollLeftRef.current = (scroller.scrollLeft + cursorX) * scaleRatio - cursorX
     setPxPerSecond(newPxPerSecond)
   }
+
+  useKeyPress('Digit0', () => setPxPerSecond(minPxPerSecondRef.current))
 
   const applyPendingZoomScroll = useEffectEvent(() => {
     const scroller = scrollerRef.current
