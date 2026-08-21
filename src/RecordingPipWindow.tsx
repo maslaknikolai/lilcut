@@ -27,6 +27,7 @@ export function RecordingPipWindow() {
       return
     }
     const pip = await window.documentPictureInPicture.requestWindow({ width: 280, height: 72 })
+    pip.document.title = 'lilcut — recording'
     copyStylesInto(pip.document)
     pip.addEventListener('pagehide', () => setPipWindow(null))
     setPipWindow(pip)
