@@ -5,7 +5,7 @@ import type { Project } from './types'
 export type ExportJob =
   | { status: 'idle' }
   | { status: 'exporting'; projectName: string; progress: number; logLines: string[] }
-  | { status: 'complete'; projectName: string }
+  | { status: 'complete'; projectName: string; exportedOpfsName: string }
 
 type ExportJobContextValue = {
   job: ExportJob

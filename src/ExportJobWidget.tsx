@@ -1,4 +1,5 @@
 import { OctagonX, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useExportJobContext } from './useExportJobContext'
 
 export function ExportJobWidget() {
@@ -26,7 +27,13 @@ export function ExportJobWidget() {
         </>
       ) : (
         <>
-          <span>Exported "{job.projectName}"</span>
+          <Link
+            to={`/${encodeURIComponent(job.exportedOpfsName)}`}
+            onClick={dismissExport}
+            className="hover:underline"
+          >
+            Exported "{job.projectName}"
+          </Link>
           <button
             type="button"
             onClick={dismissExport}

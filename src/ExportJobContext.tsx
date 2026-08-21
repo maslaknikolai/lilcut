@@ -69,6 +69,7 @@ export function ExportJobProvider({ children }: { children: ReactNode }) {
         setJob({
           status: 'complete',
           projectName: project.name,
+          exportedOpfsName,
         })
       }
     } catch (error) {
