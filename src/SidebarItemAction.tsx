@@ -33,7 +33,7 @@ export function SidebarItemAction({ onClick, label, tooltip, className, onBlur, 
   }
 
   return (
-    <Tooltip>
+    <Tooltip disableHoverableContent>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent>{tooltip}</TooltipContent>
     </Tooltip>
