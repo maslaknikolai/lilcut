@@ -1,0 +1,28 @@
+import type { ReactNode } from 'react'
+
+type TimelineClipActionProps = {
+  onClick: () => void
+  label: string
+  disabled?: boolean
+  children: ReactNode
+}
+
+export function TimelineClipAction({ onClick, label, disabled, children }: TimelineClipActionProps) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      disabled={disabled}
+      // ponytail: native title instead of Radix Tooltip — a nested Radix
+      // tooltip force-closes the toolbar tooltip it lives in (one open globally)
+      title={label}
+      className="cursor-pointer rounded p-1.5 hover:bg-white/20 focus-visible:bg-white/20 disabled:hidden"
+      aria-label={label}
+    >
+      {children}
+    </button>
+  )
+}

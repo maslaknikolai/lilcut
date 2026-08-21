@@ -93,7 +93,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
   return (
     <DragScrollArea
       ref={scrollerRef}
-      className="overflow-x-scroll pb-1 px-4 [scrollbar-color:var(--color-slate-600)_transparent] scrollbar-thin"
+      className="overflow-x-scroll pb-1 px-4"
     >
       <WheelZoomArea
         onZoom={handleZoom}
@@ -105,39 +105,34 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
           onSeek={onSeek}
         />
 
-        <div className="flex h-12 gap-px">
-          {timelineClips.length === 0 && (
-            <button
-              type="button"
-              onClick={() => openClipCreator(0)}
-              className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200"
-            >
-              <Plus size={14} />
-              Add clip
-            </button>
-          )}
-          {timelineClips.flatMap((timelineClip, index) => [
-            <InsertClipButton
-              key={`insert-${timelineClip.id}`}
-              className={index === 0 ? 'left-0' : undefined}
-              onClick={() => openClipCreator(index)}
-            />,
-            <TimelineClip
-              key={timelineClip.id}
-              project={project}
-              timelineClip={timelineClip}
-              pxPerSecond={pxPerSecond ?? 0}
-              isCurrent={timelineClip.id === currentTimelineClipId}
-              onEdit={() => openClipEditor(timelineClip)}
-            />,
-          ])}
-          {timelineClips.length > 0 && (
-            <InsertClipButton
-              className="-left-4"
-              onClick={() => openClipCreator(timelineClips.length)}
-            />
-          )}
-        </div>
+        {timelineClips.length ? (
+          <div className="flex h-12 gap-px">
+            {timelineClips.flatMap((timelineClip, index) => [
+              <InsertClipButton
+                key={`insert-${timelineClip.id}`}
+                onClick={() => openClipCreator(index)}
+              />,
+              <TimelineClip
+                key={timelineClip.id}
+                project={project}
+                timelineClip={timelineClip}
+                pxPerSecond={pxPerSecond ?? 0}
+                isCurrent={timelineClip.id === currentTimelineClipId}
+                onEdit={() => openClipEditor(timelineClip)}
+              />,
+            ])}
+            {timelineClips.length > 0 && <InsertClipButton onClick={() => openClipCreator(timelineClips.length)} />}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => openClipCreator(0)}
+            className="h-12 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200"
+          >
+            <Plus size={14} />
+            Add clip
+          </button>
+        )}
       </WheelZoomArea>
     </DragScrollArea>
   )

@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { Pause, Play } from 'lucide-react'
 import { projectsAtom } from './atoms'
+import { ClipsEditorHotkeysButton } from './ClipsEditorHotkeysButton'
 import { CutHereButton } from './CutHereButton'
 import { updateProject } from './library'
 import { formatTimestamp } from './formatTimestamp'
@@ -254,44 +255,54 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
         )}
       </div>
 
-      <div className="flex items-center gap-2 px-4">
-        <button
-          type="button"
-          onClick={togglePlayback}
-          disabled={timelineClips.length === 0}
-          className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? (
-            <Pause
-              size={16}
-              fill="currentColor"
-            />
-          ) : (
-            <Play
-              size={16}
-              fill="currentColor"
-            />
-          )}
-        </button>
+      <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 px-4 py-10 gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                // space global Space hotkey
+                e.currentTarget.blur()
+                togglePlayback()
+              }}
+              disabled={timelineClips.length === 0}
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={isPlaying ? 'Pause' : 'Play'}
+            >
+              {isPlaying ? (
+                <Pause
+                  size={16}
+                  fill="currentColor"
+                />
+              ) : (
+                <Play
+                  size={16}
+                  fill="currentColor"
+                />
+              )}
+            </button>
 
-        <span className="shrink-0 text-xs text-slate-500">
-          {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
-        </span>
+            <span className="shrink-0 text-xs text-slate-500">
+              {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
+            </span>
 
-        <CutHereButton
+            <CutHereButton
+              project={project}
+              projectTime={projectTime}
+              currentTimelineClip={currentTimelineClip}
+            />
+          </div>
+
+          <ClipsEditorHotkeysButton />
+        </div>
+
+        <Timeline
           project={project}
+          currentTimelineClipId={currentTimelineClip?.id}
           projectTime={projectTime}
-          currentTimelineClip={currentTimelineClip}
+          onSeek={seekToProjectTime}
         />
       </div>
-
-      <Timeline
-        project={project}
-        currentTimelineClipId={currentTimelineClip?.id}
-        projectTime={projectTime}
-        onSeek={seekToProjectTime}
-      />
     </>
   )
 }

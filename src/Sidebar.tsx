@@ -29,7 +29,7 @@ export function Sidebar() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto [scrollbar-color:var(--color-slate-600)_transparent] scrollbar-gutter-stable scrollbar-thin">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-gutter-stable">
         <SortingList
           items={library}
           getId={libraryItemId}

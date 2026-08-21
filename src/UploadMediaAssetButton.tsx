@@ -30,11 +30,8 @@ export function UploadMediaAssetButton() {
 
   return (
     <>
-      <GhostButton
-        onClick={() => inputRef.current?.click()}
-        className="text-violet-400"
-      >
-        <Upload size={14} />
+      <GhostButton onClick={() => inputRef.current?.click()}>
+        <Upload size={14} className="text-violet-400" />
         <span>Upload video</span>
       </GhostButton>
 

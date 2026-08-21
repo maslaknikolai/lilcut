@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { updateProject } from './library'
 import type { TimelineClip } from './projectTimeline'
+import { TimelineClipAction } from './TimelineClipAction'
 import type { Project } from './types'
 import { useScrollCurrentIntoView } from './useScrollCurrentIntoView'
 
@@ -89,67 +90,42 @@ export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, on
         sideOffset={-8}
         className="gap-0.5 p-0.5"
       >
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            moveClip(-1)
-          }}
+        <TimelineClipAction
+          onClick={() => moveClip(-1)}
           disabled={isFirst}
-          className="cursor-pointer rounded p-1 hover:bg-white/20 focus-visible:bg-white/20 disabled:hidden"
-          aria-label="Move clip earlier"
+          label="Move clip earlier"
         >
-          <ChevronLeft size={14} />
-        </button>
+          <ChevronLeft size={16} />
+        </TimelineClipAction>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            moveClip(1)
-          }}
+        <TimelineClipAction
+          onClick={() => moveClip(1)}
           disabled={isLast}
-          className="cursor-pointer rounded p-1 hover:bg-white/20 focus-visible:bg-white/20 disabled:hidden"
-          aria-label="Move clip later"
+          label="Move clip later"
         >
-          <ChevronRight size={14} />
-        </button>
+          <ChevronRight size={16} />
+        </TimelineClipAction>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit()
-          }}
-          className="cursor-pointer rounded p-1 hover:bg-white/20 focus-visible:bg-white/20"
-          aria-label="Edit clip"
+        <TimelineClipAction
+          onClick={onEdit}
+          label="Edit clip"
         >
-          <Pencil size={14} />
-        </button>
+          <Pencil size={16} />
+        </TimelineClipAction>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            cloneClip()
-          }}
-          className="cursor-pointer rounded p-1 hover:bg-white/20 focus-visible:bg-white/20"
-          aria-label="Clone clip"
+        <TimelineClipAction
+          onClick={cloneClip}
+          label="Clone clip"
         >
-          <Files size={14} />
-        </button>
+          <Files size={16} />
+        </TimelineClipAction>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            removeClip()
-          }}
-          className="cursor-pointer rounded p-1 hover:bg-white/20 focus-visible:bg-white/20"
-          aria-label="Remove clip"
+        <TimelineClipAction
+          onClick={removeClip}
+          label="Remove clip"
         >
-          <X size={14} />
-        </button>
+          <X size={16} />
+        </TimelineClipAction>
       </TooltipContent>
     </Tooltip>
   )

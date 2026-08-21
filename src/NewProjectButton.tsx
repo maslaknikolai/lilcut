@@ -22,11 +22,8 @@ export function NewProjectButton() {
   }
 
   return (
-    <GhostButton
-      onClick={handleClick}
-      className="text-blue-400"
-    >
-      <Scissors size={14} />
+    <GhostButton onClick={handleClick}>
+      <Scissors size={14} className="text-blue-400" />
       <span>New project</span>
     </GhostButton>
   )

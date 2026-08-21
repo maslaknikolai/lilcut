@@ -7,15 +7,13 @@ export function RecordButton() {
   const isRecording = recording.status !== 'idle'
 
   return (
-    <GhostButton
-      onClick={() => (isRecording ? stop() : start())}
-      className="text-red-400"
-    >
+    <GhostButton onClick={() => (isRecording ? stop() : start())}>
       {isRecording ? (
         <Square size={14} />
       ) : (
         <Circle
           size={14}
+          className="text-red-400"
           fill="currentColor"
         />
       )}

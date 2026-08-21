@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { FilePlay, Scissors } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
 import { formatBytes } from './formatBytes'
@@ -52,18 +53,27 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   )
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden p-4">
-      <div className="flex items-center gap-2">
-        <RenameField
-          key={mediaAsset.opfsName}
-          initialValue={mediaAsset.opfsName}
-          onCommit={commitRename}
-          className={isNameTaken ? 'ring-1 ring-red-500' : ''}
-        />
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50 p-4">
+      <div className="flex gap-2 items-start">
+        <div className="pt-2.5">
+          <FilePlay
+            size={16}
+            className="shrink-0 text-violet-500"
+          />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <RenameField
+            key={mediaAsset.opfsName}
+            initialValue={mediaAsset.opfsName}
+            onCommit={commitRename}
+            className={isNameTaken ? 'ring-1 ring-red-500' : ''}
+          />
+          <span className="px-0.5 pt-1 text-xs text-slate-500">{formatBytes(mediaAsset.size)}</span>
+        </div>
 
-        <span className="shrink-0 text-xs text-slate-500">{formatBytes(mediaAsset.size)}</span>
-
-        <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+        <div className="pt-2">
+          <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+        </div>
       </div>
       <div className="flex flex-1 items-center justify-center overflow-hidden">
         {videoUrl ? (
@@ -77,15 +87,19 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
         )}
       </div>
       {projectsUsingAsset.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-          Used in:
+        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 max-h-32 overflow-y-auto">
+          Used in projects:
           {projectsUsingAsset.map((project) => (
             <button
               key={project.id}
               type="button"
               onClick={() => setSelectedLibraryItemId(project.id)}
-              className="cursor-pointer text-blue-400 hover:underline"
+              className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500"
             >
+              <Scissors
+                size={14}
+                className="shrink-0 text-blue-500"
+              />
               {project.name}
             </button>
           ))}

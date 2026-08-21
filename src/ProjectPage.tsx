@@ -1,4 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
+import { Scissors } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipsPlayer } from './ClipsPlayer'
 import { ExportProjectButton } from './ExportProjectButton'
@@ -18,8 +19,12 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
   }
 
   return (
-    <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden">
+    <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden bg-blue-950/50">
       <div className="flex items-center gap-2 p-4">
+        <Scissors
+          size={16}
+          className="shrink-0 text-blue-500"
+        />
         <RenameField
           key={project.id}
           initialValue={project.name}
