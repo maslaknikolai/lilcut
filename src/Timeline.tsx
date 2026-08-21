@@ -128,7 +128,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
           <button
             type="button"
             onClick={() => openClipCreator(0)}
-            className="h-20 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 md:h-12"
+            className="h-20 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 active:border-slate-400 active:text-slate-100 md:h-12"
           >
             <Plus size={14} />
             Add clip

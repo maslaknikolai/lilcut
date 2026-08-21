@@ -157,7 +157,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100"
+            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100 active:text-white"
             aria-label="Close"
           >
             <X size={16} />
@@ -258,7 +258,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
               <button
                 type="button"
                 onClick={captureCutStart}
-                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900"
+                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950"
               >
                 Use current
               </button>
@@ -287,7 +287,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
                 type="button"
                 onClick={captureCutEnd}
                 disabled={isToVideoEnd}
-                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Use current
               </button>
@@ -305,7 +305,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
 
         {otherProjectClips.length > 0 && (
           <details>
-            <summary className="touch-target cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+            <summary className="touch-target cursor-pointer text-xs text-slate-400 hover:text-slate-200 active:text-slate-100">
               Copy file and range from another project's clip
             </summary>
             <select
@@ -338,7 +338,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={previewRange}
             disabled={!videoUrl || (!isToVideoEnd && cutEnd <= cutStart)}
-            className="touch-target mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+            className="touch-target mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Play size={14} />
             Preview range
@@ -347,7 +347,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900"
+            className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
           >
             Cancel
           </button>
@@ -355,7 +355,7 @@ export function ClipEditorModal({ projectId, clip, insertAt, onClose }: ClipEdit
             type="button"
             onClick={handleSave}
             disabled={!mediaAssetOpfsName || (!isToVideoEnd && cutEnd <= cutStart)}
-            className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {clip ? 'Save' : 'Add'}
           </button>

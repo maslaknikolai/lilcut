@@ -29,7 +29,7 @@ function AppContent() {
             type="button"
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Open sidebar"
-            className="touch-target fixed bottom-2 left-2 z-20 cursor-pointer rounded border border-slate-700 bg-slate-900 p-2 text-slate-300 md:hidden"
+            className="touch-target fixed bottom-2 left-2 z-20 cursor-pointer rounded border border-slate-700 bg-slate-900 p-2 text-slate-300 active:bg-slate-800 md:hidden"
           >
             <Menu size={20} />
           </button>

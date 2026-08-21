@@ -19,7 +19,7 @@ export function ClipsEditorHotkeysButton() {
         <button
           type="button"
           onClick={() => setIsTooltipOpen((prev) => !prev)}
-          className="cursor-pointer rounded p-1.5 text-slate-500 hover:bg-slate-900 hover:text-slate-200"
+          className="cursor-pointer rounded p-1.5 text-slate-500 hover:bg-slate-900 hover:text-slate-200 active:bg-slate-950 active:text-slate-100"
           aria-label="Editor hotkeys"
         >
           <Keyboard size={16} />

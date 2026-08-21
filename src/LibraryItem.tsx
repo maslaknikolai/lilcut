@@ -46,7 +46,7 @@ export function LibraryItem({
         setSelectedLibraryItemId(id)
         setIsSidebarOpen(false)
       }}
-      className={cn('cursor-pointer gap-1.5 py-1', isSelected ? 'bg-blue-800/40' : 'hover:bg-blue-900/40')}
+      className={cn('cursor-pointer gap-1.5 py-1 active:bg-blue-800/60', isSelected ? 'bg-blue-800/40' : 'hover:bg-blue-900/40')}
       dragHandleLabel={`Reorder ${name}`}
     >
       {icon}

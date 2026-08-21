@@ -94,7 +94,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
               key={project.id}
               type="button"
               onClick={() => setSelectedLibraryItemId(project.id)}
-              className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500"
+              className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500 active:border-slate-400 active:bg-slate-900"
             >
               <Scissors
                 size={14}

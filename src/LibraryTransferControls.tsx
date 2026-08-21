@@ -261,7 +261,7 @@ export function LibraryTransferControls() {
   }
 
   const isLibraryEmpty = mediaAssets.length + projects.length === 0
-  const controlClassName = 'flex-1 text-slate-400 hover:text-slate-200'
+  const controlClassName = 'flex-1 text-slate-400 hover:text-slate-200 active:text-slate-100'
 
   return (
     <div className="flex gap-1">
@@ -286,7 +286,7 @@ export function LibraryTransferControls() {
       <GhostButton
         onClick={clearLibrary}
         disabled={isTransferring || isLibraryEmpty}
-        className={cn(controlClassName, 'text-red-400 hover:text-red-300')}
+        className={cn(controlClassName, 'text-red-400 hover:text-red-300 active:text-red-200')}
       >
         <Trash2 size={14} />
         Clear

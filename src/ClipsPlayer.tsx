@@ -304,7 +304,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
                 togglePlayback()
               }}
               disabled={timelineClips.length === 0}
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (

@@ -58,11 +58,11 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
       type="button"
       onClick={cutHere}
       disabled={!isCutPossible}
-      className="touch-target flex shrink-0 cursor-pointer items-center gap-1 rounded p-1.5 text-xs text-slate-300 hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+      className="touch-target flex shrink-0 cursor-pointer items-center gap-1 rounded p-1.5 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <Scissors size={14} />
       Cut Here
-      <kbd className="rounded border border-slate-700 px-1 text-[10px] text-slate-500">C</kbd>
+      <kbd className="hidden rounded border border-slate-700 px-1 text-[10px] text-slate-500 md:inline">C</kbd>
     </button>
   )
 }
