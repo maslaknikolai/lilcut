@@ -2,11 +2,7 @@ import { Circle, Square } from 'lucide-react'
 import { GhostButton } from './GhostButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
-type RecordButtonProps = {
-  isWithLabel?: boolean
-}
-
-export function RecordButton({ isWithLabel }: RecordButtonProps) {
+export function RecordButton() {
   const { recording, start, stop } = useScreenRecordingContext()
   const isRecording = recording.status !== 'idle'
 
@@ -23,7 +19,7 @@ export function RecordButton({ isWithLabel }: RecordButtonProps) {
           fill="currentColor"
         />
       )}
-      {isWithLabel && <span>{isRecording ? 'Stop' : 'Record screen'}</span>}
+      {isRecording || <span>Record screen</span>}
     </GhostButton>
   )
 }

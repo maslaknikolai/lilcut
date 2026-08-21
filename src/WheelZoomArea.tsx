@@ -12,7 +12,7 @@ export function WheelZoomArea({ onZoom, className, children }: WheelZoomAreaProp
   const handleWheelZoom = useEffectEvent((event: WheelEvent) => {
     event.preventDefault()
 
-    const zoomFactor = event.deltaY < 0 ? 1.25 : 0.8
+    const zoomFactor = Math.exp(-event.deltaY * 0.001)
     onZoom(zoomFactor, event.clientX)
   })
 

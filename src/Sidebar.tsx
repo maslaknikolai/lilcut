@@ -23,9 +23,9 @@ export function Sidebar() {
           <HelpButton />
         </div>
         <div className="flex flex-wrap gap-1 items-center">
-          <RecordControls isWithLabel />
-          <UploadMediaAssetButton isWithLabel />
-          <NewProjectButton isWithLabel />
+          <RecordControls />
+          <UploadMediaAssetButton />
+          <NewProjectButton />
         </div>
       </header>
 

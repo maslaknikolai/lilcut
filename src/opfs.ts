@@ -51,7 +51,7 @@ export async function listOpfsMediaAssets(): Promise<MediaAsset[]> {
     }
     const file = await handle.getFile()
     const duration = await readVideoDuration(file)
-    mediaAssets.push({ opfsName: handle.name, mimeType: file.type, duration })
+    mediaAssets.push({ opfsName: handle.name, mimeType: file.type, duration, size: file.size })
   }
   return mediaAssets
 }

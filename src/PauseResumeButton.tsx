@@ -2,11 +2,7 @@ import { Pause, Play } from 'lucide-react'
 import { GhostButton } from './GhostButton'
 import { useScreenRecordingContext } from './useScreenRecordingContext'
 
-type PauseResumeButtonProps = {
-  isWithLabel?: boolean
-}
-
-export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
+export function PauseResumeButton() {
   const { recording, pause, resume } = useScreenRecordingContext()
 
   if (recording.status === 'idle') {
@@ -15,9 +11,7 @@ export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
   const isPaused = recording.status === 'paused'
 
   return (
-    <GhostButton
-      onClick={() => (isPaused ? resume() : pause())}
-          >
+    <GhostButton onClick={() => (isPaused ? resume() : pause())}>
       {isPaused ? (
         <Play
           size={14}
@@ -29,7 +23,6 @@ export function PauseResumeButton({ isWithLabel }: PauseResumeButtonProps) {
           fill="currentColor"
         />
       )}
-      {isWithLabel && <span>{isPaused ? 'Resume' : 'Pause'}</span>}
     </GhostButton>
   )
 }

@@ -7,11 +7,7 @@ import { GhostButton } from './GhostButton'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
-type UploadMediaAssetButtonProps = {
-  isWithLabel?: boolean
-}
-
-export function UploadMediaAssetButton({ isWithLabel }: UploadMediaAssetButtonProps) {
+export function UploadMediaAssetButton() {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const { writeMediaAsset } = useMediaAssetActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
@@ -39,7 +35,7 @@ export function UploadMediaAssetButton({ isWithLabel }: UploadMediaAssetButtonPr
         className="text-violet-400"
       >
         <Upload size={14} />
-        {isWithLabel && <span>Upload video</span>}
+        <span>Upload video</span>
       </GhostButton>
 
       <input

@@ -27,10 +27,15 @@ export function HelpModal({ onClose }: HelpModalProps) {
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-slate-300">
-          <p>
-            lilcut is a simple serverless video editing app. It heavily utilizes OPFS: everything is stored on your
-            computer, inside the browser — nothing is ever uploaded anywhere, though it also means files have to be
-            added to the app locally.
+          <p>lilcut is a simple video editor that works entirely in your browser. Your videos stay on your computer.</p>
+          <p className="">
+            Found a bug or have an idea? Email{' '}
+            <a
+              href="mailto:nikomaslak@gmail.com"
+              className="text-blue-400 hover:underline"
+            >
+              nikomaslak@gmail.com
+            </a>
           </p>
         </div>
       </div>

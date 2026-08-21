@@ -5,11 +5,7 @@ import { GhostButton } from './GhostButton'
 import { uniqueName } from './uniqueName'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
-type NewProjectButtonProps = {
-  isWithLabel?: boolean
-}
-
-export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
+export function NewProjectButton() {
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
@@ -31,7 +27,7 @@ export function NewProjectButton({ isWithLabel }: NewProjectButtonProps) {
       className="text-blue-400"
     >
       <Scissors size={14} />
-      {isWithLabel && <span>New project</span>}
+      <span>New project</span>
     </GhostButton>
   )
 }

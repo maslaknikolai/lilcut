@@ -41,7 +41,7 @@ export function RecordingPipWindow() {
   }
 
   return createPortal(
-    <div className="flex gap-2 p-2">
+    <div className="flex h-svh items-center justify-center gap-2 p-2">
       <RecordControls />
     </div>,
     pipWindow.document.body,

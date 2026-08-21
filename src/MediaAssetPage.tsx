@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
+import { formatBytes } from './formatBytes'
 import { RenameField } from './RenameField'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
@@ -59,6 +60,8 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           onCommit={commitRename}
           className={isNameTaken ? 'ring-1 ring-red-500' : ''}
         />
+
+        <span className="shrink-0 text-xs text-slate-500">{formatBytes(mediaAsset.size)}</span>
 
         <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
       </div>
