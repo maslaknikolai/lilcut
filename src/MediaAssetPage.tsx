@@ -4,6 +4,7 @@ import { FilePlay, Scissors } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
 import { formatBytes } from './formatBytes'
+import { MediaAssetActions } from './MediaAssetActions'
 import { RenameField } from './RenameField'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
@@ -71,8 +72,9 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           <span className="px-0.5 pt-1 text-xs text-slate-500">{formatBytes(mediaAsset.size)}</span>
         </div>
 
-        <div className="pt-2">
+        <div className="flex items-center gap-1 pt-2">
           <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+          <MediaAssetActions mediaAsset={mediaAsset} />
         </div>
       </div>
       <div className="flex flex-1 items-center justify-center overflow-hidden">

@@ -1,35 +1,13 @@
-import { Download, FilePlay } from 'lucide-react'
+import { FilePlay } from 'lucide-react'
 import { LibraryItem } from './LibraryItem'
-import { readOpfsFile } from './opfs'
-import { RemoveButton } from './RemoveButton'
-import { SidebarItemAction } from './SidebarItemAction'
+import { MediaAssetActions } from './MediaAssetActions'
 import type { MediaAsset } from './types'
-import { useMediaAssetActions } from './useMediaAssetActions'
-import { useRedirectAfterRemove } from './useRedirectAfterRemove'
 
 type MediaAssetItemProps = {
   mediaAsset: MediaAsset
 }
 
 export function MediaAssetItem({ mediaAsset }: MediaAssetItemProps) {
-  const { deleteMediaAsset } = useMediaAssetActions()
-  const redirectAfterRemove = useRedirectAfterRemove()
-
-  async function handleRemove() {
-    await deleteMediaAsset(mediaAsset.opfsName)
-    redirectAfterRemove(mediaAsset.opfsName)
-  }
-
-  async function handleDownload() {
-    const downloadedFile = await readOpfsFile(mediaAsset.opfsName)
-    const url = URL.createObjectURL(downloadedFile)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = mediaAsset.opfsName
-    link.click()
-    URL.revokeObjectURL(url)
-  }
-
   return (
     <LibraryItem
       id={mediaAsset.opfsName}
@@ -40,22 +18,7 @@ export function MediaAssetItem({ mediaAsset }: MediaAssetItemProps) {
           className="shrink-0 text-violet-500"
         />
       }
-      actions={
-        <>
-          <SidebarItemAction
-            onClick={handleDownload}
-            label={`Download ${mediaAsset.opfsName}`}
-            tooltip="Download file"
-          >
-            <Download size={16} />
-          </SidebarItemAction>
-
-          <RemoveButton
-            label={mediaAsset.opfsName}
-            onRemove={handleRemove}
-          />
-        </>
-      }
+      actions={<MediaAssetActions mediaAsset={mediaAsset} />}
     />
   )
 }

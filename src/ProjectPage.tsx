@@ -2,6 +2,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipsPlayer } from './ClipsPlayer'
+import { ProjectActions } from './ProjectActions'
 import { RenderProjectButton } from './RenderProjectButton'
 import { RenameField } from './RenameField'
 import type { Project } from './types'
@@ -32,6 +33,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
         />
 
         <RenderProjectButton project={project} />
+        <ProjectActions project={project} />
       </div>
 
       <ClipsPlayer
