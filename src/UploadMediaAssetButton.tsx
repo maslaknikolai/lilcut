@@ -2,8 +2,8 @@ import { useRef, type ChangeEvent } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Upload } from 'lucide-react'
 import { libraryOrderAtom, mediaAssetsAtom } from './atoms'
-import { uniqueOpfsName } from './opfs'
 import { GhostButton } from './GhostButton'
+import { uniqueName } from './uniqueName'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 
@@ -15,17 +15,23 @@ export function UploadMediaAssetButton() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
+    const files = [...(event.target.files ?? [])]
     event.target.value = ''
-    if (!file) {
+    if (files.length === 0) {
       return
     }
 
-    const opfsName = uniqueOpfsName(file.name, mediaAssets)
-    await writeMediaAsset(opfsName, file)
+    const knownOpfsNames = mediaAssets.map((mediaAsset) => mediaAsset.opfsName)
+    const uploadedOpfsNames: string[] = []
+    for (const file of files) {
+      const opfsName = uniqueName(file.name, knownOpfsNames)
+      knownOpfsNames.push(opfsName)
+      await writeMediaAsset(opfsName, file)
+      uploadedOpfsNames.push(opfsName)
+    }
 
-    setLibraryOrder((prev) => [opfsName, ...prev])
-    setSelectedLibraryItemId(opfsName)
+    setLibraryOrder((prev) => [...uploadedOpfsNames, ...prev])
+    setSelectedLibraryItemId(uploadedOpfsNames[0])
   }
 
   return (
@@ -42,6 +48,7 @@ export function UploadMediaAssetButton() {
         ref={inputRef}
         type="file"
         accept="video/*"
+        multiple
         onChange={handleFileChange}
         className="hidden"
       />
