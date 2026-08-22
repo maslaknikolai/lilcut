@@ -5,7 +5,7 @@ import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
 import { CreateProjectFromMediaAssetButton } from './CreateProjectFromMediaAssetButton'
 import { formatBytes } from './formatBytes'
 import { MediaAssetActions } from './MediaAssetActions'
-import { RenameField } from './RenameField'
+import { PageTitleField } from './PageTitleField'
 import type { MediaAsset } from './types'
 import { useMediaAssetActions } from './useMediaAssetActions'
 import { useMediaAssetVideoUrl } from './useMediaAssetVideoUrl'
@@ -55,24 +55,25 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50 p-4">
-      <div className="flex gap-2 items-start">
-        <div className="pt-2.5">
-          <FilePlay
-            size={16}
-            className="shrink-0 text-violet-500"
-          />
-        </div>
+      <div className="flex gap-2 items-center">
         <div className="flex min-w-0 flex-1 flex-col">
-          <RenameField
+          <PageTitleField
             key={mediaAsset.opfsName}
+            label="Video"
+            icon={
+              <FilePlay
+                size={16}
+                className="shrink-0 text-violet-500"
+              />
+            }
             initialValue={mediaAsset.opfsName}
-            onCommit={commitRename}
+            onChange={commitRename}
             className={isNameTaken ? 'ring-1 ring-red-500' : ''}
           />
           <span className="px-0.5 pt-1 text-xs text-slate-500">{formatBytes(mediaAsset.size)}</span>
         </div>
 
-        <div className="flex items-center gap-1 pt-2">
+        <div className="flex items-center gap-1 pt-8 self-start">
           <MediaAssetActions mediaAsset={mediaAsset} />
         </div>
       </div>

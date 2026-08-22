@@ -40,9 +40,12 @@ export function RenderProjectButton({ project }: RenderProjectButtonProps) {
         <GhostButton
           onClick={() => startRender(project)}
           disabled={isRendering || project.clips.length === 0}
-          className="shrink-0 px-3 text-violet-400"
+          className="shrink-0"
         >
-          <FilePlay size={14} />
+          <FilePlay
+            className="text-violet-400"
+            size={14}
+          />
           {isRendering ? 'Rendering…' : 'Render .mp4'}
           {project.clips.length > 0 &&
             (concatCompatibility === 'probing' ? (

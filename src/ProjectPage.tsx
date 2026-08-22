@@ -3,7 +3,7 @@ import { Scissors } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from './atoms'
 import { ClipsPlayer } from './ClipsPlayer'
 import { ProjectActions } from './ProjectActions'
-import { RenameField } from './RenameField'
+import { PageTitleField } from './PageTitleField'
 import type { Project } from './types'
 
 type ProjectPreviewProps = {
@@ -21,17 +21,22 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
   return (
     <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden bg-blue-950/50">
       <div className="flex items-center gap-2 p-4">
-        <Scissors
-          size={16}
-          className="shrink-0 text-blue-500"
-        />
-        <RenameField
+        <PageTitleField
           key={project.id}
+          label="Project"
+          icon={
+            <Scissors
+              size={16}
+              className="shrink-0 text-blue-500"
+            />
+          }
           initialValue={project.name}
-          onCommit={renameProject}
+          onChange={renameProject}
         />
 
-        <ProjectActions project={project} />
+        <div className="flex items-center gap-1 pt-8 self-start">
+          <ProjectActions project={project} />
+        </div>
       </div>
 
       <ClipsPlayer
