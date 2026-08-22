@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 type SortingItemProps = {
   ref?: Ref<HTMLLIElement>
   id: string
-  onClick: () => void
+  onClick?: () => void
   className: string
   dragHandleLabel: string
   children: ReactNode
@@ -30,11 +30,7 @@ export function SortingItem({ ref, id, onClick, className, dragHandleLabel, chil
       ref={setRefs}
       onClick={onClick}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={cn(
-        'flex items-center border-b border-slate-700',
-        className,
-        isDragging && 'relative z-10 shadow-md',
-      )}
+      className={cn('flex items-center border-b border-slate-700', className, isDragging && 'relative z-10 shadow-md')}
     >
       <span
         {...attributes}

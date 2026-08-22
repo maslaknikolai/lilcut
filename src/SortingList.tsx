@@ -1,12 +1,5 @@
 import { Fragment, type ReactNode } from 'react'
-import {
-  closestCenter,
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core'
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 type SortingListProps<T> = {
@@ -14,9 +7,10 @@ type SortingListProps<T> = {
   getId: (item: T) => string
   onReorder: (next: T[]) => void
   renderItem: (item: T) => ReactNode
+  className?: string
 }
 
-export function SortingList<T>({ items, getId, onReorder, renderItem }: SortingListProps<T>) {
+export function SortingList<T>({ items, getId, onReorder, renderItem, className }: SortingListProps<T>) {
   // a small distance threshold keeps plain clicks on the drag handle from
   // starting a drag
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
@@ -45,7 +39,7 @@ export function SortingList<T>({ items, getId, onReorder, renderItem }: SortingL
         items={items.map(getId)}
         strategy={verticalListSortingStrategy}
       >
-        <ul>
+        <ul className={className}>
           {items.map((item) => (
             <Fragment key={getId(item)}>{renderItem(item)}</Fragment>
           ))}

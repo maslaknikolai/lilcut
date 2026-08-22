@@ -165,7 +165,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
   const isLongPressingRef = useRef(false)
 
   function endLongPress(isClickComing: boolean) {
-    if (longPressTimeoutRef.current !== null) {
+    if (longPressTimeoutRef.current) {
       clearTimeout(longPressTimeoutRef.current)
       longPressTimeoutRef.current = null
     }

@@ -35,6 +35,6 @@ export function useMediaAssetVideoUrl(mediaAsset: MediaAsset | undefined): strin
   // a previous asset's url must never leak through while the new one loads —
   // callers unmount the <video> for that gap instead of swapping src in place,
   // so stale timeupdate/pause events can't fire against the new clip's timings
-  const isVideoSourceCurrent = videoSource !== null && videoSource.opfsName === mediaAsset?.opfsName
+  const isVideoSourceCurrent = !!videoSource && videoSource.opfsName === mediaAsset?.opfsName
   return isVideoSourceCurrent ? videoSource.url : null
 }

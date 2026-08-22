@@ -19,7 +19,7 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
     ? currentTimelineClip.cutStart + (projectTime - currentTimelineClip.projectStart)
     : 0
   const isCutPossible =
-    currentTimelineClip !== undefined &&
+    !!currentTimelineClip &&
     cutMediaTime > currentTimelineClip.cutStart &&
     cutMediaTime < currentTimelineClip.cutEnd
 

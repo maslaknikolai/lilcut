@@ -25,11 +25,11 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
   const setActiveModal = useSetAtom(activeModalAtom)
 
   function openClipCreator(insertAt: number) {
-    setActiveModal({ type: 'clipEditor', projectId: project.id, clip: null, insertAt })
+    setActiveModal({ type: 'clipCreate', projectId: project.id, insertAt })
   }
 
   function openClipEditor(clip: TimelineClipT) {
-    setActiveModal({ type: 'clipEditor', projectId: project.id, clip })
+    setActiveModal({ type: 'clipEdit', projectId: project.id, clip })
   }
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const scrollerRef = useRef<HTMLDivElement>(null)

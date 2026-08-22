@@ -4,7 +4,13 @@ import { GhostButton } from './GhostButton'
 import { useSelectedLibraryItemId } from './useSelectedLibraryItemId'
 import { useUploadMediaAssets } from './useUploadMediaAssets'
 
-export function UploadMediaAssetButton() {
+type UploadMediaAssetButtonProps = {
+  className?: string
+  // overrides the default "select the first uploaded video" behavior
+  onUploaded?: (opfsNames: string[]) => void
+}
+
+export function UploadMediaAssetButton({ className, onUploaded }: UploadMediaAssetButtonProps) {
   const uploadMediaAssets = useUploadMediaAssets()
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -17,12 +23,19 @@ export function UploadMediaAssetButton() {
     }
 
     const uploadedOpfsNames = await uploadMediaAssets(files)
+    if (onUploaded) {
+      onUploaded(uploadedOpfsNames)
+      return
+    }
     setSelectedLibraryItemId(uploadedOpfsNames[0])
   }
 
   return (
     <>
-      <GhostButton onClick={() => inputRef.current?.click()}>
+      <GhostButton
+        onClick={() => inputRef.current?.click()}
+        className={className}
+      >
         <Upload
           size={14}
           className="text-violet-400"

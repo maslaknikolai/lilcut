@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai'
 import { activeModalAtom } from './atoms'
-import { ClipEditorModal } from './ClipEditorModal'
+import { ClipCreateModal } from './ClipCreateModal'
+import { ClipEditModal } from './ClipEditModal'
 import { HelpModal } from './HelpModal'
 
 export function Modals() {
@@ -14,11 +15,20 @@ export function Modals() {
     return <HelpModal onClose={closeModal} />
   }
 
-  if (activeModal?.type === 'clipEditor') {
+  if (activeModal?.type === 'clipEdit') {
     return (
-      <ClipEditorModal
+      <ClipEditModal
         projectId={activeModal.projectId}
         clip={activeModal.clip}
+        onClose={closeModal}
+      />
+    )
+  }
+
+  if (activeModal?.type === 'clipCreate') {
+    return (
+      <ClipCreateModal
+        projectId={activeModal.projectId}
         insertAt={activeModal.insertAt}
         onClose={closeModal}
       />

@@ -23,7 +23,7 @@ export function useMediaAssetVideoUrls(mediaAssets: MediaAsset[]): Record<string
         return [mediaAsset.opfsName, URL.createObjectURL(file)] as const
       }),
     ).then((entries) => {
-      const loadedEntries = Object.fromEntries(entries.filter((entry) => entry !== null))
+      const loadedEntries = Object.fromEntries(entries.filter((entry) => !!entry))
       const urls = Object.values(loadedEntries)
 
       if (isCancelled) {

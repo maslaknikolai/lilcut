@@ -10,7 +10,8 @@ export const libraryOrderAtom = atom<string[]>([])
 
 export type ActiveModal =
   | { type: 'help' }
-  | { type: 'clipEditor'; projectId: string; clip: TimelineClip | null; insertAt?: number }
+  | { type: 'clipEdit'; projectId: string; clip: TimelineClip }
+  | { type: 'clipCreate'; projectId: string; insertAt?: number }
   | null
 
 export const activeModalAtom = atom<ActiveModal>(null)

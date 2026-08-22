@@ -1,4 +1,9 @@
-import type { MediaAsset, Project } from './types'
+import type { Clip, MediaAsset, Project } from './types'
+
+// cutEnd === undefined means "to the end of the video" (0 is a real time)
+export function isClipRangeValid(clip: Clip): boolean {
+  return clip.cutEnd === undefined || clip.cutEnd > (clip.cutStart ?? 0)
+}
 
 export type TimelineClip = {
   id: string
@@ -42,7 +47,7 @@ export function buildPlaybackClips(timelineClips: TimelineClip[]): PlaybackClip[
   for (const timelineClip of timelineClips) {
     const previousPlaybackClip = playbackClips[playbackClips.length - 1]
     const isContinuation =
-      previousPlaybackClip !== undefined &&
+      !!previousPlaybackClip &&
       previousPlaybackClip.mediaAssetOpfsName === timelineClip.mediaAssetOpfsName &&
       previousPlaybackClip.cutEnd === timelineClip.cutStart
 
