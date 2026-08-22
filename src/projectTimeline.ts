@@ -5,6 +5,16 @@ export function isClipRangeValid(clip: Clip): boolean {
   return clip.cutEnd === undefined || clip.cutEnd > (clip.cutStart ?? 0)
 }
 
+// the default clip: plays its video from start to end
+export function makeFullClip(opfsName: string): Clip {
+  return { id: crypto.randomUUID(), mediaAssetOpfsName: opfsName, cutStart: 0 }
+}
+
+export function isDefaultClip(clip: Clip): boolean {
+  const hasDefaultStart = !(clip.cutStart ?? 0)
+  return hasDefaultStart && clip.cutEnd === undefined
+}
+
 export type TimelineClip = {
   id: string
   mediaAssetOpfsName: string

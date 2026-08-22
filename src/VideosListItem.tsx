@@ -1,16 +1,19 @@
 import { FilePlay, SlidersHorizontal } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
 import { formatTimestamp } from './formatTimestamp'
 import type { MediaAsset } from './types'
 
 type VideosListItemProps = {
   mediaAsset: MediaAsset
   isChecked: boolean
+  // the pending clip's settings differ from the default full-length clip
+  isModified: boolean
   onToggleChecked: () => void
   onTrim: () => void
 }
 
-export function VideosListItem({ mediaAsset, isChecked, onToggleChecked, onTrim }: VideosListItemProps) {
+export function VideosListItem({ mediaAsset, isChecked, isModified, onToggleChecked, onTrim }: VideosListItemProps) {
   return (
     <div className="flex items-center gap-2 rounded border border-slate-700 px-2">
       <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2">
@@ -28,7 +31,12 @@ export function VideosListItem({ mediaAsset, isChecked, onToggleChecked, onTrim 
       <button
         type="button"
         onClick={onTrim}
-        className="flex w-10 shrink-0 cursor-pointer items-center justify-center self-stretch text-slate-500 hover:text-slate-100 active:text-white"
+        className={cn(
+          'flex w-10 shrink-0 cursor-pointer items-center justify-center self-stretch',
+          isModified
+            ? 'text-orange-400 hover:text-orange-300 active:text-orange-200'
+            : 'text-slate-500 hover:text-slate-100 active:text-white',
+        )}
         aria-label={`Set range for ${mediaAsset.opfsName}`}
       >
         <SlidersHorizontal size={14} />

@@ -4,7 +4,7 @@ import { X } from 'lucide-react'
 import { projectsAtom } from './atoms'
 import { ClipRangeEditor } from './ClipRangeEditor'
 import { updateProject } from './library'
-import { isClipRangeValid } from './projectTimeline'
+import { isClipRangeValid, isDefaultClip, makeFullClip } from './projectTimeline'
 import type { Clip } from './types'
 import { UploadMediaAssetButton } from './UploadMediaAssetButton'
 import { useOrderedMediaAssets } from './useOrderedMediaAssets'
@@ -21,12 +21,6 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
   const mediaAssets = useOrderedMediaAssets()
   const [clipsToBeAdded, setClipsToBeAdded] = useState<Clip[]>([])
   const [trimmingClip, setTrimmingClip] = useState<Clip | null>(null)
-
-  const checkedOpfsNames = clipsToBeAdded.map((clip) => clip.mediaAssetOpfsName)
-
-  function makeFullClip(opfsName: string): Clip {
-    return { id: crypto.randomUUID(), mediaAssetOpfsName: opfsName, cutStart: 0 }
-  }
 
   function toggleChecked(opfsName: string) {
     setClipsToBeAdded((prev) => {
@@ -54,8 +48,20 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
     onClose()
   }
 
+  // trimming an already-pending clip edits it in place; a fresh one is appended
+  function openTrimmer(opfsName: string) {
+    const existingClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === opfsName)
+    setTrimmingClip(existingClip ?? makeFullClip(opfsName))
+  }
+
   function addTrimmedClip(trimmedClip: Clip) {
-    setClipsToBeAdded((prev) => [...prev, trimmedClip])
+    setClipsToBeAdded((prev) => {
+      const isExisting = prev.some((clip) => clip.id === trimmedClip.id)
+      if (isExisting) {
+        return prev.map((clip) => (clip.id === trimmedClip.id ? trimmedClip : clip))
+      }
+      return [...prev, trimmedClip]
+    })
     setTrimmingClip(null)
   }
 
@@ -123,26 +129,23 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
           {!mediaAssets.length && (
             <span className="text-sm text-slate-500">No videos in the library yet — import some.</span>
           )}
-          {mediaAssets.map((mediaAsset) => (
-            <VideosListItem
-              key={mediaAsset.opfsName}
-              mediaAsset={mediaAsset}
-              isChecked={checkedOpfsNames.includes(mediaAsset.opfsName)}
-              onToggleChecked={() => toggleChecked(mediaAsset.opfsName)}
-              onTrim={() => setTrimmingClip(makeFullClip(mediaAsset.opfsName))}
-            />
-          ))}
+          {mediaAssets.map((mediaAsset) => {
+            const assetClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName)
+            const isModified = !!assetClip && !isDefaultClip(assetClip)
+            return (
+              <VideosListItem
+                key={mediaAsset.opfsName}
+                mediaAsset={mediaAsset}
+                isChecked={!!assetClip}
+                isModified={isModified}
+                onToggleChecked={() => toggleChecked(mediaAsset.opfsName)}
+                onTrim={() => openTrimmer(mediaAsset.opfsName)}
+              />
+            )
+          })}
         </div>
 
         <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setClipsToBeAdded([])}
-            disabled={!clipsToBeAdded.length}
-            className="mr-auto min-h-10 cursor-pointer rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Reset
-          </button>
           <button
             type="button"
             onClick={onClose}

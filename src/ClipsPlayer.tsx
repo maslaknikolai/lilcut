@@ -251,7 +251,6 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
             onPointerUp={() => endLongPress(true)}
             onPointerLeave={() => endLongPress(false)}
             onPointerCancel={() => endLongPress(false)}
-            // long press means "fast-forward", never the browser context menu
             onContextMenu={(e) => e.preventDefault()}
             className="max-h-full max-w-full cursor-pointer touch-none select-none"
             onLoadedMetadata={(e) => {

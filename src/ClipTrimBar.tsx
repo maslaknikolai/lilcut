@@ -1,4 +1,5 @@
 import { Slider } from '@/components/ui/slider'
+import { cn } from '@/lib/utils'
 
 type ClipTrimBarProps = {
   duration: number
@@ -37,6 +38,7 @@ export function ClipTrimBar({
         step={0.01}
         minStepsBetweenThumbs={1}
         onValueChange={handleValueChange}
+        className={cn(isToVideoEnd && '**:data-[slot=slider-track]:bg-primary **:data-[slot=slider-range]:bg-muted')}
       />
       <div
         className="pointer-events-none absolute inset-y-0 w-px bg-white"
