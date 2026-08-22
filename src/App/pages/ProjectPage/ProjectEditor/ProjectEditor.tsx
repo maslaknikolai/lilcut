@@ -359,6 +359,8 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
                 {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
               </span>
             </div>
+
+            <ProjectEditorHotkeysButton />
           </div>
 
           <div className="flex items-center gap-2">
@@ -367,15 +369,11 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
               className="flex shrink-0 empty:hidden"
             />
 
-            <ProjectEditorHotkeysButton />
-
-            <div className="flex items-center gap-2">
-              <CutHereButton
-                project={project}
-                projectTime={projectTime}
-                currentTimelineClip={currentTimelineClip}
-              />
-            </div>
+            <CutHereButton
+              project={project}
+              projectTime={projectTime}
+              currentTimelineClip={currentTimelineClip}
+            />
           </div>
         </div>
 
