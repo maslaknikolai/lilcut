@@ -48,7 +48,7 @@ export function buildTimelineClips(project: Project, mediaAssets: MediaAsset[]):
 
 // a timeline clip merged with any following clips that continue the same file
 // exactly where the previous one ended (a split, not a cut) — such spans play
-// and export as one solid segment, no seek or cut at the boundary
+// and export as one solid span, no seek or cut at the boundary
 export type PlaybackClip = TimelineClip
 
 export function buildPlaybackClips(timelineClips: TimelineClip[]): PlaybackClip[] {

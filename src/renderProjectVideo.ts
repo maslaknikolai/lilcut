@@ -1,6 +1,6 @@
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
-import { probeStreams } from './getFormatSignature'
+import { probeKeyframeTimes, probeStreams } from './getFormatSignature'
 import { isConcatCompatible } from './isConcatCompatible'
 import { readOpfsFile } from './opfs'
 import type { PlaybackClip } from './projectTimeline'
@@ -12,7 +12,7 @@ type RenderCallbacks = {
   isCancelled: () => boolean
 }
 
-type InputSegment = {
+type InputClip = {
   inputName: string
   playbackClip: PlaybackClip
   mediaAsset: MediaAsset
@@ -24,7 +24,7 @@ type InputSegment = {
 // Two render strategies, picked by probing the sources:
 // - compatible formats → stream copy: lossless and fast, cuts snap to the
 //   nearest keyframe
-// - mixed formats → every segment is decoded and re-encoded to shared
+// - mixed formats → every clip is decoded and re-encoded to shared
 //   parameters, then the normalized pieces are concatenated losslessly
 export async function renderProjectVideo(
   ffmpeg: FFmpeg,
@@ -32,11 +32,11 @@ export async function renderProjectVideo(
   mediaAssets: MediaAsset[],
   { onProgress, onLog, isCancelled }: RenderCallbacks,
 ): Promise<Blob | null> {
-  const segments = playbackClips.flatMap((playbackClip) => {
+  const resolvedClips = playbackClips.flatMap((playbackClip) => {
     const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === playbackClip.mediaAssetOpfsName)
     return mediaAsset ? [{ playbackClip, mediaAsset }] : []
   })
-  if (segments.length === 0) {
+  if (resolvedClips.length === 0) {
     return null
   }
 
@@ -66,16 +66,16 @@ export async function renderProjectVideo(
       return inputName
     }
 
-    const inputSegments: InputSegment[] = []
-    for (const { playbackClip, mediaAsset } of segments) {
+    const inputClips: InputClip[] = []
+    for (const { playbackClip, mediaAsset } of resolvedClips) {
       if (isCancelled()) {
         return null
       }
       const inputName = await ensureInputFile(mediaAsset)
-      inputSegments.push({ inputName, playbackClip, mediaAsset })
+      inputClips.push({ inputName, playbackClip, mediaAsset })
     }
 
-    const opfsNames = segments.map(({ mediaAsset }) => mediaAsset.opfsName)
+    const opfsNames = resolvedClips.map(({ mediaAsset }) => mediaAsset.opfsName)
     // a probe failure falls back to re-encoding, which works for any mix of
     // formats — only proven-compatible sources take the stream-copy shortcut
     const canStreamCopy = await isConcatCompatible(opfsNames).catch(() => false)
@@ -84,12 +84,28 @@ export async function renderProjectVideo(
       return null
     }
 
-    if (inputSegments.length === 1) {
-      await execSingleClipCopy(ffmpeg, inputSegments[0])
+    // stream copy can only start video on a keyframe while audio starts at the
+    // requested time — snapping the cut start to the preceding keyframe makes
+    // both streams begin together, so repeated clips can't accumulate A/V
+    // drift. a failed probe keeps the requested cut points (the old behavior)
+    const isStreamCopyPlan = inputClips.length === 1 || canStreamCopy
+    const keyframeTimesByOpfsName = new Map<string, number[]>()
+    if (isStreamCopyPlan) {
+      for (const opfsName of new Set(opfsNames)) {
+        if (isCancelled()) {
+          return null
+        }
+        const keyframeTimes = await probeKeyframeTimes(opfsName).catch(() => [])
+        keyframeTimesByOpfsName.set(opfsName, keyframeTimes)
+      }
+    }
+
+    if (inputClips.length === 1) {
+      await execSingleClipCopy(ffmpeg, inputClips[0], keyframeTimesByOpfsName)
     } else if (canStreamCopy) {
-      await execConcatStreamCopy(ffmpeg, inputSegments)
+      await execConcatStreamCopy(ffmpeg, inputClips, keyframeTimesByOpfsName)
     } else {
-      await execConcatReencode(ffmpeg, inputSegments)
+      await execConcatReencode(ffmpeg, inputClips)
     }
 
     if (isCancelled()) {
@@ -112,34 +128,62 @@ export async function renderProjectVideo(
   }
 }
 
+// the latest keyframe at or before `time`; without keyframe data the
+// requested time stays as is
+function snapToPrecedingKeyframe(time: number, keyframeTimes: number[]): number {
+  const precedingTimes = keyframeTimes.filter((keyframeTime) => keyframeTime <= time)
+  if (!precedingTimes.length) {
+    return time
+  }
+  return precedingTimes[precedingTimes.length - 1]
+}
+
+function snappedCutStart(
+  { playbackClip, mediaAsset }: InputClip,
+  keyframeTimesByOpfsName: Map<string, number[]>,
+): number {
+  const keyframeTimes = keyframeTimesByOpfsName.get(mediaAsset.opfsName) ?? []
+  return snapToPrecedingKeyframe(playbackClip.cutStart, keyframeTimes)
+}
+
 // one clip needs no concat: trim with stream copy
-async function execSingleClipCopy(ffmpeg: FFmpeg, { inputName, playbackClip }: InputSegment): Promise<void> {
+async function execSingleClipCopy(
+  ffmpeg: FFmpeg,
+  inputClip: InputClip,
+  keyframeTimesByOpfsName: Map<string, number[]>,
+): Promise<void> {
+  const cutStart = snappedCutStart(inputClip, keyframeTimesByOpfsName)
   await ffmpeg.exec([
     '-ss',
-    String(playbackClip.cutStart),
+    String(cutStart),
     '-i',
-    inputName,
+    inputClip.inputName,
     '-t',
-    String(playbackClip.cutEnd - playbackClip.cutStart),
+    String(inputClip.playbackClip.cutEnd - cutStart),
     '-c',
     'copy',
     'output.mp4',
   ])
 }
 
-async function execConcatStreamCopy(ffmpeg: FFmpeg, inputSegments: InputSegment[]): Promise<void> {
-  const concatEntries = inputSegments.map(({ inputName, playbackClip }) => {
-    return `file '${inputName}'\ninpoint ${playbackClip.cutStart}\noutpoint ${playbackClip.cutEnd}`
+async function execConcatStreamCopy(
+  ffmpeg: FFmpeg,
+  inputClips: InputClip[],
+  keyframeTimesByOpfsName: Map<string, number[]>,
+): Promise<void> {
+  const concatEntries = inputClips.map((inputClip) => {
+    const inpoint = snappedCutStart(inputClip, keyframeTimesByOpfsName)
+    return `file '${inputClip.inputName}'\ninpoint ${inpoint}\noutpoint ${inputClip.playbackClip.cutEnd}`
   })
   await execConcatList(ffmpeg, `ffconcat version 1.0\n\n${concatEntries.join('\n\n')}\n`)
 }
 
-// mixed formats: re-encode every segment to shared parameters (the first
+// mixed formats: re-encode every clip to shared parameters (the first
 // clip's resolution), then concatenate the now-identical pieces losslessly.
 // assumes every source has an audio stream; sources recorded
 // without audio need an anullsrc fallback here
-async function execConcatReencode(ffmpeg: FFmpeg, inputSegments: InputSegment[]): Promise<void> {
-  const firstStreams = await probeStreams(inputSegments[0].mediaAsset.opfsName)
+async function execConcatReencode(ffmpeg: FFmpeg, inputClips: InputClip[]): Promise<void> {
+  const firstStreams = await probeStreams(inputClips[0].mediaAsset.opfsName)
   const firstVideoStream = firstStreams.find((stream) => stream.codec_type === 'video')
   const targetWidth = makeEven(firstVideoStream?.width ?? 1280)
   const targetHeight = makeEven(firstVideoStream?.height ?? 720)
@@ -150,9 +194,9 @@ async function execConcatReencode(ffmpeg: FFmpeg, inputSegments: InputSegment[])
     'fps=30',
   ].join(',')
 
-  const segmentNames: string[] = []
-  for (const [index, { inputName, playbackClip }] of inputSegments.entries()) {
-    const segmentName = `segment_${index}.mp4`
+  const clipFileNames: string[] = []
+  for (const [index, { inputName, playbackClip }] of inputClips.entries()) {
+    const clipFileName = `clip_${index}.mp4`
     await ffmpeg.exec([
       '-ss',
       String(playbackClip.cutStart),
@@ -174,16 +218,16 @@ async function execConcatReencode(ffmpeg: FFmpeg, inputSegments: InputSegment[])
       '48000',
       '-ac',
       '2',
-      segmentName,
+      clipFileName,
     ])
-    segmentNames.push(segmentName)
+    clipFileNames.push(clipFileName)
   }
 
-  const concatEntries = segmentNames.map((segmentName) => `file '${segmentName}'`)
+  const concatEntries = clipFileNames.map((clipFileName) => `file '${clipFileName}'`)
   await execConcatList(ffmpeg, `ffconcat version 1.0\n\n${concatEntries.join('\n')}\n`)
 
-  for (const segmentName of segmentNames) {
-    await ffmpeg.deleteFile(segmentName)
+  for (const clipFileName of clipFileNames) {
+    await ffmpeg.deleteFile(clipFileName)
   }
 }
 

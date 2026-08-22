@@ -20,7 +20,7 @@ export type ProbedStream = {
   channels?: number
 }
 
-export async function probeStreams(opfsName: string): Promise<ProbedStream[]> {
+async function runProbe(opfsName: string, probeArgs: string[]): Promise<string> {
   const ffmpeg = await loadProbeFfmpeg()
   const file = await readOpfsFile(opfsName)
 
@@ -30,14 +30,46 @@ export async function probeStreams(opfsName: string): Promise<ProbedStream[]> {
   const outputName = `probe_${probeId}.json`
 
   await ffmpeg.writeFile(inputName, await fetchFile(file))
-  await ffmpeg.ffprobe(['-v', 'error', '-show_streams', '-print_format', 'json', inputName, '-o', outputName])
+  await ffmpeg.ffprobe(['-v', 'error', ...probeArgs, '-print_format', 'json', inputName, '-o', outputName])
   const output = await ffmpeg.readFile(outputName)
   const outputText = typeof output === 'string' ? output : new TextDecoder().decode(output)
   await ffmpeg.deleteFile(inputName)
   await ffmpeg.deleteFile(outputName)
 
+  return outputText
+}
+
+export async function probeStreams(opfsName: string): Promise<ProbedStream[]> {
+  const outputText = await runProbe(opfsName, ['-show_streams'])
   const { streams } = JSON.parse(outputText) as { streams: ProbedStream[] }
   return streams
+}
+
+type ProbedPacket = {
+  pts_time?: string
+  dts_time?: string
+  flags?: string
+}
+
+// keyframe timestamps of the first video stream, ascending.
+// reads packets only (no decode), but does list every packet of the stream
+export async function probeKeyframeTimes(opfsName: string): Promise<number[]> {
+  const outputText = await runProbe(opfsName, [
+    '-select_streams',
+    'v:0',
+    '-show_packets',
+    '-show_entries',
+    'packet=pts_time,dts_time,flags',
+  ])
+  const parsed = JSON.parse(outputText) as { packets: ProbedPacket[] }
+  console.log('WIPWIP', parsed)
+  const { packets } = parsed
+
+  const keyframeTimes = packets
+    .filter((packet) => packet.flags?.includes('K'))
+    .map((packet) => Number(packet.pts_time ?? packet.dts_time))
+    .filter((time) => Number.isFinite(time))
+  return keyframeTimes.sort((a, b) => a - b)
 }
 
 export async function getFormatSignature(opfsName: string): Promise<string> {

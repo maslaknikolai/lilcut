@@ -9,7 +9,7 @@ import { TimelineClipAction } from './TimelineClipAction'
 import type { Project } from './types'
 import { useScrollCurrentIntoView } from './useScrollCurrentIntoView'
 
-type SegmentProps = {
+type TimelineClipProps = {
   project: Project
   timelineClip: TimelineClip
   pxPerSecond: number
@@ -18,7 +18,14 @@ type SegmentProps = {
   onSeekToStart: () => void
 }
 
-export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, onEdit, onSeekToStart }: SegmentProps) {
+export function TimelineClip({
+  project,
+  timelineClip,
+  pxPerSecond,
+  isCurrent,
+  onEdit,
+  onSeekToStart,
+}: TimelineClipProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const setProjects = useSetAtom(projectsAtom)
   const rootRef = useScrollCurrentIntoView(isCurrent)
