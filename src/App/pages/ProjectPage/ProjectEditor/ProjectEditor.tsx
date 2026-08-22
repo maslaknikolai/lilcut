@@ -1,7 +1,9 @@
 import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSetAtom } from 'jotai'
-import { Pause, Play } from 'lucide-react'
+import { Pause, Play, Redo2, Undo2 } from 'lucide-react'
 import { projectsAtom } from '@/App/atoms'
+import { GhostButton } from '@/App/lib/GhostButton'
+import { useProjectsUndoRedo } from '@/App/pages/ProjectPage/ProjectEditor/useProjectsUndoRedo'
 import { ProjectEditorHotkeysButton } from '@/App/pages/ProjectPage/ProjectEditor/ProjectEditorHotkeysButton'
 import { CutHereButton } from '@/App/pages/ProjectPage/ProjectEditor/CutHereButton'
 import { updateProject } from '@/App/lib/library'
@@ -44,6 +46,8 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [fitZoomSlot, setFitZoomSlot] = useState<HTMLElement | null>(null)
+
+  const { undo, redo, isUndoAvailable, isRedoAvailable } = useProjectsUndoRedo()
 
   const currentPlaybackClipIndex = findClipIndexAtTime(playbackClips, projectTime)
   const currentPlaybackClip = playbackClips[currentPlaybackClipIndex]
@@ -298,7 +302,30 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
       </div>
 
       <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 pt-4 gap-2">
-        <div className="flex justify-end px-4">
+        <div className="flex items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            {isUndoAvailable && (
+              <GhostButton
+                onClick={() => undo()}
+                tooltip="Undo (Ctrl/⌘+Z)"
+                aria-label="Undo"
+                className="shrink-0 px-2"
+              >
+                <Undo2 size={14} />
+              </GhostButton>
+            )}
+            {isRedoAvailable && (
+              <GhostButton
+                onClick={() => redo()}
+                tooltip="Redo (Ctrl/⌘+Shift+Z)"
+                aria-label="Redo"
+                className="shrink-0 px-2"
+              >
+                <Redo2 size={14} />
+              </GhostButton>
+            )}
+          </div>
+
           <RenderProjectButton project={project} />
         </div>
         <div className="flex items-center justify-between gap-2 px-4">
