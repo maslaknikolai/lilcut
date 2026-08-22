@@ -7,11 +7,11 @@ import { CutHereButton } from './CutHereButton'
 import { updateProject } from './library'
 import { formatTimestamp } from './formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from './projectTimeline'
-import { RenderProjectButton } from './RenderProjectButton'
 import { Timeline } from './Timeline'
 import type { MediaAsset, Project } from './types'
 import { useMediaAssetVideoUrls } from './useMediaAssetVideoUrls'
 import { useKeyPress } from './useKeyPress'
+import { RenderProjectButton } from './RenderProjectButton'
 
 // find problems by filtering the console for [player]; verbose ticks are
 // deliberately not logged — every entry is a transition or a suppressed race
@@ -297,8 +297,11 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
         )}
       </div>
 
-      <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 pt-10 gap-2">
-        <div className="flex items-center justify-between gap- px-4">
+      <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 pt-4 gap-2">
+        <div className="flex justify-end px-4">
+          <RenderProjectButton project={project} />
+        </div>
+        <div className="flex items-center justify-between gap-2 px-4">
           <div className="flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2">
               <button
@@ -329,16 +332,6 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
                 {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
               </span>
             </div>
-
-            <div className="flex items-center gap-2">
-              <CutHereButton
-                project={project}
-                projectTime={projectTime}
-                currentTimelineClip={currentTimelineClip}
-              />
-
-              <RenderProjectButton project={project} />
-            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -348,6 +341,14 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
             />
 
             <ClipsEditorHotkeysButton />
+
+            <div className="flex items-center gap-2">
+              <CutHereButton
+                project={project}
+                projectTime={projectTime}
+                currentTimelineClip={currentTimelineClip}
+              />
+            </div>
           </div>
         </div>
 

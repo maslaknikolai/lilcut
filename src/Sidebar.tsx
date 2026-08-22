@@ -38,7 +38,7 @@ export function Sidebar() {
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
           aria-expanded={isSidebarOpen}
-          className="absolute top-[max(0.5rem,env(safe-area-inset-top))] left-full flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-r-full border border-l-0 border-slate-700 bg-slate-900/80 text-slate-300 shadow-lg backdrop-blur active:bg-slate-800 md:hidden"
+          className="absolute top-[max(0.5rem,env(safe-area-inset-top))] left-full flex size-10 cursor-pointer items-center justify-center rounded-r-full border border-l-0 border-slate-700 bg-slate-900/80 text-slate-300 shadow-lg backdrop-blur active:bg-slate-800 md:hidden"
         >
           <ChevronRight
             size={20}
