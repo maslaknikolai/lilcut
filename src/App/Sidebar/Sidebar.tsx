@@ -1,0 +1,97 @@
+import { useAtom, useSetAtom } from 'jotai'
+import { ChevronRight } from 'lucide-react'
+import { cn } from '@/App/lib/utils'
+import { isSidebarOpenAtom, libraryOrderAtom } from '@/App/atoms'
+import { HelpButton } from '@/App/Sidebar/HelpButton'
+import { libraryItemId, useLibraryItems } from '@/App/lib/library'
+import { LibraryTransferControls } from '@/App/Sidebar/LibraryTransferControls'
+import { MediaAssetItem } from '@/App/Sidebar/MediaAssetItem'
+import { NewProjectButton } from '@/App/Sidebar/NewProjectButton'
+import { ProjectItem } from '@/App/Sidebar/ProjectItem'
+import { RecordControls } from '@/App/lib/RecordControls'
+import { SortingList } from '@/App/Sidebar/SortingList'
+import { StorageUsage } from '@/App/Sidebar/StorageUsage'
+import { UploadMediaAssetButton } from '@/App/lib/UploadMediaAssetButton'
+
+export function Sidebar() {
+  const library = useLibraryItems()
+  const setLibraryOrder = useSetAtom(libraryOrderAtom)
+  const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom)
+
+  return (
+    <>
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+        />
+      )}
+
+      <div
+        className={cn(
+          'fixed inset-y-0 left-0 z-40 flex w-85 max-w-[85vw] shrink-0 flex-col border-r border-slate-700 bg-blue-950 transition-transform md:static md:z-auto md:max-w-none md:translate-x-0 md:transition-none',
+          !isSidebarOpen && '-translate-x-full',
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          aria-expanded={isSidebarOpen}
+          className="absolute top-[max(0.5rem,env(safe-area-inset-top))] left-full flex size-10 cursor-pointer items-center justify-center rounded-r-full border border-l-0 border-slate-700 bg-slate-900/80 text-slate-300 shadow-lg backdrop-blur active:bg-slate-800 md:hidden"
+        >
+          <ChevronRight
+            size={20}
+            className={cn('transition-transform', isSidebarOpen && 'rotate-180')}
+          />
+        </button>
+
+        <header className="flex flex-col gap-1 border-b border-slate-700 p-2">
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-bold tracking-tight">lilcut</span>
+            <HelpButton />
+          </div>
+          <h2 className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
+        </header>
+
+        <div className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-gutter-stable">
+          <SortingList
+            items={library}
+            getId={libraryItemId}
+            onReorder={(next) => setLibraryOrder(next.map(libraryItemId))}
+            renderItem={(item) =>
+              item.type === 'project' ? (
+                <ProjectItem project={item.project} />
+              ) : (
+                <MediaAssetItem mediaAsset={item.mediaAsset} />
+              )
+            }
+          />
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
+          <div className="flex flex-wrap gap-1 justify-stretch">
+            <RecordControls />
+            <UploadMediaAssetButton />
+            <NewProjectButton />
+          </div>
+
+          <StorageUsage />
+
+          <details className="group">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
+              <ChevronRight
+                size={14}
+                className="transition-transform group-open:rotate-90"
+              />
+              Transfer library
+            </summary>
+            <div className="pt-2">
+              <LibraryTransferControls />
+            </div>
+          </details>
+        </div>
+      </div>
+    </>
+  )
+}
