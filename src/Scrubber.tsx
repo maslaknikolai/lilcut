@@ -38,7 +38,7 @@ export function Scrubber({ projectTime, totalDuration, onSeek }: ScrubberProps) 
     <div
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      className="touch-target relative grow-0 shrink-0 h-6 cursor-pointer touch-none rounded-full bg-slate-700 md:h-4"
+      className="relative grow-0 shrink-0 h-6 cursor-pointer touch-none rounded-full bg-slate-700 md:h-4"
     >
       <div
         className="absolute inset-y-0 left-0 rounded-full bg-blue-600"

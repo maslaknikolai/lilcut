@@ -11,7 +11,7 @@ export function GhostButton({ className, type = 'button', tooltip, ...props }: G
     <button
       type={type}
       className={cn(
-        'touch-target flex cursor-pointer py-2 px-1 items-center justify-center gap-1.5 rounded border border-slate-700 text-xs text-nowrap text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50',
+        'flex min-h-10 min-w-10 cursor-pointer py-2 px-1 items-center justify-center gap-1.5 rounded border border-slate-700 text-xs text-nowrap text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}

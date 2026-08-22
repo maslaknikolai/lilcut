@@ -71,7 +71,7 @@ export function ClipEditModal({ projectId, clip, onClose }: ClipEditModalProps) 
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
+            className="min-h-10 cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
           >
             Cancel
           </button>
@@ -79,7 +79,7 @@ export function ClipEditModal({ projectId, clip, onClose }: ClipEditModalProps) 
             type="button"
             onClick={() => saveClip(draftClip)}
             disabled={!isClipRangeValid(draftClip)}
-            className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-10 cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save
           </button>
@@ -113,7 +113,7 @@ export function ClipEditModal({ projectId, clip, onClose }: ClipEditModalProps) 
 
       {otherProjectClips.length > 0 && (
         <details>
-          <summary className="touch-target cursor-pointer text-xs text-slate-400 hover:text-slate-200 active:text-slate-100">
+          <summary className="flex min-h-10 cursor-pointer items-center text-xs text-slate-400 hover:text-slate-200 active:text-slate-100">
             Copy file and range from another project's clip
           </summary>
           <select

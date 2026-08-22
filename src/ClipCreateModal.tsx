@@ -72,7 +72,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
             <button
               type="button"
               onClick={() => setTrimmingClip(null)}
-              className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
+              className="min-h-10 cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
             >
               Back
             </button>
@@ -80,7 +80,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
               type="button"
               onClick={() => addTrimmedClip(trimmingClip)}
               disabled={!isClipRangeValid(trimmingClip)}
-              className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-10 cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Add clip
             </button>
@@ -104,7 +104,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100 active:text-white"
+            className="flex min-h-10 min-w-10 cursor-pointer items-center justify-center text-slate-500 hover:text-slate-100 active:text-white"
             aria-label="Close"
           >
             <X size={16} />
@@ -139,14 +139,14 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
             type="button"
             onClick={() => setClipsToBeAdded([])}
             disabled={!clipsToBeAdded.length}
-            className="touch-target mr-auto cursor-pointer rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mr-auto min-h-10 cursor-pointer rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Reset
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
+            className="min-h-10 cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
           >
             Cancel
           </button>
@@ -154,7 +154,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
             type="button"
             onClick={handleAddClips}
             disabled={!clipsToBeAdded.length}
-            className="touch-target cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-10 cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add clips
           </button>

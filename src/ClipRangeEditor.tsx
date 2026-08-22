@@ -130,7 +130,7 @@ export function ClipRangeEditor({
               <button
                 type="button"
                 onClick={onBack}
-                className="touch-target cursor-pointer text-slate-500 hover:text-slate-100 active:text-white"
+                className="flex min-h-10 min-w-10 cursor-pointer items-center justify-center text-slate-500 hover:text-slate-100 active:text-white"
                 aria-label="Back to video list"
               >
                 <ChevronLeft size={16} />
@@ -141,7 +141,7 @@ export function ClipRangeEditor({
           <button
             type="button"
             onClick={onClose}
-            className="touch-target cursor-pointer text-slate-500 hover:text-slate-100 active:text-white"
+            className="flex min-h-10 min-w-10 cursor-pointer items-center justify-center text-slate-500 hover:text-slate-100 active:text-white"
             aria-label="Close"
           >
             <X size={16} />
@@ -211,7 +211,7 @@ export function ClipRangeEditor({
               <button
                 type="button"
                 onClick={captureCutStart}
-                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950"
+                className="min-h-10 shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950"
               >
                 Use current
               </button>
@@ -234,12 +234,12 @@ export function ClipRangeEditor({
                 type="button"
                 onClick={captureCutEnd}
                 disabled={isToVideoEnd}
-                className="touch-target shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+                className="min-h-10 shrink-0 cursor-pointer rounded border border-slate-700 px-2 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Use current
               </button>
             </div>
-            <label className="touch-target flex cursor-pointer items-center gap-1.5 text-xs text-slate-400">
+            <label className="flex min-h-10 cursor-pointer items-center gap-1.5 text-xs text-slate-400">
               <input
                 type="checkbox"
                 checked={isToVideoEnd}
@@ -255,7 +255,7 @@ export function ClipRangeEditor({
             type="button"
             onClick={previewRange}
             disabled={!videoUrl || !isClipRangeValid(clip)}
-            className="touch-target mr-auto flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mr-auto flex min-h-10 cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Play size={14} />
             Preview range

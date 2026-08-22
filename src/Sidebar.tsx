@@ -57,7 +57,7 @@ export function Sidebar() {
         </div>
 
         <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
-          <div className="flex flex-wrap gap-1 items-center">
+          <div className="flex flex-wrap gap-1 justify-stretch">
             <RecordControls />
             <UploadMediaAssetButton />
             <NewProjectButton />
@@ -66,7 +66,7 @@ export function Sidebar() {
           <StorageUsage />
 
           <details className="group">
-            <summary className="touch-target flex cursor-pointer list-none items-center gap-1 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
               <ChevronRight
                 size={14}
                 className="transition-transform group-open:rotate-90"

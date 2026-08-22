@@ -14,7 +14,7 @@ export function OpenSidebarButton() {
       aria-label="Open sidebar"
       aria-expanded={isSidebarOpen}
       className={cn(
-        'touch-target fixed z-20 cursor-pointer rounded-full border border-slate-700 bg-slate-900/80 p-3 text-slate-300 shadow-lg backdrop-blur transition-all active:bg-slate-800 md:hidden',
+        'fixed z-20 cursor-pointer rounded-full border border-slate-700 bg-slate-900/80 p-3 text-slate-300 shadow-lg backdrop-blur transition-all active:bg-slate-800 md:hidden',
         'bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-[max(0.5rem,env(safe-area-inset-left))]',
         isSidebarOpen && 'pointer-events-none scale-75 opacity-0',
       )}

@@ -35,7 +35,7 @@ export function SortingItem({ ref, id, onClick, className, dragHandleLabel, chil
       <span
         {...attributes}
         {...listeners}
-        className="touch-target cursor-grab touch-none px-1 text-slate-600 hover:text-slate-400 active:cursor-grabbing active:text-slate-300"
+        className="flex min-h-10 min-w-10 cursor-grab touch-none items-center justify-center text-slate-600 hover:text-slate-400 active:cursor-grabbing active:text-slate-300"
         aria-label={dragHandleLabel}
       >
         <GripVertical size={16} />
