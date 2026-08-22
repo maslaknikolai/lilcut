@@ -130,7 +130,7 @@ export async function renderProjectVideo(
 
 // the latest keyframe at or before `time`; without keyframe data the
 // requested time stays as is
-function snapToPrecedingKeyframe(time: number, keyframeTimes: number[]): number {
+export function snapToPrecedingKeyframe(time: number, keyframeTimes: number[]): number {
   const precedingTimes = keyframeTimes.filter((keyframeTime) => keyframeTime <= time)
   if (!precedingTimes.length) {
     return time

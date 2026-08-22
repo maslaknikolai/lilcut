@@ -1,4 +1,4 @@
-import type { Clip, MediaAsset, Project } from './types'
+import type { Clip, MediaAsset } from './types'
 
 // cutEnd === undefined means "to the end of the video" (0 is a real time)
 export function isClipRangeValid(clip: Clip): boolean {
@@ -24,10 +24,10 @@ export type TimelineClip = {
   projectStart: number
 }
 
-export function buildTimelineClips(project: Project, mediaAssets: MediaAsset[]): TimelineClip[] {
+export function buildTimelineClips(clips: Clip[], mediaAssets: MediaAsset[]): TimelineClip[] {
   let projectStart = 0
 
-  return project.clips.map((clip) => {
+  return clips.map((clip) => {
     const cutStart = clip.cutStart ?? 0
     const mediaAsset = mediaAssets.find((asset) => asset.opfsName === clip.mediaAssetOpfsName)
     const cutEnd = clip.cutEnd ?? mediaAsset?.duration ?? cutStart

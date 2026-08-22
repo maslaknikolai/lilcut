@@ -42,7 +42,7 @@ export function RenderJobProvider({ children }: { children: ReactNode }) {
       const ffmpeg = await loadRenderFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
-      const timelineClips = buildTimelineClips(project, mediaAssets)
+      const timelineClips = buildTimelineClips(project.clips, mediaAssets)
       const playbackClips = buildPlaybackClips(timelineClips)
       const blob = await renderProjectVideo(ffmpeg, playbackClips, mediaAssets, {
         onProgress: (overallProgress) =>

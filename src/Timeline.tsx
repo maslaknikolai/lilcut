@@ -37,7 +37,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const scrollerRef = useRef<HTMLDivElement>(null)
 
-  const timelineClips = buildTimelineClips(project, mediaAssets)
+  const timelineClips = buildTimelineClips(project.clips, mediaAssets)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
   const minPxPerSecondRef = useRef(0)

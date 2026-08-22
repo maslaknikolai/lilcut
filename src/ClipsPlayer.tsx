@@ -35,7 +35,7 @@ type ClipsPlayerProps = {
 }
 
 export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
-  const timelineClips = buildTimelineClips(project, mediaAssets)
+  const timelineClips = buildTimelineClips(project.clips, mediaAssets)
   const playbackClips = buildPlaybackClips(timelineClips)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 

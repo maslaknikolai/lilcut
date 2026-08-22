@@ -31,7 +31,7 @@ export function RenderProjectButton({ project }: RenderProjectButtonProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
   const isRendering = job.status === 'rendering'
 
-  const playbackClips = buildPlaybackClips(buildTimelineClips(project, mediaAssets))
+  const playbackClips = buildPlaybackClips(buildTimelineClips(project.clips, mediaAssets))
   const concatCompatibility = useConcatCompatibility(playbackClips)
 
   return (

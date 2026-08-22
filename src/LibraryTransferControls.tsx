@@ -5,38 +5,16 @@ import { FolderDown, FolderUp, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GhostButton } from './GhostButton'
 import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from './atoms'
+import {
+  MANIFEST_NAME,
+  MANIFEST_VERSION,
+  migrateManifest,
+  type LibraryManifest,
+  type RawManifest,
+} from './libraryManifest'
 import { createOpfsWritable, deleteOpfsFile, readOpfsFile } from './opfs'
-import type { Project } from './types'
 import { uniqueName } from './uniqueName'
 import { useMediaAssetActions } from './useMediaAssetActions'
-
-type LibraryManifest = {
-  version: number
-  projects: Project[]
-  libraryOrder: string[]
-}
-
-const MANIFEST_NAME = 'library.json'
-
-const MANIFEST_VERSION = 1
-
-type RawManifest = Partial<LibraryManifest>
-
-function migrateManifest(raw: RawManifest): LibraryManifest | null {
-  const version = raw.version ?? 1
-  if (version > MANIFEST_VERSION) {
-    return null
-  }
-
-  // future upgrades, oldest first:
-  // if (version < 2) { ... }
-
-  return {
-    version: MANIFEST_VERSION,
-    projects: raw.projects ?? [],
-    libraryOrder: raw.libraryOrder ?? [],
-  }
-}
 
 function concatChunks(chunks: Uint8Array[]): Uint8Array {
   const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0)
