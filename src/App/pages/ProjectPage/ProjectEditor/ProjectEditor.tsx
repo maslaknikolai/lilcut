@@ -2,16 +2,16 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { Pause, Play } from 'lucide-react'
 import { projectsAtom } from '@/App/atoms'
-import { ClipsEditorHotkeysButton } from '@/App/pages/ProjectPage/ClipsPlayer/ClipsEditorHotkeysButton'
-import { CutHereButton } from '@/App/pages/ProjectPage/ClipsPlayer/CutHereButton'
+import { ProjectEditorHotkeysButton } from '@/App/pages/ProjectPage/ProjectEditor/ProjectEditorHotkeysButton'
+import { CutHereButton } from '@/App/pages/ProjectPage/ProjectEditor/CutHereButton'
 import { updateProject } from '@/App/lib/library'
 import { formatTimestamp } from '@/App/lib/formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from '@/App/lib/projectTimeline'
-import { Timeline } from '@/App/pages/ProjectPage/ClipsPlayer/Timeline/Timeline'
+import { Timeline } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/Timeline'
 import type { MediaAsset, Project } from '@/App/lib/types'
-import { useMediaAssetVideoUrls } from '@/App/pages/ProjectPage/ClipsPlayer/useMediaAssetVideoUrls'
+import { useMediaAssetVideoUrls } from '@/App/pages/ProjectPage/ProjectEditor/useMediaAssetVideoUrls'
 import { useKeyPress } from '@/App/lib/useKeyPress'
-import { RenderProjectButton } from '@/App/pages/ProjectPage/ClipsPlayer/RenderProjectButton'
+import { RenderProjectButton } from '@/App/pages/ProjectPage/ProjectEditor/RenderProjectButton'
 
 // find problems by filtering the console for [player]; verbose ticks are
 // deliberately not logged — every entry is a transition or a suppressed race
@@ -29,12 +29,12 @@ function arrowSeekStep(event: KeyboardEvent): number {
   return 1
 }
 
-type ClipsPlayerProps = {
+type ProjectEditorProps = {
   project: Project
   mediaAssets: MediaAsset[]
 }
 
-export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
+export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
   const timelineClips = buildTimelineClips(project.clips, mediaAssets)
   const playbackClips = buildPlaybackClips(timelineClips)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
@@ -340,7 +340,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
               className="flex shrink-0 empty:hidden"
             />
 
-            <ClipsEditorHotkeysButton />
+            <ProjectEditorHotkeysButton />
 
             <div className="flex items-center gap-2">
               <CutHereButton

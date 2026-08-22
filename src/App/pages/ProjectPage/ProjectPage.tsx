@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
 import { mediaAssetsAtom, projectsAtom } from '@/App/atoms'
-import { ClipsPlayer } from '@/App/pages/ProjectPage/ClipsPlayer/ClipsPlayer'
+import { ProjectEditor } from '@/App/pages/ProjectPage/ProjectEditor/ProjectEditor'
 import { ProjectActions } from '@/App/lib/ProjectActions'
 import { PageTitleField } from '@/App/lib/PageTitleField'
 import type { Project } from '@/App/lib/types'
@@ -39,7 +39,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
         </div>
       </div>
 
-      <ClipsPlayer
+      <ProjectEditor
         project={project}
         mediaAssets={mediaAssets}
       />

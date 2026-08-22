@@ -6,7 +6,7 @@ function Kbd({ children }: { children: ReactNode }) {
   return <kbd className="rounded border border-slate-500 px-1 text-xs text-slate-500">{children}</kbd>
 }
 
-export function ClipsEditorHotkeysButton() {
+export function ProjectEditorHotkeysButton() {
   return (
     <Tooltip disableHoverableContent>
       <TooltipTrigger asChild>

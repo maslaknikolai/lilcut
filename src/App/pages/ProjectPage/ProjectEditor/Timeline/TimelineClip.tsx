@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/App/lib/ui/tooltip'
 import { mediaAssetsAtom, projectsAtom } from '@/App/atoms'
 import { updateProject } from '@/App/lib/library'
 import type { TimelineClip } from '@/App/lib/projectTimeline'
-import { TimelineClipAction } from '@/App/pages/ProjectPage/ClipsPlayer/Timeline/TimelineClipAction'
+import { TimelineClipAction } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClipAction'
 import type { Project } from '@/App/lib/types'
 import { useScrollCurrentIntoView } from '@/App/lib/useScrollCurrentIntoView'
 

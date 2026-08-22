@@ -5,7 +5,7 @@ import { mediaAssetsAtom } from '@/App/atoms'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { buildPlaybackClips, buildTimelineClips } from '@/App/lib/projectTimeline'
 import type { Project } from '@/App/lib/types'
-import { useConcatCompatibility } from '@/App/pages/ProjectPage/ClipsPlayer/useConcatCompatibility'
+import { useConcatCompatibility } from '@/App/pages/ProjectPage/ProjectEditor/useConcatCompatibility'
 import { useRenderJobContext } from '@/App/contexts/useRenderJobContext'
 
 type RenderProjectButtonProps = {
