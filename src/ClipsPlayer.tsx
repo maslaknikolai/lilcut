@@ -43,6 +43,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
   const [projectTime, setProjectTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [fitZoomSlot, setFitZoomSlot] = useState<HTMLElement | null>(null)
 
   const currentPlaybackClipIndex = findClipIndexAtTime(playbackClips, projectTime)
   const currentPlaybackClip = playbackClips[currentPlaybackClipIndex]
@@ -297,45 +298,56 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
 
       <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 pt-10 gap-2">
         <div className="flex items-center justify-between gap- px-4">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={(e) => {
-                // space global Space hotkey
-                e.currentTarget.blur()
-                togglePlayback()
-              }}
-              disabled={timelineClips.length === 0}
-              className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <Pause
-                  size={16}
-                  fill="currentColor"
-                />
-              ) : (
-                <Play
-                  size={16}
-                  fill="currentColor"
-                />
-              )}
-            </button>
+          <div className="flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  // space global Space hotkey
+                  e.currentTarget.blur()
+                  togglePlayback()
+                }}
+                disabled={timelineClips.length === 0}
+                className="flex shrink-0 cursor-pointer items-center justify-center rounded p-1.5 text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? (
+                  <Pause
+                    size={16}
+                    fill="currentColor"
+                  />
+                ) : (
+                  <Play
+                    size={16}
+                    fill="currentColor"
+                  />
+                )}
+              </button>
 
-            <span className="shrink-0 text-xs text-slate-500">
-              {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
-            </span>
+              <span className="shrink-0 text-xs text-slate-500">
+                {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
+              </span>
+            </div>
 
-            <CutHereButton
-              project={project}
-              projectTime={projectTime}
-              currentTimelineClip={currentTimelineClip}
-            />
+            <div className="flex items-center gap-2">
+              <CutHereButton
+                project={project}
+                projectTime={projectTime}
+                currentTimelineClip={currentTimelineClip}
+              />
 
-            <RenderProjectButton project={project} />
+              <RenderProjectButton project={project} />
+            </div>
           </div>
 
-          <ClipsEditorHotkeysButton />
+          <div className="flex items-center gap-2">
+            <div
+              ref={setFitZoomSlot}
+              className="flex shrink-0 empty:hidden"
+            />
+
+            <ClipsEditorHotkeysButton />
+          </div>
         </div>
 
         <Timeline
@@ -343,6 +355,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
           currentTimelineClipId={currentTimelineClip?.id}
           projectTime={projectTime}
           onSeek={seekToProjectTime}
+          fitZoomSlot={fitZoomSlot}
         />
       </div>
     </>

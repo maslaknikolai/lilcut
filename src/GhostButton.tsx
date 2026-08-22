@@ -1,8 +1,13 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-export function GhostButton({ className, type = 'button', ...props }: ComponentProps<'button'>) {
-  return (
+type GhostButtonProps = ComponentProps<'button'> & {
+  tooltip?: ReactNode
+}
+
+export function GhostButton({ className, type = 'button', tooltip, ...props }: GhostButtonProps) {
+  const button = (
     <button
       type={type}
       className={cn(
@@ -11,5 +16,16 @@ export function GhostButton({ className, type = 'button', ...props }: ComponentP
       )}
       {...props}
     />
+  )
+
+  if (!tooltip) {
+    return button
+  }
+
+  return (
+    <Tooltip disableHoverableContent>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent>{tooltip}</TooltipContent>
+    </Tooltip>
   )
 }

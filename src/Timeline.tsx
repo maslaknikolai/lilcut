@@ -1,8 +1,10 @@
 import { useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { Plus, Shrink } from 'lucide-react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { activeModalAtom, mediaAssetsAtom } from './atoms'
 import { DragScrollArea } from './DragScrollArea'
+import { GhostButton } from './GhostButton'
 import { InsertClipButton } from './InsertClipButton'
 import { buildTimelineClips, type TimelineClip as TimelineClipT } from './projectTimeline'
 import { Scrubber } from './Scrubber'
@@ -16,11 +18,12 @@ type TimelineProps = {
   currentTimelineClipId: string | undefined
   projectTime: number
   onSeek: (time: number) => void
+  fitZoomSlot?: HTMLElement | null
 }
 
 const MAX_PX_PER_SECOND = 500
 
-export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }: TimelineProps) {
+export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, fitZoomSlot }: TimelineProps) {
   const [pxPerSecond, setPxPerSecond] = useState<number | null>(null)
   const setActiveModal = useSetAtom(activeModalAtom)
 
@@ -76,7 +79,13 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
     setPxPerSecond(newPxPerSecond)
   }
 
-  useKeyPress('Digit0', () => setPxPerSecond(minPxPerSecondRef.current))
+  function fitZoom() {
+    setPxPerSecond(minPxPerSecondRef.current)
+  }
+
+  useKeyPress('Digit0', fitZoom)
+
+  const isZoomedIn = (pxPerSecond ?? 0) > minPxPerSecondRef.current
 
   const applyPendingZoomScroll = useEffectEvent(() => {
     const scroller = scrollerRef.current
@@ -91,50 +100,66 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek }
   }, [pxPerSecond])
 
   return (
-    <DragScrollArea
-      ref={scrollerRef}
-      className="overflow-x-scroll pb-10 px-4"
-    >
-      <ZoomArea
-        onZoom={handleZoom}
-        className="flex w-fit min-w-full flex-col gap-4"
-      >
-        <Scrubber
-          projectTime={projectTime}
-          totalDuration={totalDuration}
-          onSeek={onSeek}
-        />
-
-        {timelineClips.length ? (
-          <div className="flex h-20 gap-px md:h-12">
-            {timelineClips.flatMap((timelineClip, index) => [
-              <InsertClipButton
-                key={`insert-${timelineClip.id}`}
-                onClick={() => openClipCreator(index)}
-              />,
-              <TimelineClip
-                key={timelineClip.id}
-                project={project}
-                timelineClip={timelineClip}
-                pxPerSecond={pxPerSecond ?? 0}
-                isCurrent={timelineClip.id === currentTimelineClipId}
-                onEdit={() => openClipEditor(timelineClip)}
-                onSeekToStart={() => onSeek(timelineClip.projectStart)}
-              />,
-            ])}
-            {timelineClips.length > 0 && <InsertClipButton onClick={() => openClipCreator(timelineClips.length)} />}
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => openClipCreator(0)}
-            className="h-20 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 active:border-slate-400 active:text-slate-100 md:h-12"
+    <>
+      {fitZoomSlot &&
+        isZoomedIn &&
+        createPortal(
+          <GhostButton
+            onClick={fitZoom}
+            tooltip="Fit timeline to width (0)"
+            aria-label="Fit timeline to width"
+            className="shrink-0 px-2"
           >
-            <Plus size={14} />
-            Add clip
-          </button>
+            <Shrink size={14} />
+          </GhostButton>,
+          fitZoomSlot,
         )}
-      </ZoomArea>
-    </DragScrollArea>
+
+      <DragScrollArea
+        ref={scrollerRef}
+        className="overflow-x-scroll pb-10 px-4"
+      >
+        <ZoomArea
+          onZoom={handleZoom}
+          className="flex w-fit min-w-full flex-col gap-4"
+        >
+          <Scrubber
+            projectTime={projectTime}
+            totalDuration={totalDuration}
+            onSeek={onSeek}
+          />
+
+          {timelineClips.length ? (
+            <div className="flex h-20 gap-px md:h-12">
+              {timelineClips.flatMap((timelineClip, index) => [
+                <InsertClipButton
+                  key={`insert-${timelineClip.id}`}
+                  onClick={() => openClipCreator(index)}
+                />,
+                <TimelineClip
+                  key={timelineClip.id}
+                  project={project}
+                  timelineClip={timelineClip}
+                  pxPerSecond={pxPerSecond ?? 0}
+                  isCurrent={timelineClip.id === currentTimelineClipId}
+                  onEdit={() => openClipEditor(timelineClip)}
+                  onSeekToStart={() => onSeek(timelineClip.projectStart)}
+                />,
+              ])}
+              {timelineClips.length > 0 && <InsertClipButton onClick={() => openClipCreator(timelineClips.length)} />}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => openClipCreator(0)}
+              className="h-20 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded border border-dashed border-slate-700 text-sm text-slate-400 hover:border-slate-500 hover:text-slate-200 active:border-slate-400 active:text-slate-100 md:h-12"
+            >
+              <Plus size={14} />
+              Add clip
+            </button>
+          )}
+        </ZoomArea>
+      </DragScrollArea>
+    </>
   )
 }

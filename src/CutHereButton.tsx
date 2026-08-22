@@ -1,6 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
 import { projectsAtom } from './atoms'
+import { GhostButton } from './GhostButton'
 import { updateProject } from './library'
 import { type TimelineClip } from './projectTimeline'
 import type { Project } from './types'
@@ -19,9 +20,7 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
     ? currentTimelineClip.cutStart + (projectTime - currentTimelineClip.projectStart)
     : 0
   const isCutPossible =
-    !!currentTimelineClip &&
-    cutMediaTime > currentTimelineClip.cutStart &&
-    cutMediaTime < currentTimelineClip.cutEnd
+    !!currentTimelineClip && cutMediaTime > currentTimelineClip.cutStart && cutMediaTime < currentTimelineClip.cutEnd
 
   function cutHere() {
     if (!currentTimelineClip || !isCutPossible) {
@@ -54,15 +53,17 @@ export function CutHereButton({ project, projectTime, currentTimelineClip }: Pro
   useKeyPress('KeyC', cutHere)
 
   return (
-    <button
-      type="button"
+    <GhostButton
       onClick={cutHere}
       disabled={!isCutPossible}
-      className="touch-target flex shrink-0 cursor-pointer items-center gap-1 rounded p-1.5 text-xs text-slate-300 hover:bg-slate-900 active:bg-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+      className="shrink-0 px-2"
     >
-      <Scissors size={14} />
+      <Scissors
+        size={14}
+        className="text-slate-100"
+      />
       Cut Here
       <kbd className="hidden rounded border border-slate-700 px-1 text-[10px] text-slate-500 md:inline">C</kbd>
-    </button>
+    </GhostButton>
   )
 }
