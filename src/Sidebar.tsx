@@ -33,6 +33,19 @@ export function Sidebar() {
           !isSidebarOpen && '-translate-x-full',
         )}
       >
+        <button
+          type="button"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          aria-expanded={isSidebarOpen}
+          className="absolute top-[max(0.5rem,env(safe-area-inset-top))] left-full flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-r-full border border-l-0 border-slate-700 bg-slate-900/80 text-slate-300 shadow-lg backdrop-blur active:bg-slate-800 md:hidden"
+        >
+          <ChevronRight
+            size={20}
+            className={cn('transition-transform', isSidebarOpen && 'rotate-180')}
+          />
+        </button>
+
         <header className="flex flex-col gap-1 border-b border-slate-700 p-2">
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold tracking-tight">lilcut</span>

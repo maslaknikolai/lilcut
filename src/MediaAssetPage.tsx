@@ -54,7 +54,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   )
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50 p-4">
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50 p-4 pt-14 md:pt-4">
       <div className="flex gap-2 items-center">
         <div className="flex min-w-0 flex-1 flex-col">
           <PageTitleField

@@ -4,7 +4,6 @@ import { libraryOrderAtom, projectsAtom } from './atoms'
 import { RenderJobProvider } from './RenderJobContext'
 import { RenderJobWidget } from './RenderJobWidget'
 import { Modals } from './Modals'
-import { OpenSidebarButton } from './OpenSidebarButton'
 import { PageView } from './PageView'
 import { Sidebar } from './Sidebar'
 import { RecordingPipWindow } from './RecordingPipWindow'
@@ -21,8 +20,6 @@ function AppContent() {
             <Sidebar />
             <PageView />
           </div>
-
-          <OpenSidebarButton />
 
           <div className="fixed top-2 right-2">
             <RenderJobWidget />
