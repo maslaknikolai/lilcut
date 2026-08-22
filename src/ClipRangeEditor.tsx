@@ -15,22 +15,12 @@ type ClipRangeEditorProps = {
   clip: Clip
   title: string
   onClipChange: (clip: Clip) => void
-  // footer buttons — each caller decides what accepting the draft means
   actions: ReactNode
   onBack?: () => void
   onClose: () => void
-  children?: ReactNode
 }
 
-export function ClipRangeEditor({
-  clip,
-  title,
-  onClipChange,
-  actions,
-  onBack,
-  onClose,
-  children,
-}: ClipRangeEditorProps) {
+export function ClipRangeEditor({ clip, title, onClipChange, actions, onBack, onClose }: ClipRangeEditorProps) {
   const mediaAssets = useAtomValue(mediaAssetsAtom)
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
@@ -148,14 +138,12 @@ export function ClipRangeEditor({
           </button>
         </div>
 
-        {children}
-
         {videoUrl ? (
           <video
             ref={videoRef}
             src={videoUrl}
             controls
-            className="min-h-0 w-full flex-1"
+            className="min-h-0 w-full flex-1 rounded bg-slate-950"
             onTimeUpdate={(e) => {
               setCurrentTime(e.currentTarget.currentTime)
               if (isPreviewingRef.current && !isToVideoEnd && e.currentTarget.currentTime >= cutEnd) {

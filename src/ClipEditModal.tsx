@@ -1,12 +1,10 @@
 import { useState } from 'react'
-import { useAtom, useAtomValue } from 'jotai'
-import { mediaAssetsAtom, projectsAtom } from './atoms'
+import { useAtom } from 'jotai'
+import { projectsAtom } from './atoms'
 import { ClipRangeEditor } from './ClipRangeEditor'
-import { formatTimestamp } from './formatTimestamp'
 import { updateProject } from './library'
 import { isClipRangeValid, type TimelineClip } from './projectTimeline'
 import type { Clip } from './types'
-import { UploadMediaAssetButton } from './UploadMediaAssetButton'
 
 type ClipEditModalProps = {
   projectId: string
@@ -16,38 +14,12 @@ type ClipEditModalProps = {
 
 export function ClipEditModal({ projectId, clip, onClose }: ClipEditModalProps) {
   const [projects, setProjects] = useAtom(projectsAtom)
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
 
   const projectClip = projects.find((p) => p.id === projectId)?.clips.find((item) => item.id === clip.id)
   const [draftClip, setDraftClip] = useState(projectClip ?? null)
 
-  const otherProjectClips = projects
-    .filter((project) => project.id !== projectId)
-    .flatMap((project) => project.clips.map((otherClip) => ({ project, otherClip })))
-
   if (!draftClip) {
     return null
-  }
-
-  function changeMediaAsset(opfsName: string) {
-    setDraftClip((prev) => (prev ? { ...prev, mediaAssetOpfsName: opfsName } : prev))
-  }
-
-  function applyOtherProjectClip(clipId: string) {
-    const source = otherProjectClips.find(({ otherClip }) => otherClip.id === clipId)
-    if (!source) {
-      return
-    }
-    setDraftClip((prev) =>
-      prev
-        ? {
-            ...prev,
-            mediaAssetOpfsName: source.otherClip.mediaAssetOpfsName,
-            cutStart: source.otherClip.cutStart ?? 0,
-            cutEnd: source.otherClip.cutEnd,
-          }
-        : prev,
-    )
   }
 
   function saveClip(savedClip: Clip) {
@@ -85,60 +57,6 @@ export function ClipEditModal({ projectId, clip, onClose }: ClipEditModalProps) 
           </button>
         </>
       }
-    >
-      <label className="flex flex-col gap-1 text-sm text-slate-300">
-        File
-        <div className="flex gap-1">
-          <select
-            value={draftClip.mediaAssetOpfsName}
-            onChange={(e) => changeMediaAsset(e.target.value)}
-            className="min-h-10 min-w-0 flex-1 rounded border border-slate-700 px-2 py-1"
-          >
-            {mediaAssets.map((mediaAsset) => (
-              <option
-                key={mediaAsset.opfsName}
-                value={mediaAsset.opfsName}
-              >
-                {mediaAsset.opfsName}
-              </option>
-            ))}
-          </select>
-
-          <UploadMediaAssetButton
-            className="shrink-0 px-2"
-            onUploaded={(opfsNames) => changeMediaAsset(opfsNames[0])}
-          />
-        </div>
-      </label>
-
-      {otherProjectClips.length > 0 && (
-        <details>
-          <summary className="flex min-h-10 cursor-pointer items-center text-xs text-slate-400 hover:text-slate-200 active:text-slate-100">
-            Copy file and range from another project's clip
-          </summary>
-          <select
-            value=""
-            onChange={(e) => applyOtherProjectClip(e.target.value)}
-            className="mt-1 min-h-10 w-full rounded border border-slate-700 px-2 py-1 text-sm text-slate-300"
-          >
-            <option
-              value=""
-              disabled
-            >
-              Select a clip
-            </option>
-            {otherProjectClips.map(({ project, otherClip }) => (
-              <option
-                key={otherClip.id}
-                value={otherClip.id}
-              >
-                {project.name} — {otherClip.mediaAssetOpfsName} ({formatTimestamp(otherClip.cutStart ?? 0)}–
-                {otherClip.cutEnd === undefined ? 'end' : formatTimestamp(otherClip.cutEnd)})
-              </option>
-            ))}
-          </select>
-        </details>
-      )}
-    </ClipRangeEditor>
+    />
   )
 }
