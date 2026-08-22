@@ -1,14 +1,25 @@
-// appends " (2)", " (3)", etc. before the extension (if any) until `desiredName` no longer collides
+// "video.mp4" → "video (2).mp4" → "video (3).mp4"
+// "Untitled project (3)" → "Untitled project (4)", never "Untitled project (3) (2)"
 export function uniqueName(desiredName: string, existingNames: string[]): string {
   if (!existingNames.includes(desiredName)) {
     return desiredName
   }
+
   const dotIndex = desiredName.lastIndexOf('.')
-  const base = dotIndex === -1 ? desiredName : desiredName.slice(0, dotIndex)
+  let nameWithoutExtension = dotIndex === -1 ? desiredName : desiredName.slice(0, dotIndex)
   const extension = dotIndex === -1 ? '' : desiredName.slice(dotIndex)
+
   let attempt = 2
-  while (existingNames.includes(`${base} (${attempt})${extension}`)) {
-    attempt++
+  const counterMatch = nameWithoutExtension.match(/^(.*) \((\d+)\)$/)
+  if (counterMatch) {
+    nameWithoutExtension = counterMatch[1]
+    attempt = Number(counterMatch[2]) + 1
   }
-  return `${base} (${attempt})${extension}`
+
+  let candidate = `${nameWithoutExtension} (${attempt})${extension}`
+  while (existingNames.includes(candidate)) {
+    attempt++
+    candidate = `${nameWithoutExtension} (${attempt})${extension}`
+  }
+  return candidate
 }
