@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { ChevronLeft, ChevronRight, Files, FileX, Pencil, X } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -23,6 +23,9 @@ export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, on
   const setProjects = useSetAtom(projectsAtom)
   const rootRef = useScrollCurrentIntoView(isCurrent)
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+  // Radix closes the tooltip itself on trigger pointerdown; remembering the
+  // pre-tap state stops the click from immediately reopening it
+  const wasTooltipOpenOnPointerDownRef = useRef(false)
 
   const mediaAssetExists = mediaAssets.some((mediaAsset) => mediaAsset.opfsName === timelineClip.mediaAssetOpfsName)
   const mediaAssetName = mediaAssetExists ? timelineClip.mediaAssetOpfsName : 'Unknown file'
@@ -77,7 +80,14 @@ export function TimelineClip({ project, timelineClip, pxPerSecond, isCurrent, on
       <TooltipTrigger asChild>
         <div
           ref={rootRef}
-          onClick={() => setIsTooltipOpen((prev) => !prev)}
+          onPointerDown={() => {
+            wasTooltipOpenOnPointerDownRef.current = isTooltipOpen
+          }}
+          onClick={() => {
+            if (!wasTooltipOpenOnPointerDownRef.current) {
+              setIsTooltipOpen(true)
+            }
+          }}
           onDoubleClick={onSeekToStart}
           className={`relative flex shrink-0 items-center rounded text-xs font-medium ${
             isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white'
