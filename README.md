@@ -1,4 +1,4 @@
-# lilcut
+# LilCut
 
 Screen recorder that runs entirely in the browser. Records screen + mic, saves clips to OPFS, and lets you browse, rename, download, and play them back.
 

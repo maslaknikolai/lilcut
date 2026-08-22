@@ -41,7 +41,7 @@ export function LibraryTransferControls() {
     // 'sv' locale formats as ISO-like "2026-08-20 15:42:11"; colons are
     // invalid in filenames on some systems
     const timestamp = new Date().toLocaleString('sv').replaceAll(':', '-')
-    const suggestedName = `lilcut-library-${timestamp}.zip`
+    const suggestedName = `LilCut-library-${timestamp}.zip`
 
     const isPickerSupported = 'showSaveFilePicker' in window
     const fileHandle = isPickerSupported
@@ -206,7 +206,7 @@ export function LibraryTransferControls() {
       }
       const manifest = migrateManifest(JSON.parse(strFromU8(concatChunks(manifestChunks))) as RawManifest)
       if (!manifest) {
-        alert('This library file was exported by a newer version of lilcut — update the app to import it.')
+        alert('This library file was exported by a newer version of LilCut — update the app to import it.')
         return
       }
 

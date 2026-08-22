@@ -48,7 +48,7 @@ export function Sidebar() {
 
         <header className="flex flex-col gap-1 border-b border-slate-700 p-2">
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold tracking-tight">lilcut</span>
+            <span className="text-lg font-bold tracking-tight">LilCut</span>
             <HelpButton />
           </div>
           <h2 className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>

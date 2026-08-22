@@ -29,7 +29,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
         <div className="flex flex-col gap-4 text-sm text-slate-300">
           <section>
             <p>
-              lilcut is a simple open-source screen recorder and video editor that runs entirely in your browser. Your
+              LilCut is a simple open-source screen recorder and video editor that runs entirely in your browser. Your
               videos never leave your device.
             </p>
           </section>
@@ -45,7 +45,7 @@ export function HelpModal({ onClose }: HelpModalProps) {
           <section>
             <h3 className="mb-1 font-medium text-white">Privacy & storage</h3>
             <p>
-              lilcut doesn't upload your recordings to a server. Clearing browser site data may remove locally stored
+              LilCut doesn't upload your recordings to a server. Clearing browser site data may remove locally stored
               files and projects.
             </p>
           </section>
