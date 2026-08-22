@@ -43,6 +43,9 @@ export function RecordingPipWindow() {
 
   return createPortal(
     <div className="flex h-svh items-center justify-center gap-2 p-2">
+      {recording.status === 'countdown' && (
+        <span className="text-2xl font-bold text-red-400 tabular-nums">{recording.secondsToStart}</span>
+      )}
       <RecordControls />
     </div>,
     pipWindow.document.body,

@@ -34,6 +34,8 @@ const MIME_TYPE_CANDIDATES = [
   'video/webm',
 ]
 
+const COUNTDOWN_SECONDS = 3
+
 function pickSupportedMimeType(): string {
   return MIME_TYPE_CANDIDATES.find((type) => MediaRecorder.isTypeSupported(type)) ?? 'video/webm'
 }
@@ -47,9 +49,10 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  const cancelCountdownRef = useRef<(() => void) | null>(null)
 
   const finishRecording = useEffectEvent(async (blob: Blob) => {
-    const closedSegments = recording.status === 'idle' ? [] : recording.segments
+    const closedSegments = recording.status === 'recording' || recording.status === 'paused' ? recording.segments : []
 
     const extension = blob.type.includes('mp4') ? 'mp4' : 'webm'
     const opfsName = uniqueOpfsName(formatRecordingOpfsName(new Date(), extension), mediaAssets)
@@ -136,7 +139,27 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
       await finishRecording(blob)
     }
 
-    stream.getVideoTracks()[0].addEventListener('ended', () => recorder.stop())
+    stream.getVideoTracks()[0].addEventListener('ended', () => {
+      if (recorder.state !== 'inactive') {
+        recorder.stop()
+      }
+    })
+
+    let isCountdownCancelled = false
+    cancelCountdownRef.current = () => {
+      isCountdownCancelled = true
+    }
+    for (let secondsToStart = COUNTDOWN_SECONDS; secondsToStart > 0; secondsToStart--) {
+      setRecording({ status: 'countdown', secondsToStart })
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const isCaptureAlive = stream.getVideoTracks()[0].readyState === 'live'
+      if (isCountdownCancelled || !isCaptureAlive) {
+        stopAllTracks()
+        setRecording({ status: 'idle' })
+        return
+      }
+    }
+    cancelCountdownRef.current = null
 
     recorder.start()
     recorderRef.current = recorder
@@ -144,6 +167,10 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   })
 
   const stop = useEffectEvent(() => {
+    if (recording.status === 'countdown') {
+      cancelCountdownRef.current?.()
+      return
+    }
     recorderRef.current?.stop()
   })
 

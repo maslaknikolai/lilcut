@@ -5,7 +5,7 @@ import { useScreenRecordingContext } from '@/App/contexts/useScreenRecordingCont
 export function PauseResumeButton() {
   const { recording, pause, resume } = useScreenRecordingContext()
 
-  if (recording.status === 'idle') {
+  if (recording.status === 'idle' || recording.status === 'countdown') {
     return null
   }
   const isPaused = recording.status === 'paused'
