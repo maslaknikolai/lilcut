@@ -19,8 +19,8 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
   }
 
   return (
-    <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden bg-blue-950/50 pt-10 md:pt-0">
-      <div className="flex items-center gap-2 p-4">
+    <div className="flex min-w-0 w-full flex-1 flex-col overflow-hidden bg-blue-950/50">
+      <div className="flex items-center gap-2 p-4 pl-14 md:pl-4">
         <PageTitleField
           key={project.id}
           label="Project"

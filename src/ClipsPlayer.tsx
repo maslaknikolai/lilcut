@@ -227,7 +227,7 @@ export function ClipsPlayer({ project, mediaAssets }: ClipsPlayerProps) {
 
   return (
     <>
-      <div className="flex flex-1 items-center justify-center overflow-hidden p-4">
+      <div className="flex flex-1 items-center justify-center overflow-hidden p-4 rounded bg-slate-950">
         {videoUrl ? (
           <video
             ref={videoRef}

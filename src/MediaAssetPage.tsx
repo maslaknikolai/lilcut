@@ -54,8 +54,8 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   )
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50 p-4 pt-14 md:pt-4">
-      <div className="flex gap-2 items-center">
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50">
+      <div className="flex gap-2 items-center p-4 pl-14 md:pl-4">
         <div className="flex min-w-0 flex-1 flex-col">
           <PageTitleField
             key={mediaAsset.opfsName}
@@ -77,7 +77,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           <MediaAssetActions mediaAsset={mediaAsset} />
         </div>
       </div>
-      <div className="flex flex-1 items-center justify-center overflow-hidden">
+      <div className="flex flex-1 items-center justify-center overflow-hidden rounded bg-slate-950 px-4">
         {videoUrl ? (
           <video
             src={videoUrl}
@@ -88,28 +88,30 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
           <span className="text-slate-400">Loading…</span>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 max-h-32 overflow-y-auto">
-        {projectsUsingAsset.length > 0 && (
-          <>
-            Used in projects:
-            {projectsUsingAsset.map((project) => (
-              <button
-                key={project.id}
-                type="button"
-                onClick={() => setSelectedLibraryItemId(project.id)}
-                className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500 active:border-slate-400 active:bg-slate-900"
-              >
-                <Scissors
-                  size={14}
-                  className="shrink-0 text-blue-500"
-                />
-                {project.name}
-              </button>
-            ))}
-          </>
-        )}
-
+      <div className="flex flex-col gap-2 px-4 py-4 text-xs text-slate-500 max-h-32 overflow-y-auto">
         <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+
+        {projectsUsingAsset.length > 0 && (
+          <div>
+            Used in projects:
+            <div className="flex flex-wrap gap-2 mt-1">
+              {projectsUsingAsset.map((project) => (
+                <button
+                  key={project.id}
+                  type="button"
+                  onClick={() => setSelectedLibraryItemId(project.id)}
+                  className="flex cursor-pointer items-center gap-1.5 rounded border border-slate-700 px-2 py-1 text-slate-100 hover:border-slate-500 active:border-slate-400 active:bg-slate-900"
+                >
+                  <Scissors
+                    size={14}
+                    className="shrink-0 text-blue-500"
+                  />
+                  {project.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
