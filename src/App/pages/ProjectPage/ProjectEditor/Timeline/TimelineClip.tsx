@@ -95,6 +95,10 @@ export function TimelineClip({
               setIsTooltipOpen(true)
             }
           }}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            setIsTooltipOpen(true)
+          }}
           onDoubleClick={onSeekToStart}
           className={`relative flex shrink-0 items-center rounded text-xs font-medium ${
             isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white'
