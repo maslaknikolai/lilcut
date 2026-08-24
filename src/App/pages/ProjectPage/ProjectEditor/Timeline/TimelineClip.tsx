@@ -139,7 +139,10 @@ export function TimelineClip({
         </TimelineClipAction>
 
         <TimelineClipAction
-          onClick={onEdit}
+          onClick={() => {
+            setIsTooltipOpen(false)
+            onEdit()
+          }}
           label="Edit clip"
         >
           <Pencil size={16} />
