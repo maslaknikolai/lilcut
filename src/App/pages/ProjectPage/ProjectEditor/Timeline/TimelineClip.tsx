@@ -104,6 +104,7 @@ export function TimelineClip({
           className={cn(
             'relative flex shrink-0 items-center rounded text-xs font-medium select-none [-webkit-touch-callout:none]',
             isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white',
+            isTooltipOpen && 'outline-2 outline-offset-2 outline-slate-100',
           )}
           style={{ width: timelineClip.duration * pxPerSecond }}
         >
