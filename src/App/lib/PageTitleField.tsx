@@ -12,6 +12,12 @@ type PageTitleFieldProps = {
 export function PageTitleField({ label, icon, initialValue, onChange, className }: PageTitleFieldProps) {
   const [editingName, setEditingName] = useState(initialValue)
 
+  const [lastInitialValue, setLastInitialValue] = useState(initialValue)
+  if (initialValue !== lastInitialValue) {
+    setLastInitialValue(initialValue)
+    setEditingName(initialValue)
+  }
+
   function commitChange() {
     const name = editingName.trim()
     if (!name || name === initialValue) {

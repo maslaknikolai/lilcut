@@ -301,7 +301,7 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
         )}
       </div>
 
-      <div className="flex flex-col shrink-0 border-t border-slate-700 bg-slate-800 pt-4 gap-2">
+      <div className="flex flex-col shrink-0 border-t border-slate-700 pt-4 gap-2">
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center gap-2">
             {isUndoAvailable && (
