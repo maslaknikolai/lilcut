@@ -8,6 +8,7 @@ import type { TimelineClip } from '@/App/lib/projectTimeline'
 import { TimelineClipAction } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClipAction'
 import type { Project } from '@/App/lib/types'
 import { useScrollCurrentIntoView } from '@/App/lib/useScrollCurrentIntoView'
+import { cn } from '@/App/lib/utils'
 
 type TimelineClipProps = {
   project: Project
@@ -100,9 +101,10 @@ export function TimelineClip({
             setIsTooltipOpen(true)
           }}
           onDoubleClick={onSeekToStart}
-          className={`relative flex shrink-0 items-center rounded text-xs font-medium ${
-            isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white'
-          }`}
+          className={cn(
+            'relative flex shrink-0 items-center rounded text-xs font-medium select-none [-webkit-touch-callout:none]',
+            isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white',
+          )}
           style={{ width: timelineClip.duration * pxPerSecond }}
         >
           {!mediaAssetExists && (
