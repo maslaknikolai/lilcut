@@ -2,16 +2,16 @@ import { useRef, type ChangeEvent } from 'react'
 import { Upload } from 'lucide-react'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
-import { useUploadMediaAssets } from '@/App/lib/useUploadMediaAssets'
+import { useUploadVideos } from '@/App/lib/useUploadVideos'
 
-type UploadMediaAssetButtonProps = {
+type UploadVideoButtonProps = {
   className?: string
   // overrides the default "select the first uploaded video" behavior
   onUploaded?: (opfsNames: string[]) => void
 }
 
-export function UploadMediaAssetButton({ className, onUploaded }: UploadMediaAssetButtonProps) {
-  const uploadMediaAssets = useUploadMediaAssets()
+export function UploadVideoButton({ className, onUploaded }: UploadVideoButtonProps) {
+  const uploadVideos = useUploadVideos()
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -22,7 +22,7 @@ export function UploadMediaAssetButton({ className, onUploaded }: UploadMediaAss
       return
     }
 
-    const uploadedOpfsNames = await uploadMediaAssets(files)
+    const uploadedOpfsNames = await uploadVideos(files)
     if (onUploaded) {
       onUploaded(uploadedOpfsNames)
       return

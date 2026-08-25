@@ -2,7 +2,7 @@ import { useEffect, useEffectEvent, useState } from 'react'
 import { probeMediaInfo, type ProbedFormat, type ProbedStream } from '@/App/contexts/getFormatSignature'
 import { Modal } from '@/App/Modals/Modal'
 
-type MediaAssetInfoModalProps = {
+type VideoInfoModalProps = {
   opfsName: string
   onClose: () => void
 }
@@ -24,20 +24,20 @@ function formatBitrate(bitsPerSecond?: string): string {
 }
 
 function getRows(streams: ProbedStream[], format: ProbedFormat) {
-  const video = streams.find((stream) => stream.codec_type === 'video')
-  if (!video) {
+  const videoStream = streams.find((stream) => stream.codec_type === 'video')
+  if (!videoStream) {
     return [['Video stream', 'none']]
   }
   return [
-    ['Resolution', `${video.width}×${video.height}`],
-    ['FPS', formatFps(video.avg_frame_rate)],
-    ['Bitrate', formatBitrate(video.bit_rate ?? format.bit_rate)],
-    ['Codec', video.codec_name],
-    ['Pixel format', video.pix_fmt ?? '—'],
+    ['Resolution', `${videoStream.width}×${videoStream.height}`],
+    ['FPS', formatFps(videoStream.avg_frame_rate)],
+    ['Bitrate', formatBitrate(videoStream.bit_rate ?? format.bit_rate)],
+    ['Codec', videoStream.codec_name],
+    ['Pixel format', videoStream.pix_fmt ?? '—'],
   ]
 }
 
-export function MediaAssetInfoModal({ opfsName, onClose }: MediaAssetInfoModalProps) {
+export function VideoInfoModal({ opfsName, onClose }: VideoInfoModalProps) {
   const [rows, setRows] = useState<string[][] | null>(null)
   const [isFailed, setIsFailed] = useState(false)
 

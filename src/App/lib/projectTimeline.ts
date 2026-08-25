@@ -1,4 +1,4 @@
-import type { Clip, MediaAsset } from '@/App/lib/types'
+import type { Clip, Video } from '@/App/lib/types'
 
 // cutEnd === undefined means "to the end of the video" (0 is a real time)
 export function isClipRangeValid(clip: Clip): boolean {
@@ -7,7 +7,7 @@ export function isClipRangeValid(clip: Clip): boolean {
 
 // the default clip: plays its video from start to end
 export function makeFullClip(opfsName: string): Clip {
-  return { id: crypto.randomUUID(), mediaAssetOpfsName: opfsName, cutStart: 0 }
+  return { id: crypto.randomUUID(), videoOpfsName: opfsName, cutStart: 0 }
 }
 
 export function isDefaultClip(clip: Clip): boolean {
@@ -17,24 +17,24 @@ export function isDefaultClip(clip: Clip): boolean {
 
 export type TimelineClip = {
   id: string
-  mediaAssetOpfsName: string
+  videoOpfsName: string
   cutStart: number
   cutEnd: number
   duration: number
   projectStart: number
 }
 
-export function buildTimelineClips(clips: Clip[], mediaAssets: MediaAsset[]): TimelineClip[] {
+export function buildTimelineClips(clips: Clip[], videos: Video[]): TimelineClip[] {
   let projectStart = 0
 
   return clips.map((clip) => {
     const cutStart = clip.cutStart ?? 0
-    const mediaAsset = mediaAssets.find((asset) => asset.opfsName === clip.mediaAssetOpfsName)
-    const cutEnd = clip.cutEnd ?? mediaAsset?.duration ?? cutStart
+    const video = videos.find((asset) => asset.opfsName === clip.videoOpfsName)
+    const cutEnd = clip.cutEnd ?? video?.duration ?? cutStart
     const clipDuration = Math.max(0, cutEnd - cutStart)
     const timelineClip = {
       id: clip.id,
-      mediaAssetOpfsName: clip.mediaAssetOpfsName,
+      videoOpfsName: clip.videoOpfsName,
       cutStart,
       cutEnd,
       duration: clipDuration,
@@ -58,7 +58,7 @@ export function buildPlaybackClips(timelineClips: TimelineClip[]): PlaybackClip[
     const previousPlaybackClip = playbackClips[playbackClips.length - 1]
     const isContinuation =
       !!previousPlaybackClip &&
-      previousPlaybackClip.mediaAssetOpfsName === timelineClip.mediaAssetOpfsName &&
+      previousPlaybackClip.videoOpfsName === timelineClip.videoOpfsName &&
       previousPlaybackClip.cutEnd === timelineClip.cutStart
 
     if (isContinuation) {

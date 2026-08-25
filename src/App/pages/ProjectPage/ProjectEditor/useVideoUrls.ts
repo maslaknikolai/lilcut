@@ -1,26 +1,26 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { readOpfsFile } from '@/App/lib/opfs'
-import type { MediaAsset } from '@/App/lib/types'
+import type { Video } from '@/App/lib/types'
 
 // preloads a blob url for every asset up front so playback never waits on an
 // async OPFS read when crossing a file boundary; blob urls reference the
 // on-disk File, nothing is read into memory
-export function useMediaAssetVideoUrls(mediaAssets: MediaAsset[]): Record<string, string> {
+export function useVideoUrls(videos: Video[]): Record<string, string> {
   const [videoUrls, setVideoUrls] = useState<Record<string, string>>({})
 
-  const opfsNamesKey = mediaAssets.map((mediaAsset) => mediaAsset.opfsName).join('\n')
+  const opfsNamesKey = videos.map((video) => video.opfsName).join('\n')
 
-  const openMediaAssets = useEffectEvent(() => {
+  const openVideos = useEffectEvent(() => {
     let isCancelled = false
     let createdUrls: string[] = []
 
     Promise.all(
-      mediaAssets.map(async (mediaAsset) => {
-        const file = await readOpfsFile(mediaAsset.opfsName).catch(() => null)
+      videos.map(async (video) => {
+        const file = await readOpfsFile(video.opfsName).catch(() => null)
         if (!file) {
           return null
         }
-        return [mediaAsset.opfsName, URL.createObjectURL(file)] as const
+        return [video.opfsName, URL.createObjectURL(file)] as const
       }),
     ).then((entries) => {
       const loadedEntries = Object.fromEntries(entries.filter((entry) => !!entry))
@@ -45,7 +45,7 @@ export function useMediaAssetVideoUrls(mediaAssets: MediaAsset[]): Record<string
     }
   })
 
-  useEffect(() => openMediaAssets(), [opfsNamesKey])
+  useEffect(() => openVideos(), [opfsNamesKey])
 
   return videoUrls
 }

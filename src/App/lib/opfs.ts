@@ -1,5 +1,5 @@
 import { uniqueName } from '@/App/lib/uniqueName'
-import type { MediaAsset } from '@/App/lib/types'
+import type { Video } from '@/App/lib/types'
 
 export async function createOpfsWritable(name: string): Promise<FileSystemWritableFileStream> {
   const root = await navigator.storage.getDirectory()
@@ -42,18 +42,18 @@ function readVideoDuration(file: File): Promise<number> {
   })
 }
 
-export async function listOpfsMediaAssets(): Promise<MediaAsset[]> {
+export async function listOpfsVideos(): Promise<Video[]> {
   const root = await navigator.storage.getDirectory()
-  const mediaAssets: MediaAsset[] = []
+  const videos: Video[] = []
   for await (const handle of root.values()) {
     if (handle.kind !== 'file') {
       continue
     }
     const file = await handle.getFile()
     const duration = await readVideoDuration(file)
-    mediaAssets.push({ opfsName: handle.name, mimeType: file.type, duration, size: file.size })
+    videos.push({ opfsName: handle.name, mimeType: file.type, duration, size: file.size })
   }
-  return mediaAssets
+  return videos
 }
 
 // FileSystemHandle.move() exists in Chrome but isn't in TS's DOM lib
@@ -65,9 +65,9 @@ export async function renameOpfsFile(oldName: string, newName: string): Promise<
   await (handle as MovableFileHandle).move(newName)
 }
 
-export function uniqueOpfsName(desiredName: string, mediaAssets: MediaAsset[]): string {
+export function uniqueOpfsName(desiredName: string, videos: Video[]): string {
   return uniqueName(
     desiredName,
-    mediaAssets.map((mediaAsset) => mediaAsset.opfsName),
+    videos.map((video) => video.opfsName),
   )
 }

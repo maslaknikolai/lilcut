@@ -6,8 +6,8 @@ import { ClipRangeEditor } from '@/App/Modals/ClipRangeEditor/ClipRangeEditor'
 import { updateProject } from '@/App/lib/library'
 import { isClipRangeValid, isDefaultClip, makeFullClip } from '@/App/lib/projectTimeline'
 import type { Clip } from '@/App/lib/types'
-import { UploadMediaAssetButton } from '@/App/lib/UploadMediaAssetButton'
-import { useOrderedMediaAssets } from '@/App/Modals/ClipCreateModal/useOrderedMediaAssets'
+import { UploadVideoButton } from '@/App/lib/UploadVideoButton'
+import { useOrderedVideos } from '@/App/Modals/ClipCreateModal/useOrderedVideos'
 import { VideosListItem } from '@/App/Modals/ClipCreateModal/VideosListItem'
 
 type ClipCreateModalProps = {
@@ -18,15 +18,15 @@ type ClipCreateModalProps = {
 
 export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModalProps) {
   const setProjects = useSetAtom(projectsAtom)
-  const mediaAssets = useOrderedMediaAssets()
+  const videos = useOrderedVideos()
   const [clipsToBeAdded, setClipsToBeAdded] = useState<Clip[]>([])
   const [trimmingClip, setTrimmingClip] = useState<Clip | null>(null)
 
   function toggleChecked(opfsName: string) {
     setClipsToBeAdded((prev) => {
-      const isChecked = prev.some((clip) => clip.mediaAssetOpfsName === opfsName)
+      const isChecked = prev.some((clip) => clip.videoOpfsName === opfsName)
       if (isChecked) {
-        return prev.filter((clip) => clip.mediaAssetOpfsName !== opfsName)
+        return prev.filter((clip) => clip.videoOpfsName !== opfsName)
       }
       return [...prev, makeFullClip(opfsName)]
     })
@@ -50,7 +50,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
 
   // trimming an already-pending clip edits it in place; a fresh one is appended
   function openTrimmer(opfsName: string) {
-    const existingClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === opfsName)
+    const existingClip = clipsToBeAdded.find((clip) => clip.videoOpfsName === opfsName)
     setTrimmingClip(existingClip ?? makeFullClip(opfsName))
   }
 
@@ -104,27 +104,25 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
     >
       <div className="flex items-center justify-between gap-2 text-sm text-slate-400">
         <span>Check videos to add them as clips</span>
-        <UploadMediaAssetButton
+        <UploadVideoButton
           className="shrink-0 px-2"
           onUploaded={(opfsNames) => setClipsToBeAdded((prev) => [...prev, ...opfsNames.map(makeFullClip)])}
         />
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-        {!mediaAssets.length && (
-          <span className="text-sm text-slate-500">No videos in the library yet — import some.</span>
-        )}
-        {mediaAssets.map((mediaAsset) => {
-          const assetClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName)
+        {!videos.length && <span className="text-sm text-slate-500">No videos in the library yet — import some.</span>}
+        {videos.map((video) => {
+          const assetClip = clipsToBeAdded.find((clip) => clip.videoOpfsName === video.opfsName)
           const isModified = !!assetClip && !isDefaultClip(assetClip)
           return (
             <VideosListItem
-              key={mediaAsset.opfsName}
-              mediaAsset={mediaAsset}
+              key={video.opfsName}
+              video={video}
               isChecked={!!assetClip}
               isModified={isModified}
-              onToggleChecked={() => toggleChecked(mediaAsset.opfsName)}
-              onTrim={() => openTrimmer(mediaAsset.opfsName)}
+              onToggleChecked={() => toggleChecked(video.opfsName)}
+              onTrim={() => openTrimmer(video.opfsName)}
             />
           )
         })}

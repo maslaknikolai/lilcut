@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { FilePlay, LoaderCircle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/App/lib/ui/tooltip'
-import { mediaAssetsAtom } from '@/App/atoms'
+import { videosAtom } from '@/App/atoms'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { buildPlaybackClips, buildTimelineClips } from '@/App/lib/projectTimeline'
 import type { Project } from '@/App/lib/types'
@@ -28,10 +28,10 @@ const TOOLTIP_TEXTS = {
 
 export function RenderProjectButton({ project }: RenderProjectButtonProps) {
   const { job, startRender } = useRenderJobContext()
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
   const isRendering = job.status === 'rendering'
 
-  const playbackClips = buildPlaybackClips(buildTimelineClips(project.clips, mediaAssets))
+  const playbackClips = buildPlaybackClips(buildTimelineClips(project.clips, videos))
   const concatCompatibility = useConcatCompatibility(playbackClips)
 
   return (

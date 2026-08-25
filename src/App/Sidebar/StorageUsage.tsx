@@ -1,10 +1,10 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { useAtomValue } from 'jotai'
-import { mediaAssetsAtom } from '@/App/atoms'
+import { videosAtom } from '@/App/atoms'
 import { formatBytes } from '@/App/lib/formatBytes'
 
 export function StorageUsage() {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
   const [storageEstimate, setStorageEstimate] = useState<StorageEstimate | null>(null)
 
   const refreshStorageEstimate = useEffectEvent(async () => {
@@ -14,7 +14,7 @@ export function StorageUsage() {
 
   useEffect(() => {
     refreshStorageEstimate()
-  }, [mediaAssets])
+  }, [videos])
 
   if (storageEstimate?.usage === undefined || storageEstimate.quota === undefined) {
     return null

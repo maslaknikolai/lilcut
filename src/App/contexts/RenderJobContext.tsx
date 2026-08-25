@@ -1,14 +1,14 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
-import { libraryOrderAtom, mediaAssetsAtom } from '@/App/atoms'
+import { libraryOrderAtom, videosAtom } from '@/App/atoms'
 import { renderProjectVideo } from '@/App/contexts/renderProjectVideo'
 import { loadFfmpeg } from '@/App/contexts/loadFfmpeg'
 import { uniqueOpfsName } from '@/App/lib/opfs'
 import { buildPlaybackClips, buildTimelineClips } from '@/App/lib/projectTimeline'
 import type { Project } from '@/App/lib/types'
 import { RenderJobContext, type RenderJob } from '@/App/contexts/useRenderJobContext'
-import { useMediaAssetActions } from '@/App/lib/useMediaAssetActions'
+import { useVideoActions } from '@/App/lib/useVideoActions'
 
 let ffmpegPromise: Promise<FFmpeg> | null = null
 
@@ -18,8 +18,8 @@ function loadRenderFfmpeg(): Promise<FFmpeg> {
 }
 
 export function RenderJobProvider({ children }: { children: ReactNode }) {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const { writeMediaAsset } = useMediaAssetActions()
+  const videos = useAtomValue(videosAtom)
+  const { writeVideo } = useVideoActions()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
 
   const [job, setJob] = useState<RenderJob>({ status: 'idle' })
@@ -42,9 +42,9 @@ export function RenderJobProvider({ children }: { children: ReactNode }) {
       const ffmpeg = await loadRenderFfmpeg()
       ffmpegInstanceRef.current = ffmpeg
 
-      const timelineClips = buildTimelineClips(project.clips, mediaAssets)
+      const timelineClips = buildTimelineClips(project.clips, videos)
       const playbackClips = buildPlaybackClips(timelineClips)
-      const blob = await renderProjectVideo(ffmpeg, playbackClips, mediaAssets, {
+      const blob = await renderProjectVideo(ffmpeg, playbackClips, videos, {
         onProgress: (overallProgress) =>
           setJob((prev) => {
             if (prev.status !== 'rendering') {
@@ -63,8 +63,8 @@ export function RenderJobProvider({ children }: { children: ReactNode }) {
       })
 
       if (blob) {
-        const renderedOpfsName = uniqueOpfsName(`${project.name}.mp4`, mediaAssets)
-        await writeMediaAsset(renderedOpfsName, blob)
+        const renderedOpfsName = uniqueOpfsName(`${project.name}.mp4`, videos)
+        await writeVideo(renderedOpfsName, blob)
         setLibraryOrder((prev) => [renderedOpfsName, ...prev])
         setJob({
           status: 'complete',

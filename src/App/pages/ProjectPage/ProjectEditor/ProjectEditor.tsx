@@ -10,8 +10,8 @@ import { updateProject } from '@/App/lib/library'
 import { formatTimestamp } from '@/App/lib/formatTimestamp'
 import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from '@/App/lib/projectTimeline'
 import { Timeline } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/Timeline'
-import type { MediaAsset, Project } from '@/App/lib/types'
-import { useMediaAssetVideoUrls } from '@/App/pages/ProjectPage/ProjectEditor/useMediaAssetVideoUrls'
+import type { Video, Project } from '@/App/lib/types'
+import { useVideoUrls } from '@/App/pages/ProjectPage/ProjectEditor/useVideoUrls'
 import { useKeyPress } from '@/App/lib/useKeyPress'
 import { RenderProjectButton } from '@/App/pages/ProjectPage/ProjectEditor/RenderProjectButton'
 
@@ -33,11 +33,11 @@ function arrowSeekStep(event: KeyboardEvent): number {
 
 type ProjectEditorProps = {
   project: Project
-  mediaAssets: MediaAsset[]
+  videos: Video[]
 }
 
-export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
-  const timelineClips = buildTimelineClips(project.clips, mediaAssets)
+export function ProjectEditor({ project, videos }: ProjectEditorProps) {
+  const timelineClips = buildTimelineClips(project.clips, videos)
   const playbackClips = buildPlaybackClips(timelineClips)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
@@ -53,15 +53,11 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
   const currentPlaybackClip = playbackClips[currentPlaybackClipIndex]
   const currentTimelineClipIndex = findClipIndexAtTime(timelineClips, projectTime)
   const currentTimelineClip = timelineClips[currentTimelineClipIndex]
-  const currentMediaAsset = mediaAssets.find(
-    (mediaAsset) => mediaAsset.opfsName === currentPlaybackClip?.mediaAssetOpfsName,
-  )
+  const currentVideo = videos.find((video) => video.opfsName === currentPlaybackClip?.videoOpfsName)
 
-  const usedMediaAssets = mediaAssets.filter((mediaAsset) =>
-    project.clips.some((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName),
-  )
-  const videoUrls = useMediaAssetVideoUrls(usedMediaAssets)
-  const videoUrl = currentMediaAsset ? (videoUrls[currentMediaAsset.opfsName] ?? null) : null
+  const usedVideos = videos.filter((video) => project.clips.some((clip) => clip.videoOpfsName === video.opfsName))
+  const videoUrls = useVideoUrls(usedVideos)
+  const videoUrl = currentVideo ? (videoUrls[currentVideo.opfsName] ?? null) : null
 
   const applyPendingSeek = useEffectEvent(() => {
     const video = videoRef.current
@@ -83,7 +79,7 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
 
   useEffect(() => {
     applyPendingSeek()
-  }, [currentPlaybackClip?.id, currentMediaAsset])
+  }, [currentPlaybackClip?.id, currentVideo])
 
   function seekToProjectTime(time: number) {
     if (timelineClips.length === 0) {
@@ -133,9 +129,9 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
       const nextPlaybackClip = playbackClips[currentPlaybackClipIndex + 1]
       if (nextPlaybackClip) {
         logPlayer('clip switch', {
-          from: currentPlaybackClip.mediaAssetOpfsName,
-          to: nextPlaybackClip.mediaAssetOpfsName,
-          isFileSwap: nextPlaybackClip.mediaAssetOpfsName !== currentPlaybackClip.mediaAssetOpfsName,
+          from: currentPlaybackClip.videoOpfsName,
+          to: nextPlaybackClip.videoOpfsName,
+          isFileSwap: nextPlaybackClip.videoOpfsName !== currentPlaybackClip.videoOpfsName,
           overshoot: video.currentTime - currentPlaybackClip.cutEnd,
         })
         setProjectTime(nextPlaybackClip.projectStart)
@@ -261,7 +257,7 @@ export function ProjectEditor({ project, mediaAssets }: ProjectEditorProps) {
               const timeIntoClip = projectTime - currentPlaybackClip.projectStart
               const fileTime = currentPlaybackClip.cutStart + timeIntoClip
               logPlayer('new src ready: positioning', {
-                file: currentPlaybackClip.mediaAssetOpfsName,
+                file: currentPlaybackClip.videoOpfsName,
                 fileTime,
                 willResume: isPlaying,
               })

@@ -1,11 +1,11 @@
 import { useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from '@/App/atoms'
+import { libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
 import { uniqueOpfsName } from '@/App/lib/opfs'
 import { stripExtension } from '@/App/lib/stripExtension'
 import { uniqueName } from '@/App/lib/uniqueName'
 import type { Clip, Project } from '@/App/lib/types'
-import { useMediaAssetActions } from '@/App/lib/useMediaAssetActions'
+import { useVideoActions } from '@/App/lib/useVideoActions'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 import { ScreenRecordingContext, type RecordingState } from '@/App/contexts/useScreenRecordingContext'
 
@@ -42,8 +42,8 @@ function pickSupportedMimeType(): string {
 
 export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
   const [recording, setRecording] = useState<RecordingState>({ status: 'idle' })
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
-  const { writeMediaAsset } = useMediaAssetActions()
+  const videos = useAtomValue(videosAtom)
+  const { writeVideo } = useVideoActions()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
@@ -55,13 +55,13 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     const closedSegments = recording.status === 'recording' || recording.status === 'paused' ? recording.segments : []
 
     const extension = blob.type.includes('mp4') ? 'mp4' : 'webm'
-    const opfsName = uniqueOpfsName(formatRecordingOpfsName(new Date(), extension), mediaAssets)
+    const opfsName = uniqueOpfsName(formatRecordingOpfsName(new Date(), extension), videos)
 
-    await writeMediaAsset(opfsName, blob)
+    await writeVideo(opfsName, blob)
 
     const clips: Clip[] = closedSegments.map((segment) => ({
       id: crypto.randomUUID(),
-      mediaAssetOpfsName: opfsName,
+      videoOpfsName: opfsName,
       cutStart: segment.cutStart,
       cutEnd: segment.cutEnd,
     }))
@@ -69,7 +69,7 @@ export function ScreenRecordingProvider({ children }: { children: ReactNode }) {
     if (recording.status === 'recording') {
       clips.push({
         id: crypto.randomUUID(),
-        mediaAssetOpfsName: opfsName,
+        videoOpfsName: opfsName,
         cutStart: recording.segments.at(-1)?.cutEnd ?? 0,
       })
     }

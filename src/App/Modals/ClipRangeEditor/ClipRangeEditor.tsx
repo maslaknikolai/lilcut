@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { useAtomValue } from 'jotai'
 import { ChevronLeft, Play } from 'lucide-react'
-import { mediaAssetsAtom } from '@/App/atoms'
+import { videosAtom } from '@/App/atoms'
 import { Modal } from '@/App/Modals/Modal'
 import { ClipTrimBar } from '@/App/Modals/ClipRangeEditor/ClipTrimBar'
 import { formatTimestamp } from '@/App/lib/formatTimestamp'
@@ -22,28 +22,28 @@ type ClipRangeEditorProps = {
 }
 
 export function ClipRangeEditor({ clip, title, onClipChange, actions, onBack, onClose }: ClipRangeEditorProps) {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const isPreviewingRef = useRef(false)
 
-  const mediaAsset = mediaAssets.find((item) => item.opfsName === clip.mediaAssetOpfsName)
+  const video = videos.find((item) => item.opfsName === clip.videoOpfsName)
 
   const cutStart = clip.cutStart ?? 0
   const cutEnd = clip.cutEnd
   const isToVideoEnd = cutEnd === undefined
 
-  const openMediaAsset = useEffectEvent(() => {
-    if (!mediaAsset) {
+  const openVideo = useEffectEvent(() => {
+    if (!video) {
       setVideoUrl(null)
       return () => {}
     }
 
     let url: string | null = null
     let isCancelled = false
-    readOpfsFile(mediaAsset.opfsName).then((downloadedFile) => {
+    readOpfsFile(video.opfsName).then((downloadedFile) => {
       if (isCancelled) {
         return
       }
@@ -59,7 +59,7 @@ export function ClipRangeEditor({ clip, title, onClipChange, actions, onBack, on
     }
   })
 
-  useEffect(() => openMediaAsset(), [mediaAsset])
+  useEffect(() => openVideo(), [video])
 
   function changeCutStart(value: number) {
     onClipChange({ ...clip, cutStart: value })
@@ -76,34 +76,34 @@ export function ClipRangeEditor({ clip, title, onClipChange, actions, onBack, on
   }
 
   function captureCutStart() {
-    const video = videoRef.current
-    if (!video) {
+    const videoElement = videoRef.current
+    if (!videoElement) {
       return
     }
-    onClipChange({ ...clip, cutStart: roundTime(video.currentTime) })
+    onClipChange({ ...clip, cutStart: roundTime(videoElement.currentTime) })
   }
 
   function captureCutEnd() {
-    const video = videoRef.current
-    if (!video) {
+    const videoElement = videoRef.current
+    if (!videoElement) {
       return
     }
-    onClipChange({ ...clip, cutEnd: roundTime(video.currentTime) })
+    onClipChange({ ...clip, cutEnd: roundTime(videoElement.currentTime) })
   }
 
   function toggleToVideoEnd(isChecked: boolean) {
-    const newCutEnd = isChecked ? undefined : roundTime(mediaAsset?.duration ?? 0)
+    const newCutEnd = isChecked ? undefined : roundTime(video?.duration ?? 0)
     onClipChange({ ...clip, cutEnd: newCutEnd })
   }
 
   function previewRange() {
-    const video = videoRef.current
-    if (!video) {
+    const videoElement = videoRef.current
+    if (!videoElement) {
       return
     }
     isPreviewingRef.current = true
-    video.currentTime = cutStart
-    video.play()
+    videoElement.currentTime = cutStart
+    videoElement.play()
   }
 
   return (
@@ -144,11 +144,11 @@ export function ClipRangeEditor({ clip, title, onClipChange, actions, onBack, on
         <div className="flex-1" />
       )}
 
-      {mediaAsset && (
+      {video && (
         <ClipTrimBar
-          duration={mediaAsset.duration}
+          duration={video.duration}
           cutStart={cutStart}
-          cutEnd={cutEnd ?? mediaAsset.duration}
+          cutEnd={cutEnd ?? video.duration}
           isToVideoEnd={isToVideoEnd}
           currentTime={currentTime}
           onRangeChange={(newCutStart, newCutEnd) => {

@@ -3,26 +3,26 @@ import { Scissors } from 'lucide-react'
 import { libraryOrderAtom, projectsAtom } from '@/App/atoms'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { stripExtension } from '@/App/lib/stripExtension'
-import type { MediaAsset } from '@/App/lib/types'
+import type { Video } from '@/App/lib/types'
 import { uniqueName } from '@/App/lib/uniqueName'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
-type CreateProjectFromMediaAssetButtonProps = {
-  mediaAsset: MediaAsset
+type CreateProjectFromVideoButtonProps = {
+  video: Video
 }
 
-export function CreateProjectFromMediaAssetButton({ mediaAsset }: CreateProjectFromMediaAssetButtonProps) {
+export function CreateProjectFromVideoButton({ video }: CreateProjectFromVideoButtonProps) {
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
 
-  function createProjectFromMediaAsset() {
+  function createProjectFromVideo() {
     const projectId = crypto.randomUUID()
     const name = uniqueName(
-      stripExtension(mediaAsset.opfsName),
+      stripExtension(video.opfsName),
       projects.map((project) => project.name),
     )
-    const clip = { id: crypto.randomUUID(), mediaAssetOpfsName: mediaAsset.opfsName }
+    const clip = { id: crypto.randomUUID(), videoOpfsName: video.opfsName }
     setProjects((prev) => [{ id: projectId, name, clips: [clip] }, ...prev])
     setLibraryOrder((prev) => [projectId, ...prev])
     setSelectedLibraryItemId(projectId)
@@ -30,7 +30,7 @@ export function CreateProjectFromMediaAssetButton({ mediaAsset }: CreateProjectF
 
   return (
     <GhostButton
-      onClick={createProjectFromMediaAsset}
+      onClick={createProjectFromVideo}
       className="px-3 text-blue-400"
     >
       <Scissors size={14} />

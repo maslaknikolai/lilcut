@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { ChevronLeft, ChevronRight, Files, FileX, Pencil, X } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/App/lib/ui/tooltip'
-import { mediaAssetsAtom, projectsAtom } from '@/App/atoms'
+import { videosAtom, projectsAtom } from '@/App/atoms'
 import { updateProject } from '@/App/lib/library'
 import type { TimelineClip } from '@/App/lib/projectTimeline'
 import { TimelineClipAction } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClipAction'
@@ -27,7 +27,7 @@ export function TimelineClip({
   onEdit,
   onSeekToStart,
 }: TimelineClipProps) {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
   const setProjects = useSetAtom(projectsAtom)
   const rootRef = useScrollCurrentIntoView(isCurrent)
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
@@ -35,8 +35,8 @@ export function TimelineClip({
   // pre-tap state stops the click from immediately reopening it
   const wasTooltipOpenOnPointerDownRef = useRef(false)
 
-  const mediaAssetExists = mediaAssets.some((mediaAsset) => mediaAsset.opfsName === timelineClip.mediaAssetOpfsName)
-  const mediaAssetName = mediaAssetExists ? timelineClip.mediaAssetOpfsName : 'Unknown file'
+  const videoExists = videos.some((video) => video.opfsName === timelineClip.videoOpfsName)
+  const videoName = videoExists ? timelineClip.videoOpfsName : 'Unknown file'
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
@@ -108,13 +108,13 @@ export function TimelineClip({
           )}
           style={{ width: timelineClip.duration * pxPerSecond }}
         >
-          {!mediaAssetExists && (
+          {!videoExists && (
             <FileX
               size={12}
               className="mr-1 shrink-0"
             />
           )}
-          <span className="min-w-0 truncate px-3">{mediaAssetName}</span>
+          <span className="min-w-0 truncate px-3">{videoName}</span>
         </div>
       </TooltipTrigger>
 

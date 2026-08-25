@@ -3,7 +3,7 @@ import { activeModalAtom } from '@/App/atoms'
 import { ClipCreateModal } from '@/App/Modals/ClipCreateModal/ClipCreateModal'
 import { ClipEditModal } from '@/App/Modals/ClipEditModal/ClipEditModal'
 import { HelpModal } from '@/App/Modals/HelpModal'
-import { MediaAssetInfoModal } from '@/App/Modals/MediaAssetInfoModal'
+import { VideoInfoModal } from '@/App/Modals/VideoInfoModal'
 
 export function Modals() {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
@@ -36,9 +36,9 @@ export function Modals() {
     )
   }
 
-  if (activeModal?.type === 'mediaAssetInfo') {
+  if (activeModal?.type === 'videoInfo') {
     return (
-      <MediaAssetInfoModal
+      <VideoInfoModal
         opfsName={activeModal.opfsName}
         onClose={closeModal}
       />

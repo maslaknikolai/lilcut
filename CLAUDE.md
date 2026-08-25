@@ -1,7 +1,7 @@
 # Rules
 
 - Every clickable element (buttons, checkboxes, clickable labels/summaries, drag handles) must be at least 40×40px: `min-h-10` plus `min-w-10` on icon-only controls (text buttons are usually wide enough). No invisible hit-area tricks (`::after` overlays) — size the element itself.
-- Entity colors: each domain entity has its own accent color used for its icons, page backgrounds, and highlights — `MediaAsset` (video) is violet (`violet-500` icons, `violet-950/50` page bg), `Project` is blue (`blue-500` icons, `blue-950/50` page bg). Generic/neutral UI (buttons, inputs, checkboxes, borders) uses slate. Don't put an entity's color on a control that isn't specifically about that entity.
+- Entity colors: each domain entity has its own accent color used for its icons, page backgrounds, and highlights — `Video` is violet (`violet-500` icons, `violet-950/50` page bg), `Project` is blue (`blue-500` icons, `blue-950/50` page bg). Generic/neutral UI (buttons, inputs, checkboxes, borders) uses slate. Don't put an entity's color on a control that isn't specifically about that entity.
 
 - Always build dynamic/conditional `className` values with `cn` (from `@/lib/utils`) — never template literals or string concatenation (`` `... ${className}` ``). Static class strings need no wrapper.
 

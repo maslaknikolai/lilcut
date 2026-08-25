@@ -9,7 +9,7 @@ export type ConcatCompatibility = 'probing' | 'probeFailed' | 'compatible' | 'in
 const PROBE_DEBOUNCE_MS = 1500
 
 export function useConcatCompatibility(playbackClips: PlaybackClip[]): ConcatCompatibility {
-  const uniqueOpfsNames = [...new Set(playbackClips.map((playbackClip) => playbackClip.mediaAssetOpfsName))]
+  const uniqueOpfsNames = [...new Set(playbackClips.map((playbackClip) => playbackClip.videoOpfsName))]
   const uniqueOpfsNamesKey = uniqueOpfsNames.join('\n')
   const [concatCompatibility, setConcatCompatibility] = useState<ConcatCompatibility>('probing')
   const probeTokenRef = useRef(0)

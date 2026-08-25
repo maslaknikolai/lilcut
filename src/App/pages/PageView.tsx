@@ -1,5 +1,5 @@
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
-import { MediaAssetPage } from '@/App/pages/MediaAssetPage/MediaAssetPage'
+import { VideoPage } from '@/App/pages/VideoPage/VideoPage'
 import { ProjectPage } from '@/App/pages/ProjectPage/ProjectPage'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
@@ -15,10 +15,10 @@ export function PageView() {
           key={selectedLibraryItem.project.id}
           project={selectedLibraryItem.project}
         />
-      ) : selectedLibraryItem?.type === 'media' ? (
-        <MediaAssetPage
-          key={selectedLibraryItem.mediaAsset.opfsName}
-          mediaAsset={selectedLibraryItem.mediaAsset}
+      ) : selectedLibraryItem?.type === 'video' ? (
+        <VideoPage
+          key={selectedLibraryItem.video.opfsName}
+          video={selectedLibraryItem.video}
         />
       ) : (
         <div className="flex flex-1 items-center justify-center text-center text-slate-400">

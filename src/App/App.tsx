@@ -1,6 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { TooltipProvider } from '@/App/lib/ui/tooltip'
 import { libraryOrderAtom, projectsAtom } from '@/App/atoms'
+import { migrateProjects } from '@/App/lib/library'
 import { RenderJobProvider } from '@/App/contexts/RenderJobContext'
 import { RenderJobWidget } from '@/App/RenderJobWidget'
 import { Modals } from '@/App/Modals/Modals'
@@ -9,7 +10,7 @@ import { Sidebar } from '@/App/Sidebar/Sidebar'
 import { RecordingPipWindow } from '@/App/RecordingPipWindow'
 import { ScreenRecordingProvider } from '@/App/contexts/ScreenRecordingContext'
 import { useSyncIndexedDbAtom } from '@/App/useSyncIndexedDbAtom'
-import { useSyncMediaAssets } from '@/App/useSyncMediaAssets'
+import { useSyncVideos } from '@/App/useSyncVideos'
 
 function AppContent() {
   return (
@@ -34,9 +35,9 @@ function AppContent() {
 }
 
 export function App() {
-  useSyncIndexedDbAtom(projectsAtom, 'projects')
+  useSyncIndexedDbAtom(projectsAtom, 'projects', migrateProjects)
   useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
-  useSyncMediaAssets()
+  useSyncVideos()
 
   return (
     <HashRouter>

@@ -1,3 +1,4 @@
+import { migrateProjects } from '@/App/lib/library'
 import type { Project } from '@/App/lib/types'
 
 export type LibraryManifest = {
@@ -10,7 +11,7 @@ export type RawManifest = Partial<LibraryManifest>
 
 export const MANIFEST_NAME = 'library.json'
 
-export const MANIFEST_VERSION = 1
+export const MANIFEST_VERSION = 2
 
 export function migrateManifest(raw: RawManifest): LibraryManifest | null {
   const version = raw.version ?? 1
@@ -19,11 +20,14 @@ export function migrateManifest(raw: RawManifest): LibraryManifest | null {
   }
 
   // future upgrades, oldest first:
-  // if (version < 2) { ... }
+  let projects = raw.projects ?? []
+  if (version < 2) {
+    projects = migrateProjects(projects)
+  }
 
   return {
     version: MANIFEST_VERSION,
-    projects: raw.projects ?? [],
+    projects,
     libraryOrder: raw.libraryOrder ?? [],
   }
 }

@@ -4,14 +4,14 @@ import { idbGet, idbSet } from '@/App/lib/indexedDb'
 
 // loads `key` from the IndexedDB kv store into `valueAtom` on mount, then
 // persists every subsequent change back to that key
-export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string) {
+export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string, migrate?: (stored: T) => T) {
   const [value, setValue] = useAtom(valueAtom)
   const [isLoaded, setIsLoaded] = useState(false)
 
   const load = useEffectEvent(() => {
     idbGet<T>(key).then((stored) => {
       if (stored !== undefined) {
-        setValue(stored)
+        setValue(migrate ? migrate(stored) : stored)
       }
       setIsLoaded(true)
     })

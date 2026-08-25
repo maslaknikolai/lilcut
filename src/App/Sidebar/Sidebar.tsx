@@ -6,13 +6,13 @@ import { HelpButton } from '@/App/Sidebar/HelpButton'
 import { Logo } from '@/App/Sidebar/Logo'
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
 import { LibraryTransferControls } from '@/App/Sidebar/LibraryTransferControls'
-import { MediaAssetItem } from '@/App/Sidebar/MediaAssetItem'
+import { VideoItem } from '@/App/Sidebar/VideoItem'
 import { NewProjectButton } from '@/App/Sidebar/NewProjectButton'
 import { ProjectItem } from '@/App/Sidebar/ProjectItem'
 import { RecordControls } from '@/App/lib/RecordControls'
 import { SortingList } from '@/App/Sidebar/SortingList'
 import { StorageUsage } from '@/App/Sidebar/StorageUsage'
-import { UploadMediaAssetButton } from '@/App/lib/UploadMediaAssetButton'
+import { UploadVideoButton } from '@/App/lib/UploadVideoButton'
 
 export function Sidebar() {
   const library = useLibraryItems()
@@ -61,11 +61,7 @@ export function Sidebar() {
             getId={libraryItemId}
             onReorder={(next) => setLibraryOrder(next.map(libraryItemId))}
             renderItem={(item) =>
-              item.type === 'project' ? (
-                <ProjectItem project={item.project} />
-              ) : (
-                <MediaAssetItem mediaAsset={item.mediaAsset} />
-              )
+              item.type === 'project' ? <ProjectItem project={item.project} /> : <VideoItem video={item.video} />
             }
           />
         </div>
@@ -73,7 +69,7 @@ export function Sidebar() {
         <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
           <div className="flex flex-wrap gap-1 justify-stretch">
             <RecordControls />
-            <UploadMediaAssetButton />
+            <UploadVideoButton />
             <NewProjectButton />
           </div>
 

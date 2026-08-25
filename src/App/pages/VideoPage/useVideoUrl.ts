@@ -1,17 +1,17 @@
 import { useEffect, useEffectEvent, useState } from 'react'
 import { readOpfsFile } from '@/App/lib/opfs'
-import type { MediaAsset } from '@/App/lib/types'
+import type { Video } from '@/App/lib/types'
 
-export function useMediaAssetVideoUrl(mediaAsset: MediaAsset | undefined): string | null {
+export function useVideoUrl(video: Video | undefined): string | null {
   const [videoSource, setVideoSource] = useState<{ opfsName: string; url: string } | null>(null)
 
-  const openMediaAsset = useEffectEvent(() => {
-    if (!mediaAsset) {
+  const openVideo = useEffectEvent(() => {
+    if (!video) {
       setVideoSource(null)
       return () => {}
     }
 
-    const { opfsName } = mediaAsset
+    const { opfsName } = video
     let url: string | null = null
     let isCancelled = false
     readOpfsFile(opfsName).then((downloadedFile) => {
@@ -30,11 +30,11 @@ export function useMediaAssetVideoUrl(mediaAsset: MediaAsset | undefined): strin
     }
   })
 
-  useEffect(() => openMediaAsset(), [mediaAsset])
+  useEffect(() => openVideo(), [video])
 
   // a previous asset's url must never leak through while the new one loads —
   // callers unmount the <video> for that gap instead of swapping src in place,
   // so stale timeupdate/pause events can't fire against the new clip's timings
-  const isVideoSourceCurrent = !!videoSource && videoSource.opfsName === mediaAsset?.opfsName
+  const isVideoSourceCurrent = !!videoSource && videoSource.opfsName === video?.opfsName
   return isVideoSourceCurrent ? videoSource.url : null
 }

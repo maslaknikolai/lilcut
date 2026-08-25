@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Scissors } from 'lucide-react'
-import { mediaAssetsAtom, projectsAtom } from '@/App/atoms'
+import { videosAtom, projectsAtom } from '@/App/atoms'
 import { ProjectEditor } from '@/App/pages/ProjectPage/ProjectEditor/ProjectEditor'
 import { ProjectActions } from '@/App/lib/ProjectActions'
 import { PageTitleField } from '@/App/lib/PageTitleField'
@@ -11,7 +11,7 @@ type ProjectPreviewProps = {
 }
 
 export function ProjectPage({ project }: ProjectPreviewProps) {
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
   const setProjects = useSetAtom(projectsAtom)
 
   function renameProject(name: string) {
@@ -41,7 +41,7 @@ export function ProjectPage({ project }: ProjectPreviewProps) {
 
       <ProjectEditor
         project={project}
-        mediaAssets={mediaAssets}
+        videos={videos}
       />
     </div>
   )

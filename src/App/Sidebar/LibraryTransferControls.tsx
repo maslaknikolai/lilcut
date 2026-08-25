@@ -4,7 +4,7 @@ import { strFromU8, strToU8, Unzip, UnzipInflate, UnzipPassThrough, Zip, ZipPass
 import { FolderDown, FolderUp, Trash2 } from 'lucide-react'
 import { cn } from '@/App/lib/utils'
 import { GhostButton } from '@/App/lib/GhostButton'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from '@/App/atoms'
+import { libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
 import {
   MANIFEST_NAME,
   MANIFEST_VERSION,
@@ -14,7 +14,7 @@ import {
 } from '@/App/Sidebar/libraryManifest'
 import { createOpfsWritable, deleteOpfsFile, readOpfsFile } from '@/App/lib/opfs'
 import { uniqueName } from '@/App/lib/uniqueName'
-import { useMediaAssetActions } from '@/App/lib/useMediaAssetActions'
+import { useVideoActions } from '@/App/lib/useVideoActions'
 
 function concatChunks(chunks: Uint8Array[]): Uint8Array {
   const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0)
@@ -28,10 +28,10 @@ function concatChunks(chunks: Uint8Array[]): Uint8Array {
 }
 
 export function LibraryTransferControls() {
-  const [mediaAssets] = useAtom(mediaAssetsAtom)
+  const [videos] = useAtom(videosAtom)
   const [projects, setProjects] = useAtom(projectsAtom)
   const [libraryOrder, setLibraryOrder] = useAtom(libraryOrderAtom)
-  const { refreshMediaAssets } = useMediaAssetActions()
+  const { refreshVideos } = useVideoActions()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isTransferring, setIsTransferring] = useState(false)
 
@@ -90,11 +90,11 @@ export function LibraryTransferControls() {
         }
       })
 
-      for (const mediaAsset of mediaAssets) {
+      for (const video of videos) {
         // pass-through entry (no compression): video data is already compressed
-        const entry = new ZipPassThrough(`media/${mediaAsset.opfsName}`)
+        const entry = new ZipPassThrough(`media/${video.opfsName}`)
         zip.add(entry)
-        const file = await readOpfsFile(mediaAsset.opfsName)
+        const file = await readOpfsFile(video.opfsName)
         const reader = file.stream().getReader()
         while (true) {
           const { done, value } = await reader.read()
@@ -137,7 +137,7 @@ export function LibraryTransferControls() {
     setIsTransferring(true)
     try {
       const opfsNameByImportedName = new Map<string, string>()
-      const knownOpfsNames = mediaAssets.map((mediaAsset) => mediaAsset.opfsName)
+      const knownOpfsNames = videos.map((video) => video.opfsName)
       const manifestChunks: Uint8Array[] = []
       let streamError: Error | null = null
       let entryWriteChain: Promise<unknown> = Promise.resolve()
@@ -199,7 +199,7 @@ export function LibraryTransferControls() {
       if (streamError) {
         throw streamError
       }
-      await refreshMediaAssets()
+      await refreshVideos()
 
       if (manifestChunks.length === 0) {
         return
@@ -221,7 +221,7 @@ export function LibraryTransferControls() {
         const clips = importedProject.clips.map((clip) => ({
           ...clip,
           id: crypto.randomUUID(),
-          mediaAssetOpfsName: opfsNameByImportedName.get(clip.mediaAssetOpfsName) ?? clip.mediaAssetOpfsName,
+          videoOpfsName: opfsNameByImportedName.get(clip.videoOpfsName) ?? clip.videoOpfsName,
         }))
         return { id, name, clips }
       })
@@ -245,12 +245,12 @@ export function LibraryTransferControls() {
     }
     setIsTransferring(true)
     try {
-      for (const mediaAsset of mediaAssets) {
-        await deleteOpfsFile(mediaAsset.opfsName)
+      for (const video of videos) {
+        await deleteOpfsFile(video.opfsName)
       }
       setProjects([])
       setLibraryOrder([])
-      await refreshMediaAssets()
+      await refreshVideos()
     } finally {
       setIsTransferring(false)
     }
@@ -264,7 +264,7 @@ export function LibraryTransferControls() {
     }
   }
 
-  const isLibraryEmpty = mediaAssets.length + projects.length === 0
+  const isLibraryEmpty = videos.length + projects.length === 0
   const controlClassName = 'flex-1 py-2 text-slate-400 hover:text-slate-200 active:text-slate-100'
 
   return (

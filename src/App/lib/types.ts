@@ -1,4 +1,4 @@
-export type MediaAsset = {
+export type Video = {
   opfsName: string
   mimeType: string
   duration: number
@@ -13,9 +13,9 @@ export type Project = {
 
 export type Clip = {
   id: string
-  mediaAssetOpfsName: string
+  videoOpfsName: string
   cutStart?: number
   cutEnd?: number
 }
 
-export type LibraryItem = { type: 'project'; project: Project } | { type: 'media'; mediaAsset: MediaAsset }
+export type LibraryItem = { type: 'project'; project: Project } | { type: 'video'; video: Video }

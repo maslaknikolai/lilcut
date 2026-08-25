@@ -4,7 +4,7 @@ import { probeKeyframeTimes, probeStreams } from '@/App/contexts/getFormatSignat
 import { isConcatCompatible } from '@/App/contexts/isConcatCompatible'
 import { readOpfsFile } from '@/App/lib/opfs'
 import type { PlaybackClip } from '@/App/lib/projectTimeline'
-import type { MediaAsset } from '@/App/lib/types'
+import type { Video } from '@/App/lib/types'
 
 type RenderCallbacks = {
   onProgress: (overallProgress: number) => void
@@ -15,7 +15,7 @@ type RenderCallbacks = {
 type InputClip = {
   inputName: string
   playbackClip: PlaybackClip
-  mediaAsset: MediaAsset
+  video: Video
 }
 
 // Callers pass playback clips (buildPlaybackClips) so uncut spans of one
@@ -29,12 +29,12 @@ type InputClip = {
 export async function renderProjectVideo(
   ffmpeg: FFmpeg,
   playbackClips: PlaybackClip[],
-  mediaAssets: MediaAsset[],
+  videos: Video[],
   { onProgress, onLog, isCancelled }: RenderCallbacks,
 ): Promise<Blob | null> {
   const resolvedClips = playbackClips.flatMap((playbackClip) => {
-    const mediaAsset = mediaAssets.find((mediaAsset) => mediaAsset.opfsName === playbackClip.mediaAssetOpfsName)
-    return mediaAsset ? [{ playbackClip, mediaAsset }] : []
+    const video = videos.find((video) => video.opfsName === playbackClip.videoOpfsName)
+    return video ? [{ playbackClip, video }] : []
   })
   if (resolvedClips.length === 0) {
     return null
@@ -53,29 +53,29 @@ export async function renderProjectVideo(
   try {
     const inputNameByOpfsName = new Map<string, string>()
 
-    async function ensureInputFile(mediaAsset: MediaAsset): Promise<string> {
-      const existingName = inputNameByOpfsName.get(mediaAsset.opfsName)
+    async function ensureInputFile(video: Video): Promise<string> {
+      const existingName = inputNameByOpfsName.get(video.opfsName)
       if (existingName) {
         return existingName
       }
-      const extension = mediaAsset.opfsName.split('.').pop()
+      const extension = video.opfsName.split('.').pop()
       const inputName = `input_${inputNameByOpfsName.size}.${extension}`
-      const sourceFile = await readOpfsFile(mediaAsset.opfsName)
+      const sourceFile = await readOpfsFile(video.opfsName)
       await ffmpeg.writeFile(inputName, await fetchFile(sourceFile))
-      inputNameByOpfsName.set(mediaAsset.opfsName, inputName)
+      inputNameByOpfsName.set(video.opfsName, inputName)
       return inputName
     }
 
     const inputClips: InputClip[] = []
-    for (const { playbackClip, mediaAsset } of resolvedClips) {
+    for (const { playbackClip, video } of resolvedClips) {
       if (isCancelled()) {
         return null
       }
-      const inputName = await ensureInputFile(mediaAsset)
-      inputClips.push({ inputName, playbackClip, mediaAsset })
+      const inputName = await ensureInputFile(video)
+      inputClips.push({ inputName, playbackClip, video })
     }
 
-    const opfsNames = resolvedClips.map(({ mediaAsset }) => mediaAsset.opfsName)
+    const opfsNames = resolvedClips.map(({ video }) => video.opfsName)
     // a probe failure falls back to re-encoding, which works for any mix of
     // formats — only proven-compatible sources take the stream-copy shortcut
     const canStreamCopy = await isConcatCompatible(opfsNames).catch(() => false)
@@ -138,11 +138,8 @@ export function snapToPrecedingKeyframe(time: number, keyframeTimes: number[]): 
   return precedingTimes[precedingTimes.length - 1]
 }
 
-function snappedCutStart(
-  { playbackClip, mediaAsset }: InputClip,
-  keyframeTimesByOpfsName: Map<string, number[]>,
-): number {
-  const keyframeTimes = keyframeTimesByOpfsName.get(mediaAsset.opfsName) ?? []
+function snappedCutStart({ playbackClip, video }: InputClip, keyframeTimesByOpfsName: Map<string, number[]>): number {
+  const keyframeTimes = keyframeTimesByOpfsName.get(video.opfsName) ?? []
   return snapToPrecedingKeyframe(playbackClip.cutStart, keyframeTimes)
 }
 
@@ -183,7 +180,7 @@ async function execConcatStreamCopy(
 // assumes every source has an audio stream; sources recorded
 // without audio need an anullsrc fallback here
 async function execConcatReencode(ffmpeg: FFmpeg, inputClips: InputClip[]): Promise<void> {
-  const firstStreams = await probeStreams(inputClips[0].mediaAsset.opfsName)
+  const firstStreams = await probeStreams(inputClips[0].video.opfsName)
   const firstVideoStream = firstStreams.find((stream) => stream.codec_type === 'video')
   const targetWidth = makeEven(firstVideoStream?.width ?? 1280)
   const targetHeight = makeEven(firstVideoStream?.height ?? 720)

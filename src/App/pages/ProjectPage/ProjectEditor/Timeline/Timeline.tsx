@@ -2,7 +2,7 @@ import { useEffectEvent, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Plus, Shrink } from 'lucide-react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { activeModalAtom, mediaAssetsAtom } from '@/App/atoms'
+import { activeModalAtom, videosAtom } from '@/App/atoms'
 import { DragScrollArea } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/DragScrollArea'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { InsertClipButton } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/InsertClipButton'
@@ -34,10 +34,10 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
   function openClipEditor(clip: TimelineClipT) {
     setActiveModal({ type: 'clipEdit', projectId: project.id, clip })
   }
-  const mediaAssets = useAtomValue(mediaAssetsAtom)
+  const videos = useAtomValue(videosAtom)
   const scrollerRef = useRef<HTMLDivElement>(null)
 
-  const timelineClips = buildTimelineClips(project.clips, mediaAssets)
+  const timelineClips = buildTimelineClips(project.clips, videos)
   const totalDuration = timelineClips.reduce((sum, timelineClip) => sum + timelineClip.duration, 0)
 
   const minPxPerSecondRef = useRef(0)
