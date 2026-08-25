@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { ChevronLeft, ChevronRight, Files, FileX, Pencil, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileExclamationPoint, FilePlay, Files, Pencil, X } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/App/lib/ui/tooltip'
 import { videosAtom, projectsAtom } from '@/App/atoms'
 import { updateProject } from '@/App/lib/library'
-import type { TimelineClip } from '@/App/lib/projectTimeline'
+import { getTimelineClipWidth, type TimelineClip } from '@/App/lib/projectTimeline'
 import { TimelineClipAction } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClipAction'
 import type { Project } from '@/App/lib/types'
 import { useScrollCurrentIntoView } from '@/App/lib/useScrollCurrentIntoView'
+import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 import { cn } from '@/App/lib/utils'
 
 type TimelineClipProps = {
@@ -30,13 +31,13 @@ export function TimelineClip({
   const videos = useAtomValue(videosAtom)
   const setProjects = useSetAtom(projectsAtom)
   const rootRef = useScrollCurrentIntoView(isCurrent)
+  const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
   // Radix closes the tooltip itself on trigger pointerdown; remembering the
   // pre-tap state stops the click from immediately reopening it
   const wasTooltipOpenOnPointerDownRef = useRef(false)
 
   const videoExists = videos.some((video) => video.opfsName === timelineClip.videoOpfsName)
-  const videoName = videoExists ? timelineClip.videoOpfsName : 'Unknown file'
   const clipIndex = project.clips.findIndex((clip) => clip.id === timelineClip.id)
   const isFirst = clipIndex === 0
   const isLast = clipIndex === project.clips.length - 1
@@ -106,15 +107,16 @@ export function TimelineClip({
             isCurrent ? 'bg-slate-300 text-slate-900' : 'bg-slate-500 text-white',
             isTooltipOpen && 'outline-2 outline-offset-2 outline-slate-100',
           )}
-          style={{ width: timelineClip.duration * pxPerSecond }}
+          style={{ width: getTimelineClipWidth(timelineClip.duration, pxPerSecond) }}
         >
-          {!videoExists && (
-            <FileX
-              size={12}
-              className="mr-1 shrink-0"
+          {videoExists ? (
+            <span className="min-w-0 truncate px-3">{timelineClip.videoOpfsName}</span>
+          ) : (
+            <FileExclamationPoint
+              size={14}
+              className="mx-auto shrink-0"
             />
           )}
-          <span className="min-w-0 truncate px-3">{videoName}</span>
         </div>
       </TooltipTrigger>
 
@@ -122,38 +124,49 @@ export function TimelineClip({
         sideOffset={-8}
         className="gap-0.5 p-0.5"
       >
-        <TimelineClipAction
-          onClick={() => moveClip(-1)}
-          disabled={isFirst}
-          label="Move clip earlier"
-        >
-          <ChevronLeft size={16} />
-        </TimelineClipAction>
+        {videoExists && (
+          <>
+            <TimelineClipAction
+              onClick={() => moveClip(-1)}
+              disabled={isFirst}
+              label="Move clip earlier"
+            >
+              <ChevronLeft size={16} />
+            </TimelineClipAction>
 
-        <TimelineClipAction
-          onClick={() => moveClip(1)}
-          disabled={isLast}
-          label="Move clip later"
-        >
-          <ChevronRight size={16} />
-        </TimelineClipAction>
+            <TimelineClipAction
+              onClick={() => moveClip(1)}
+              disabled={isLast}
+              label="Move clip later"
+            >
+              <ChevronRight size={16} />
+            </TimelineClipAction>
 
-        <TimelineClipAction
-          onClick={() => {
-            setIsTooltipOpen(false)
-            onEdit()
-          }}
-          label="Edit clip"
-        >
-          <Pencil size={16} />
-        </TimelineClipAction>
+            <TimelineClipAction
+              onClick={() => {
+                setIsTooltipOpen(false)
+                onEdit()
+              }}
+              label="Edit clip"
+            >
+              <Pencil size={16} />
+            </TimelineClipAction>
 
-        <TimelineClipAction
-          onClick={cloneClip}
-          label="Clone clip"
-        >
-          <Files size={16} />
-        </TimelineClipAction>
+            <TimelineClipAction
+              onClick={cloneClip}
+              label="Clone clip"
+            >
+              <Files size={16} />
+            </TimelineClipAction>
+
+            <TimelineClipAction
+              onClick={() => setSelectedLibraryItemId(timelineClip.videoOpfsName)}
+              label="Open video"
+            >
+              <FilePlay size={16} />
+            </TimelineClipAction>
+          </>
+        )}
 
         <TimelineClipAction
           onClick={removeClip}

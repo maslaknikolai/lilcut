@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   buildPlaybackClips,
   buildTimelineClips,
+  EMPTY_CLIP_WIDTH,
+  getTimelineClipWidth,
   findClipIndexAtTime,
   isClipRangeValid,
   isDefaultClip,
@@ -151,5 +153,15 @@ describe('makeFullClip / isDefaultClip', () => {
 
   it('an omitted cutStart counts as 0', () => {
     expect(isDefaultClip({ id: '1', videoOpfsName: 'a.mp4' })).toBe(true)
+  })
+})
+
+describe('getTimelineClipWidth', () => {
+  it('scales a clip with duration', () => {
+    expect(getTimelineClipWidth(2, 30)).toBe(60)
+  })
+
+  it('keeps a clip without duration tappable', () => {
+    expect(getTimelineClipWidth(0, 30)).toBe(EMPTY_CLIP_WIDTH)
   })
 })

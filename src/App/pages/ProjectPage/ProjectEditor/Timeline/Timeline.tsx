@@ -6,7 +6,7 @@ import { activeModalAtom, videosAtom } from '@/App/atoms'
 import { DragScrollArea } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/DragScrollArea'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { InsertClipButton } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/InsertClipButton'
-import { buildTimelineClips, type TimelineClip as TimelineClipT } from '@/App/lib/projectTimeline'
+import { buildTimelineClips, EMPTY_CLIP_WIDTH, type TimelineClip as TimelineClipT } from '@/App/lib/projectTimeline'
 import { Scrubber } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/Scrubber'
 import { TimelineClip } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClip'
 import type { Project } from '@/App/lib/types'
@@ -50,7 +50,11 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
     const scrollerStyles = getComputedStyle(scroller)
     const scrollerPadding = parseFloat(scrollerStyles.paddingLeft) + parseFloat(scrollerStyles.paddingRight)
     const rowGapsWidth = 2 * timelineClips.length
-    const fillPxPerSecond = (scroller.clientWidth - scrollerPadding - rowGapsWidth) / totalDuration
+    // empty clips keep a fixed width, so they eat pixels instead of seconds
+    const emptyClips = timelineClips.filter((timelineClip) => !timelineClip.duration)
+    const emptyClipsWidth = emptyClips.length * EMPTY_CLIP_WIDTH
+    const availableWidth = scroller.clientWidth - scrollerPadding - rowGapsWidth - emptyClipsWidth
+    const fillPxPerSecond = availableWidth / totalDuration
     minPxPerSecondRef.current = fillPxPerSecond
     setPxPerSecond((prev) => (prev === null ? fillPxPerSecond : Math.max(prev, fillPxPerSecond)))
   })

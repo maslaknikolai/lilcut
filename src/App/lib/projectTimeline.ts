@@ -24,6 +24,12 @@ export type TimelineClip = {
   projectStart: number
 }
 
+export const EMPTY_CLIP_WIDTH = 40
+
+export function getTimelineClipWidth(duration: number, pxPerSecond: number): number {
+  return duration ? duration * pxPerSecond : EMPTY_CLIP_WIDTH
+}
+
 export function buildTimelineClips(clips: Clip[], videos: Video[]): TimelineClip[] {
   let projectStart = 0
 
