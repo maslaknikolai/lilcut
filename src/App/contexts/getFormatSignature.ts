@@ -22,11 +22,6 @@ export type ProbedStream = {
   bit_rate?: string
 }
 
-export type ProbedFormat = {
-  format_name?: string
-  bit_rate?: string
-}
-
 async function runProbe(opfsName: string, probeArgs: string[]): Promise<string> {
   const ffmpeg = await loadProbeFfmpeg()
   const file = await readOpfsFile(opfsName)
@@ -79,9 +74,15 @@ export async function probeKeyframeTimes(opfsName: string): Promise<number[]> {
   return keyframeTimes.sort((a, b) => a - b)
 }
 
-export async function probeMediaInfo(opfsName: string): Promise<{ streams: ProbedStream[]; format: ProbedFormat }> {
+// every field ffprobe reports, not just the ones we model
+type FullProbe = {
+  streams: (ProbedStream & Record<string, unknown>)[]
+  format: Record<string, unknown>
+}
+
+export async function probeMediaInfo(opfsName: string): Promise<FullProbe> {
   const outputText = await runProbe(opfsName, ['-show_streams', '-show_format'])
-  return JSON.parse(outputText) as { streams: ProbedStream[]; format: ProbedFormat }
+  return JSON.parse(outputText) as FullProbe
 }
 
 export async function getFormatSignature(opfsName: string): Promise<string> {
