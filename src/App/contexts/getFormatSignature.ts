@@ -18,6 +18,13 @@ export type ProbedStream = {
   pix_fmt?: string
   sample_rate?: string
   channels?: number
+  avg_frame_rate?: string
+  bit_rate?: string
+}
+
+export type ProbedFormat = {
+  format_name?: string
+  bit_rate?: string
 }
 
 async function runProbe(opfsName: string, probeArgs: string[]): Promise<string> {
@@ -70,6 +77,11 @@ export async function probeKeyframeTimes(opfsName: string): Promise<number[]> {
     .map((packet) => Number(packet.pts_time ?? packet.dts_time))
     .filter((time) => Number.isFinite(time))
   return keyframeTimes.sort((a, b) => a - b)
+}
+
+export async function probeMediaInfo(opfsName: string): Promise<{ streams: ProbedStream[]; format: ProbedFormat }> {
+  const outputText = await runProbe(opfsName, ['-show_streams', '-show_format'])
+  return JSON.parse(outputText) as { streams: ProbedStream[]; format: ProbedFormat }
 }
 
 export async function getFormatSignature(opfsName: string): Promise<string> {

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSetAtom } from 'jotai'
-import { X } from 'lucide-react'
 import { projectsAtom } from '@/App/atoms'
+import { Modal } from '@/App/Modals/Modal'
 import { ClipRangeEditor } from '@/App/Modals/ClipRangeEditor/ClipRangeEditor'
 import { updateProject } from '@/App/lib/library'
 import { isClipRangeValid, isDefaultClip, makeFullClip } from '@/App/lib/projectTimeline'
@@ -97,72 +97,56 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
   }
 
   return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    <Modal
+      title="Add clips"
+      onClose={onClose}
+      className="h-full max-w-none"
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="flex h-full w-full flex-col gap-3 rounded bg-slate-800 p-4 shadow-lg"
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-slate-100">Add clips</span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex min-h-10 min-w-10 cursor-pointer items-center justify-center text-slate-500 hover:text-slate-100 active:text-white"
-            aria-label="Close"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between gap-2 text-sm text-slate-400">
-          <span>Check videos to add them as clips</span>
-          <UploadMediaAssetButton
-            className="shrink-0 px-2"
-            onUploaded={(opfsNames) => setClipsToBeAdded((prev) => [...prev, ...opfsNames.map(makeFullClip)])}
-          />
-        </div>
-
-        <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
-          {!mediaAssets.length && (
-            <span className="text-sm text-slate-500">No videos in the library yet — import some.</span>
-          )}
-          {mediaAssets.map((mediaAsset) => {
-            const assetClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName)
-            const isModified = !!assetClip && !isDefaultClip(assetClip)
-            return (
-              <VideosListItem
-                key={mediaAsset.opfsName}
-                mediaAsset={mediaAsset}
-                isChecked={!!assetClip}
-                isModified={isModified}
-                onToggleChecked={() => toggleChecked(mediaAsset.opfsName)}
-                onTrim={() => openTrimmer(mediaAsset.opfsName)}
-              />
-            )
-          })}
-        </div>
-
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="min-h-10 cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleAddClips}
-            disabled={!clipsToBeAdded.length}
-            className="min-h-10 cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Add clips
-          </button>
-        </div>
+      <div className="flex items-center justify-between gap-2 text-sm text-slate-400">
+        <span>Check videos to add them as clips</span>
+        <UploadMediaAssetButton
+          className="shrink-0 px-2"
+          onUploaded={(opfsNames) => setClipsToBeAdded((prev) => [...prev, ...opfsNames.map(makeFullClip)])}
+        />
       </div>
-    </div>
+
+      <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
+        {!mediaAssets.length && (
+          <span className="text-sm text-slate-500">No videos in the library yet — import some.</span>
+        )}
+        {mediaAssets.map((mediaAsset) => {
+          const assetClip = clipsToBeAdded.find((clip) => clip.mediaAssetOpfsName === mediaAsset.opfsName)
+          const isModified = !!assetClip && !isDefaultClip(assetClip)
+          return (
+            <VideosListItem
+              key={mediaAsset.opfsName}
+              mediaAsset={mediaAsset}
+              isChecked={!!assetClip}
+              isModified={isModified}
+              onToggleChecked={() => toggleChecked(mediaAsset.opfsName)}
+              onTrim={() => openTrimmer(mediaAsset.opfsName)}
+            />
+          )
+        })}
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="min-h-10 cursor-pointer rounded px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-900 active:bg-slate-950"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={handleAddClips}
+          disabled={!clipsToBeAdded.length}
+          className="min-h-10 cursor-pointer rounded bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-900 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Add clips
+        </button>
+      </div>
+    </Modal>
   )
 }

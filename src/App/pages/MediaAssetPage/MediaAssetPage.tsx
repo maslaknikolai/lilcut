@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { FilePlay, Scissors } from 'lucide-react'
-import { libraryOrderAtom, mediaAssetsAtom, projectsAtom } from '@/App/atoms'
+import { FilePlay, Info, Scissors } from 'lucide-react'
+import { activeModalAtom, libraryOrderAtom, mediaAssetsAtom, projectsAtom } from '@/App/atoms'
 import { CreateProjectFromMediaAssetButton } from '@/App/pages/MediaAssetPage/CreateProjectFromMediaAssetButton'
 import { formatBytes } from '@/App/lib/formatBytes'
+import { GhostButton } from '@/App/lib/GhostButton'
 import { MediaAssetActions } from '@/App/lib/MediaAssetActions'
 import { PageTitleField } from '@/App/lib/PageTitleField'
 import type { MediaAsset } from '@/App/lib/types'
@@ -21,6 +22,7 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
   const { renameMediaAsset } = useMediaAssetActions()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
+  const setActiveModal = useSetAtom(activeModalAtom)
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [isNameTaken, setIsNameTaken] = useState(false)
 
@@ -89,7 +91,17 @@ export function MediaAssetPage({ mediaAsset }: MediaAssetPageProps) {
         )}
       </div>
       <div className="flex flex-col gap-2 px-4 py-4 text-xs text-slate-500 max-h-32 overflow-y-auto">
-        <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+        <div className="flex flex-wrap gap-2">
+          <CreateProjectFromMediaAssetButton mediaAsset={mediaAsset} />
+
+          <GhostButton
+            onClick={() => setActiveModal({ type: 'mediaAssetInfo', opfsName: mediaAsset.opfsName })}
+            className="px-3"
+          >
+            <Info size={14} />
+            <span>Video info</span>
+          </GhostButton>
+        </div>
 
         {projectsUsingAsset.length > 0 && (
           <div>

@@ -12,6 +12,7 @@ export type ActiveModal =
   | { type: 'help' }
   | { type: 'clipEdit'; projectId: string; clip: TimelineClip }
   | { type: 'clipCreate'; projectId: string; insertAt?: number }
+  | { type: 'mediaAssetInfo'; opfsName: string }
   | null
 
 export const activeModalAtom = atom<ActiveModal>(null)

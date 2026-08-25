@@ -3,6 +3,7 @@ import { activeModalAtom } from '@/App/atoms'
 import { ClipCreateModal } from '@/App/Modals/ClipCreateModal/ClipCreateModal'
 import { ClipEditModal } from '@/App/Modals/ClipEditModal/ClipEditModal'
 import { HelpModal } from '@/App/Modals/HelpModal'
+import { MediaAssetInfoModal } from '@/App/Modals/MediaAssetInfoModal'
 
 export function Modals() {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
@@ -30,6 +31,15 @@ export function Modals() {
       <ClipCreateModal
         projectId={activeModal.projectId}
         insertAt={activeModal.insertAt}
+        onClose={closeModal}
+      />
+    )
+  }
+
+  if (activeModal?.type === 'mediaAssetInfo') {
+    return (
+      <MediaAssetInfoModal
+        opfsName={activeModal.opfsName}
         onClose={closeModal}
       />
     )
