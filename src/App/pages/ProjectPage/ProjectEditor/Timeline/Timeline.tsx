@@ -133,8 +133,9 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
           className="flex w-fit min-w-full flex-col gap-4"
         >
           <Scrubber
+            timelineClips={timelineClips}
             projectTime={projectTime}
-            totalDuration={totalDuration}
+            pxPerSecond={pxPerSecond ?? 0}
             onSeek={onSeek}
           />
 

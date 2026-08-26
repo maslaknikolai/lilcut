@@ -1,22 +1,25 @@
 import { type PointerEvent } from 'react'
+import { getTimelineTime, getTimelineX, type TimelineClip } from '@/App/lib/projectTimeline'
 
 type ScrubberProps = {
+  timelineClips: TimelineClip[]
   projectTime: number
-  totalDuration: number
+  pxPerSecond: number
   onSeek: (time: number) => void
 }
 
-export function Scrubber({ projectTime, totalDuration, onSeek }: ScrubberProps) {
-  const playheadPercent = totalDuration > 0 ? (projectTime / totalDuration) * 100 : 0
+export function Scrubber({ timelineClips, projectTime, pxPerSecond, onSeek }: ScrubberProps) {
+  const playheadX = getTimelineX(timelineClips, projectTime, pxPerSecond)
 
   function seekToClientX(track: HTMLDivElement, clientX: number) {
-    const rect = track.getBoundingClientRect()
-    const ratio = (clientX - rect.left) / rect.width
-    onSeek(Math.min(1, Math.max(0, ratio)) * totalDuration)
+    const trackRect = track.getBoundingClientRect()
+    const xOnTrack = clientX - trackRect.left
+    const time = getTimelineTime(timelineClips, xOnTrack, pxPerSecond)
+    onSeek(time)
   }
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (totalDuration <= 0) {
+    if (!timelineClips.length) {
       return
     }
     // also suppresses the compatibility mousedown that would start
@@ -42,7 +45,7 @@ export function Scrubber({ projectTime, totalDuration, onSeek }: ScrubberProps) 
     >
       <div
         className="absolute inset-y-0 left-0 rounded-full bg-blue-600"
-        style={{ width: `${playheadPercent}%` }}
+        style={{ width: playheadX }}
       />
     </div>
   )

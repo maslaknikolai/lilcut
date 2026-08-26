@@ -30,6 +30,45 @@ export function getTimelineClipWidth(duration: number, pxPerSecond: number): num
   return duration ? duration * pxPerSecond : EMPTY_CLIP_WIDTH
 }
 
+// the clip row separates its children by a 1px flex gap; the insert buttons
+// between clips are zero-width, so only the gaps shift the clips along
+const CLIP_GAP = 1
+const FIRST_CLIP_LEFT = CLIP_GAP
+const GAP_BETWEEN_CLIPS = 2 * CLIP_GAP
+
+// empty clips keep a fixed pixel width, so time and pixels don't scale
+// together — walk the row to place the playhead where its clip really is
+export function getTimelineX(timelineClips: TimelineClip[], time: number, pxPerSecond: number): number {
+  let left = FIRST_CLIP_LEFT
+
+  for (const timelineClip of timelineClips) {
+    if (time < timelineClip.projectStart + timelineClip.duration) {
+      return left + (time - timelineClip.projectStart) * pxPerSecond
+    }
+    left += getTimelineClipWidth(timelineClip.duration, pxPerSecond) + GAP_BETWEEN_CLIPS
+  }
+
+  return Math.max(FIRST_CLIP_LEFT, left - GAP_BETWEEN_CLIPS)
+}
+
+// inverse of getTimelineX: a click at x on the row becomes a project time
+export function getTimelineTime(timelineClips: TimelineClip[], x: number, pxPerSecond: number): number {
+  let left = FIRST_CLIP_LEFT
+
+  for (const timelineClip of timelineClips) {
+    const width = getTimelineClipWidth(timelineClip.duration, pxPerSecond)
+    if (x < left + width) {
+      const timeIntoClip = timelineClip.duration ? (x - left) / pxPerSecond : 0
+      const clampedTimeIntoClip = Math.max(0, Math.min(timelineClip.duration, timeIntoClip))
+      return timelineClip.projectStart + clampedTimeIntoClip
+    }
+    left += width + GAP_BETWEEN_CLIPS
+  }
+
+  const lastTimelineClip = timelineClips.at(-1)
+  return lastTimelineClip ? lastTimelineClip.projectStart + lastTimelineClip.duration : 0
+}
+
 export function buildTimelineClips(clips: Clip[], videos: Video[]): TimelineClip[] {
   let projectStart = 0
 

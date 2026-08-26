@@ -4,6 +4,8 @@ import {
   buildTimelineClips,
   EMPTY_CLIP_WIDTH,
   getTimelineClipWidth,
+  getTimelineTime,
+  getTimelineX,
   findClipIndexAtTime,
   isClipRangeValid,
   isDefaultClip,
@@ -163,5 +165,35 @@ describe('getTimelineClipWidth', () => {
 
   it('keeps a clip without duration tappable', () => {
     expect(getTimelineClipWidth(0, 30)).toBe(EMPTY_CLIP_WIDTH)
+  })
+})
+
+describe('getTimelineX / getTimelineTime', () => {
+  // a broken first clip (missing video) is 0s long but still 40px wide
+  const clipsWithBroken = buildTimelineClips(
+    [
+      { id: '1', videoOpfsName: 'missing.mp4', cutStart: 0 },
+      { id: '2', videoOpfsName: 'a.mp4', cutStart: 0, cutEnd: 10 },
+    ],
+    videos,
+  )
+  const pxPerSecond = 10
+
+  it('offsets the playhead by the fixed width of the broken clip', () => {
+    expect(getTimelineX(clipsWithBroken, 0, pxPerSecond)).toBe(1 + EMPTY_CLIP_WIDTH + 2)
+    expect(getTimelineX(clipsWithBroken, 4, pxPerSecond)).toBe(1 + EMPTY_CLIP_WIDTH + 2 + 40)
+  })
+
+  it('maps the row end to the total duration', () => {
+    expect(getTimelineX(clipsWithBroken, 10, pxPerSecond)).toBe(1 + EMPTY_CLIP_WIDTH + 2 + 100)
+  })
+
+  it('round-trips pixels back to time', () => {
+    const x = getTimelineX(clipsWithBroken, 4, pxPerSecond)
+    expect(getTimelineTime(clipsWithBroken, x, pxPerSecond)).toBe(4)
+  })
+
+  it('lands on the broken clip start when clicked inside its fixed width', () => {
+    expect(getTimelineTime(clipsWithBroken, 10, pxPerSecond)).toBe(0)
   })
 })
