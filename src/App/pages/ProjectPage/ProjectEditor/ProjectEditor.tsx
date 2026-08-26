@@ -26,6 +26,9 @@ function logPlayer(message: string, ...details: unknown[]) {
   console.debug(`[player] ${message}`, ...details)
 }
 
+const LONG_PRESS_DELAY = 400
+const PLAYBACK_RATES = [1, 2, 0.5]
+
 function arrowSeekStep(event: KeyboardEvent): number {
   if (event.metaKey || event.ctrlKey) {
     return 30
@@ -49,6 +52,7 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
   const setProjects = useSetAtom(projectsAtom)
   const [projectTime, setProjectTime] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [playbackRate, setPlaybackRate] = useState(1)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [fitZoomSlot, setFitZoomSlot] = useState<HTMLElement | null>(null)
 
@@ -170,6 +174,15 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
   const longPressTimeoutRef = useRef<number | null>(null)
   const isLongPressingRef = useRef(false)
 
+  function startLongPress() {
+    longPressTimeoutRef.current = window.setTimeout(() => {
+      isLongPressingRef.current = true
+      if (videoRef.current) {
+        videoRef.current.playbackRate = 2
+      }
+    }, LONG_PRESS_DELAY)
+  }
+
   function endLongPress(isClickComing: boolean) {
     if (longPressTimeoutRef.current) {
       clearTimeout(longPressTimeoutRef.current)
@@ -177,7 +190,7 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
     }
     if (isLongPressingRef.current) {
       if (videoRef.current) {
-        videoRef.current.playbackRate = 1
+        videoRef.current.playbackRate = playbackRate
       }
       if (!isClickComing) {
         isLongPressingRef.current = false
@@ -199,6 +212,15 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
 
     seekToProjectTime(nextPlayableClip.projectStart)
     setIsPlaying(true)
+  }
+
+  function cyclePlaybackRate() {
+    const currentIndex = PLAYBACK_RATES.indexOf(playbackRate)
+    const nextPlaybackRate = PLAYBACK_RATES[(currentIndex + 1) % PLAYBACK_RATES.length]
+    setPlaybackRate(nextPlaybackRate)
+    if (videoRef.current) {
+      videoRef.current.playbackRate = nextPlaybackRate
+    }
   }
 
   function togglePlayback() {
@@ -241,7 +263,15 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
     seekToProjectTime(projectTime + direction * arrowSeekStep(event))
   }
 
-  useKeyPress('Space', togglePlayback)
+  function handleSpacePress(event: KeyboardEvent) {
+    if (event.repeat) {
+      return
+    }
+    togglePlayback()
+    startLongPress()
+  }
+
+  useKeyPress('Space', handleSpacePress, { onRelease: () => endLongPress(false) })
   useKeyPress('ArrowLeft', (event) => handleArrowPress(event, -1), { isModifierAllowed: true })
   useKeyPress('ArrowRight', (event) => handleArrowPress(event, 1), { isModifierAllowed: true })
   useKeyPress('Backspace', removeCurrentClip)
@@ -263,12 +293,7 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
             }}
             onPointerDown={(e) => {
               e.preventDefault()
-              longPressTimeoutRef.current = window.setTimeout(() => {
-                isLongPressingRef.current = true
-                if (videoRef.current) {
-                  videoRef.current.playbackRate = 2
-                }
-              }, 400)
+              startLongPress()
             }}
             onPointerUp={() => endLongPress(true)}
             onPointerLeave={() => endLongPress(false)}
@@ -284,7 +309,7 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
                 willResume: isPlaying,
               })
               e.currentTarget.currentTime = fileTime
-              e.currentTarget.playbackRate = isLongPressingRef.current ? 2 : 1
+              e.currentTarget.playbackRate = isLongPressingRef.current ? 2 : playbackRate
               // a source switch resets the <video> to paused —
               // resume if playback was running when the previous source ended
 
@@ -352,7 +377,6 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
               <button
                 type="button"
                 onClick={(e) => {
-                  // space global Space hotkey
                   e.currentTarget.blur()
                   togglePlayback()
                 }}
@@ -377,6 +401,15 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
                 {formatTimestamp(projectTime)} / {formatTimestamp(totalDuration)}
               </span>
             </div>
+
+            <GhostButton
+              onClick={cyclePlaybackRate}
+              tooltip="Playback speed"
+              aria-label={`Playback speed ${playbackRate}x, click to change`}
+              className="px-2"
+            >
+              {playbackRate}x
+            </GhostButton>
 
             <ProjectEditorHotkeysButton />
           </div>

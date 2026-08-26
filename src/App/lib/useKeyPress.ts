@@ -5,12 +5,14 @@ import { useEffect, useEffectEvent } from 'react'
 type UseKeyPressOptions = {
   // for keys whose handler reads the modifiers itself (Alt+Arrow, Cmd+Arrow)
   isModifierAllowed?: boolean
+  // for keys that do something while held (Space runs playback at 2x)
+  onRelease?: () => void
 }
 
 export function useKeyPress(
   code: string,
   onPress: (event: KeyboardEvent) => void,
-  { isModifierAllowed }: UseKeyPressOptions = {},
+  { isModifierAllowed, onRelease }: UseKeyPressOptions = {},
 ) {
   const handleKeyPress = useEffectEvent((event: KeyboardEvent) => {
     if (event.code !== code) {
@@ -29,9 +31,21 @@ export function useKeyPress(
     onPress(event)
   })
 
+  const handleKeyRelease = useEffectEvent((event: KeyboardEvent) => {
+    if (event.code !== code) {
+      return
+    }
+    onRelease?.()
+  })
+
   useEffect(() => {
     const listener = (event: KeyboardEvent) => handleKeyPress(event)
+    const releaseListener = (event: KeyboardEvent) => handleKeyRelease(event)
     window.addEventListener('keydown', listener)
-    return () => window.removeEventListener('keydown', listener)
+    window.addEventListener('keyup', releaseListener)
+    return () => {
+      window.removeEventListener('keydown', listener)
+      window.removeEventListener('keyup', releaseListener)
+    }
   }, [code])
 }
