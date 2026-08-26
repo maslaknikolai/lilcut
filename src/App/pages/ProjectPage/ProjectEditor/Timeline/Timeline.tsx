@@ -51,13 +51,15 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
     const scrollerStyles = getComputedStyle(scroller)
     const scrollerPadding = parseFloat(scrollerStyles.paddingLeft) + parseFloat(scrollerStyles.paddingRight)
     const rowGapsWidth = 2 * timelineClips.length
-    // empty clips keep a fixed width, so they eat pixels instead of seconds
+    // empty clips keep a fixed width, so pixels instead of seconds
     const emptyClips = timelineClips.filter((timelineClip) => !timelineClip.duration)
     const emptyClipsWidth = emptyClips.length * EMPTY_CLIP_WIDTH
     const availableWidth = scroller.clientWidth - scrollerPadding - rowGapsWidth - emptyClipsWidth
     const fillPxPerSecond = availableWidth / totalDuration
+    // the user never zoomed in — keep it fitted through changes
+    const isFitted = pxPerSecond === null || pxPerSecond === minPxPerSecondRef.current
     minPxPerSecondRef.current = fillPxPerSecond
-    setPxPerSecond((prev) => (prev === null ? fillPxPerSecond : Math.max(prev, fillPxPerSecond)))
+    setPxPerSecond(isFitted ? fillPxPerSecond : Math.max(pxPerSecond, fillPxPerSecond))
   })
 
   useLayoutEffect(() => {
