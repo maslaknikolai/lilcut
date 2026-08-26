@@ -58,7 +58,6 @@ export function VideoInfoModal({ opfsName, onClose }: VideoInfoModalProps) {
     <Modal
       title="Video info"
       onClose={onClose}
-      className="overflow-y-auto"
     >
       <div className="flex items-center justify-between gap-2">
         <span className="min-w-0 text-xs break-all text-slate-500">{opfsName}</span>

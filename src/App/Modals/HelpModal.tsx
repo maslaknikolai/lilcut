@@ -9,7 +9,6 @@ export function HelpModal({ onClose }: HelpModalProps) {
     <Modal
       title="Help"
       onClose={onClose}
-      className="overflow-y-auto"
     >
       <div className="flex flex-col gap-4 text-sm text-slate-300">
         <section>

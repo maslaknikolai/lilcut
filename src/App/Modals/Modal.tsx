@@ -35,7 +35,7 @@ export function Modal({ title, onClose, headerStart, className, children }: Moda
           </button>
         </div>
 
-        {children}
+        <div className="-mx-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4">{children}</div>
       </div>
     </div>
   )
