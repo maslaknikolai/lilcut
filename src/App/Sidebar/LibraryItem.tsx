@@ -37,7 +37,7 @@ export function LibraryItem({ id, name, icon, actions }: LibraryItemProps) {
 
       <span className="min-w-0 flex-1 truncate py-2 text-xs text-slate-100">{name}</span>
 
-      <div className="flex items-stretch gap-1 self-stretch">{actions}</div>
+      <div className="hidden items-stretch gap-1 self-stretch md:flex">{actions}</div>
     </SortingItem>
   )
 }
