@@ -220,8 +220,8 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
   }
 
   useKeyPress('Space', togglePlayback)
-  useKeyPress('ArrowLeft', (event) => handleArrowPress(event, -1))
-  useKeyPress('ArrowRight', (event) => handleArrowPress(event, 1))
+  useKeyPress('ArrowLeft', (event) => handleArrowPress(event, -1), { isModifierAllowed: true })
+  useKeyPress('ArrowRight', (event) => handleArrowPress(event, 1), { isModifierAllowed: true })
   useKeyPress('Backspace', removeCurrentClip)
   useKeyPress('Delete', removeCurrentClip)
 
