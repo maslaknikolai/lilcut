@@ -1,4 +1,6 @@
-import { useEffect, useEffectEvent, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
+import { useAtom } from 'jotai'
+import { libraryFilterAtom } from '@/App/atoms'
 import { libraryItemId } from '@/App/lib/library'
 import type { LibraryItem } from '@/App/lib/types'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
@@ -9,10 +11,8 @@ export const LIBRARY_FILTERS = [
   { value: 'all', label: 'All' },
 ] as const
 
-export type LibraryFilter = (typeof LIBRARY_FILTERS)[number]['value']
-
 export function useLibraryFilter(library: LibraryItem[]) {
-  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>('all')
+  const [libraryFilter, setLibraryFilter] = useAtom(libraryFilterAtom)
   const [selectedLibraryItemId] = useSelectedLibraryItemId()
 
   const selectedItem = library.find((item) => libraryItemId(item) === selectedLibraryItemId)

@@ -19,3 +19,5 @@ export type Clip = {
 }
 
 export type LibraryItem = { type: 'project'; project: Project } | { type: 'video'; video: Video }
+
+export type LibraryFilter = LibraryItem['type'] | 'all'
