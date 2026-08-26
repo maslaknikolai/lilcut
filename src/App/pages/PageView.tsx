@@ -2,6 +2,7 @@ import { libraryItemId, useLibraryItems } from '@/App/lib/library'
 import { VideoPage } from '@/App/pages/VideoPage/VideoPage'
 import { ProjectPage } from '@/App/pages/ProjectPage/ProjectPage'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
+import { LibraryItemType } from '../lib/types'
 
 export function PageView() {
   const library = useLibraryItems()
@@ -10,12 +11,12 @@ export function PageView() {
 
   return (
     <div className="flex min-w-0 w-full flex-1 flex-col gap-2 overflow-hidden bg-slate-950">
-      {selectedLibraryItem?.type === 'project' ? (
+      {selectedLibraryItem?.type === LibraryItemType.Project ? (
         <ProjectPage
           key={selectedLibraryItem.project.id}
           project={selectedLibraryItem.project}
         />
-      ) : selectedLibraryItem?.type === 'video' ? (
+      ) : selectedLibraryItem?.type === LibraryItemType.Video ? (
         <VideoPage
           key={selectedLibraryItem.video.opfsName}
           video={selectedLibraryItem.video}

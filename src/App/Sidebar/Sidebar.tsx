@@ -6,7 +6,7 @@ import { HelpButton } from '@/App/Sidebar/HelpButton'
 import { Logo } from '@/App/Sidebar/Logo'
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
 import { LIBRARY_FILTERS, useLibraryFilter } from '@/App/Sidebar/useLibraryFilter'
-import type { LibraryItem } from '@/App/lib/types'
+import { LibraryItemType, type LibraryItem } from '@/App/lib/types'
 import { LibraryTransferControls } from '@/App/Sidebar/LibraryTransferControls'
 import { VideoItem } from '@/App/Sidebar/VideoItem'
 import { NewProjectButton } from '@/App/Sidebar/NewProjectButton'
@@ -102,7 +102,7 @@ export function Sidebar() {
             getId={libraryItemId}
             onReorder={reorderLibrary}
             renderItem={(item) =>
-              item.type === 'project' ? <ProjectItem project={item.project} /> : <VideoItem video={item.video} />
+              item.type === LibraryItemType.Project ? <ProjectItem project={item.project} /> : <VideoItem video={item.video} />
             }
           />
         </div>

@@ -2,12 +2,12 @@ import { useEffect, useEffectEvent, useRef } from 'react'
 import { useAtom } from 'jotai'
 import { libraryFilterAtom } from '@/App/atoms'
 import { libraryItemId } from '@/App/lib/library'
-import type { LibraryItem } from '@/App/lib/types'
+import { LibraryItemType, type LibraryItem } from '@/App/lib/types'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
 export const LIBRARY_FILTERS = [
-  { value: 'project', label: 'Projects' },
-  { value: 'video', label: 'Videos' },
+  { value: LibraryItemType.Project, label: 'Projects' },
+  { value: LibraryItemType.Video, label: 'Videos' },
   { value: 'all', label: 'All' },
 ] as const
 

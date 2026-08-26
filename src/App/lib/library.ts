@@ -1,18 +1,18 @@
 import { useAtomValue } from 'jotai'
 import { libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
-import type { Clip, LibraryItem, Video, Project } from '@/App/lib/types'
+import { LibraryItemType, type Clip, type LibraryItem, type Video, type Project } from '@/App/lib/types'
 
 export function libraryItemId(item: LibraryItem): string {
-  return item.type === 'project' ? item.project.id : item.video.opfsName
+  return item.type === LibraryItemType.Project ? item.project.id : item.video.opfsName
 }
 
 export function orderLibraryItems(projects: Project[], videos: Video[], order: string[]): LibraryItem[] {
   const itemsById = new Map<string, LibraryItem>()
   for (const project of projects) {
-    itemsById.set(project.id, { type: 'project', project })
+    itemsById.set(project.id, { type: LibraryItemType.Project, project })
   }
   for (const video of videos) {
-    itemsById.set(video.opfsName, { type: 'video', video })
+    itemsById.set(video.opfsName, { type: LibraryItemType.Video, video })
   }
   const ordered = order.flatMap((id) => {
     const item = itemsById.get(id)

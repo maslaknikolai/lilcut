@@ -18,6 +18,15 @@ export type Clip = {
   cutEnd?: number
 }
 
-export type LibraryItem = { type: 'project'; project: Project } | { type: 'video'; video: Video }
+export const LibraryItemType = {
+  Project: 'project',
+  Video: 'video',
+} as const
 
-export type LibraryFilter = LibraryItem['type'] | 'all'
+export type LibraryItemType = (typeof LibraryItemType)[keyof typeof LibraryItemType]
+
+export type LibraryItem =
+  | { type: typeof LibraryItemType.Project; project: Project }
+  | { type: typeof LibraryItemType.Video; video: Video }
+
+export type LibraryFilter = LibraryItemType | 'all'
