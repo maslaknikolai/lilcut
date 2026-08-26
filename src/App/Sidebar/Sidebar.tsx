@@ -77,7 +77,7 @@ export function Sidebar() {
           <div className="-mb-2 flex items-stretch justify-between gap-2">
             <h2 className="flex items-center text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
 
-            <div className="flex">
+            <div className="flex min-w-40">
               {LIBRARY_FILTERS.map((filter) => (
                 <button
                   key={filter.value}
