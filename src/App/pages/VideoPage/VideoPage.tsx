@@ -56,7 +56,7 @@ export function VideoPage({ video }: VideoPageProps) {
   )
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden bg-violet-950/50">
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto bg-violet-950/50">
       <div className="flex gap-2 p-4 pl-14 md:pl-4">
         <div className="flex min-w-0 flex-1 flex-col">
           <PageTitleField
@@ -79,7 +79,7 @@ export function VideoPage({ video }: VideoPageProps) {
           <VideoActions video={video} />
         </div>
       </div>
-      <div className="flex flex-1 items-center justify-center overflow-hidden rounded bg-slate-950 px-4">
+      <div className="flex h-[66vh] shrink-0 items-center justify-center overflow-hidden rounded bg-slate-950 px-4">
         {videoUrl ? (
           <video
             src={videoUrl}
@@ -90,7 +90,7 @@ export function VideoPage({ video }: VideoPageProps) {
           <span className="text-slate-400">Loading…</span>
         )}
       </div>
-      <div className="flex flex-col gap-2 px-4 py-4 text-xs text-slate-500 max-h-32 overflow-y-auto">
+      <div className="flex flex-col gap-2 px-4 py-4 text-xs text-slate-500">
         <div className="flex flex-wrap gap-2">
           <CreateProjectFromVideoButton video={video} />
 
