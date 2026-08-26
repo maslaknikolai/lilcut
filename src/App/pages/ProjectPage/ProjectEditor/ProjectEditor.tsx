@@ -90,6 +90,18 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
     applyPendingSeek()
   }, [currentPlaybackClip?.id, currentVideo])
 
+  const isCurrentClipBroken = !!currentPlaybackClip && !currentVideo
+
+  const stopOnBrokenClip = useEffectEvent(() => {
+    if (isCurrentClipBroken) {
+      setIsPlaying(false)
+    }
+  })
+
+  useEffect(() => {
+    stopOnBrokenClip()
+  }, [isCurrentClipBroken])
+
   function seekToProjectTime(time: number) {
     if (timelineClips.length === 0) {
       return
