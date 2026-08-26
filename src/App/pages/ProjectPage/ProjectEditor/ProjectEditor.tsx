@@ -8,7 +8,12 @@ import { ProjectEditorHotkeysButton } from '@/App/pages/ProjectPage/ProjectEdito
 import { CutHereButton } from '@/App/pages/ProjectPage/ProjectEditor/CutHereButton'
 import { updateProject } from '@/App/lib/library'
 import { formatTimestamp } from '@/App/lib/formatTimestamp'
-import { buildPlaybackClips, buildTimelineClips, findClipIndexAtTime } from '@/App/lib/projectTimeline'
+import {
+  buildPlaybackClips,
+  buildTimelineClips,
+  findClipIndexAtTime,
+  type PlaybackClip,
+} from '@/App/lib/projectTimeline'
 import { Timeline } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/Timeline'
 import type { Video, Project } from '@/App/lib/types'
 import { useVideoUrls } from '@/App/pages/ProjectPage/ProjectEditor/useVideoUrls'
@@ -180,9 +185,26 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
     }
   }
 
+  function playFromNextPlayableClip() {
+    function isPlayable(playbackClip: PlaybackClip) {
+      return videos.some((video) => video.opfsName === playbackClip.videoOpfsName)
+    }
+
+    const laterPlaybackClips = playbackClips.slice(currentPlaybackClipIndex + 1)
+    const nextPlayableClip = laterPlaybackClips.find(isPlayable)
+    if (!nextPlayableClip) {
+      setIsPlaying(false)
+      return
+    }
+
+    seekToProjectTime(nextPlayableClip.projectStart)
+    setIsPlaying(true)
+  }
+
   function togglePlayback() {
     const video = videoRef.current
     if (!video) {
+      playFromNextPlayableClip()
       return
     }
     if (video.paused) {
