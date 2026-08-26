@@ -4,9 +4,9 @@ import type { LibraryItem } from '@/App/lib/types'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
 export const LIBRARY_FILTERS = [
-  { value: 'all', label: 'All' },
   { value: 'project', label: 'Projects' },
   { value: 'video', label: 'Videos' },
+  { value: 'all', label: 'All' },
 ] as const
 
 export type LibraryFilter = (typeof LIBRARY_FILTERS)[number]['value']

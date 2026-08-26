@@ -24,8 +24,6 @@ export function Sidebar() {
 
   const visibleLibrary = library.filter((item) => libraryFilter === 'all' || item.type === libraryFilter)
 
-  // a filtered drag only reorders what is on screen — keep the hidden items
-  // parked in their own slots instead of dropping them out of the order
   function reorderLibrary(nextVisible: LibraryItem[]) {
     const visibleIds = new Set(nextVisible.map(libraryItemId))
     const idsToPlace = nextVisible.map(libraryItemId)
@@ -112,8 +110,8 @@ export function Sidebar() {
         <div className="flex flex-col gap-2 border-t border-slate-700 p-2">
           <div className="flex flex-wrap gap-1 justify-stretch">
             <RecordControls />
-            <UploadVideoButton />
             <NewProjectButton />
+            <UploadVideoButton />
           </div>
 
           <StorageUsage />
