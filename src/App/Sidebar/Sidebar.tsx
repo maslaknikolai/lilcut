@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/App/lib/utils'
@@ -5,6 +6,7 @@ import { isSidebarOpenAtom, libraryOrderAtom } from '@/App/atoms'
 import { HelpButton } from '@/App/Sidebar/HelpButton'
 import { Logo } from '@/App/Sidebar/Logo'
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
+import type { LibraryItem } from '@/App/lib/types'
 import { LibraryTransferControls } from '@/App/Sidebar/LibraryTransferControls'
 import { VideoItem } from '@/App/Sidebar/VideoItem'
 import { NewProjectButton } from '@/App/Sidebar/NewProjectButton'
@@ -14,10 +16,37 @@ import { SortingList } from '@/App/Sidebar/SortingList'
 import { StorageUsage } from '@/App/Sidebar/StorageUsage'
 import { UploadVideoButton } from '@/App/lib/UploadVideoButton'
 
+const LIBRARY_FILTERS = [
+  { value: 'all', label: 'All' },
+  { value: 'project', label: 'Projects' },
+  { value: 'video', label: 'Videos' },
+] as const
+
+type LibraryFilter = (typeof LIBRARY_FILTERS)[number]['value']
+
 export function Sidebar() {
   const library = useLibraryItems()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom)
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>('all')
+
+  const visibleLibrary = library.filter((item) => libraryFilter === 'all' || item.type === libraryFilter)
+
+  // a filtered drag only reorders what is on screen — keep the hidden items
+  // parked in their own slots instead of dropping them out of the order
+  function reorderLibrary(nextVisible: LibraryItem[]) {
+    const visibleIds = new Set(nextVisible.map(libraryItemId))
+    const idsToPlace = nextVisible.map(libraryItemId)
+    const nextOrder = library.map((item) => {
+      const id = libraryItemId(item)
+      if (!visibleIds.has(id)) {
+        return id
+      }
+      const [idToPlace] = idsToPlace.splice(0, 1)
+      return idToPlace ?? id
+    })
+    setLibraryOrder(nextOrder)
+  }
 
   return (
     <>
@@ -52,14 +81,36 @@ export function Sidebar() {
             <Logo />
             <HelpButton />
           </div>
-          <h2 className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
+
+          <div className="-mb-2 flex items-stretch justify-between gap-2">
+            <h2 className="flex items-center text-xs font-semibold tracking-wide text-slate-500 uppercase">Library</h2>
+
+            <div className="flex">
+              {LIBRARY_FILTERS.map((filter) => (
+                <button
+                  key={filter.value}
+                  type="button"
+                  onClick={() => setLibraryFilter(filter.value)}
+                  aria-pressed={libraryFilter === filter.value}
+                  className={cn(
+                    'flex min-h-10 flex-1 cursor-pointer items-center justify-center border-b-2 px-2 text-xs',
+                    libraryFilter === filter.value
+                      ? 'border-slate-200 text-slate-100'
+                      : 'border-transparent text-slate-400 hover:border-slate-600 hover:text-slate-200 active:text-slate-100',
+                  )}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </header>
 
         <div className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-gutter-stable">
           <SortingList
-            items={library}
+            items={visibleLibrary}
             getId={libraryItemId}
-            onReorder={(next) => setLibraryOrder(next.map(libraryItemId))}
+            onReorder={reorderLibrary}
             renderItem={(item) =>
               item.type === 'project' ? <ProjectItem project={item.project} /> : <VideoItem video={item.video} />
             }
