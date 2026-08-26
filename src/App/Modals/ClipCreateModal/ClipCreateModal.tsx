@@ -72,7 +72,7 @@ export function ClipCreateModal({ projectId, insertAt, onClose }: ClipCreateModa
         title="New clip"
         onClipChange={setTrimmingClip}
         onBack={() => setTrimmingClip(null)}
-        onClose={onClose}
+        onClose={() => setTrimmingClip(null)}
         actions={
           <>
             <button
