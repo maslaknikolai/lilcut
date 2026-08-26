@@ -1,6 +1,25 @@
 import { Fragment, type ReactNode } from 'react'
-import { closestCenter, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type Modifier,
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+
+// dragging past the list's own box would stretch the scrollable area, so the
+// row is pinned to the vertical axis and clamped to the list itself
+const restrictToList: Modifier = ({ transform, draggingNodeRect, containerNodeRect }) => {
+  if (!draggingNodeRect || !containerNodeRect) {
+    return { ...transform, x: 0 }
+  }
+  const minY = containerNodeRect.top - draggingNodeRect.top
+  const maxY = containerNodeRect.bottom - draggingNodeRect.bottom
+  return { ...transform, x: 0, y: Math.min(maxY, Math.max(minY, transform.y)) }
+}
 
 type SortingListProps<T> = {
   items: T[]
@@ -33,6 +52,7 @@ export function SortingList<T>({ items, getId, onReorder, renderItem, className 
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      modifiers={[restrictToList]}
       onDragEnd={handleDragEnd}
     >
       <SortableContext

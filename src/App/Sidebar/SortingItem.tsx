@@ -29,7 +29,7 @@ export function SortingItem({ ref, id, onClick, className, dragHandleLabel, chil
     <li
       ref={setRefs}
       onClick={onClick}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
       className={cn('flex items-center border-b border-slate-700', className, isDragging && 'relative z-10 shadow-md')}
     >
       <span
