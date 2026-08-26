@@ -23,15 +23,13 @@ export function ZoomArea({ onZoom, className, children }: ZoomAreaProps) {
     onZoom(zoomFactor, event.clientX)
   })
 
-  // React's synthetic onWheel can't preventDefault reliably (passive listener),
-  // so the zoom listener is attached natively with passive: false
   useEffect(() => {
     const zoomArea = zoomAreaRef.current
     if (!zoomArea) {
       return
     }
     const listener = (event: WheelEvent) => handleWheelZoom(event)
-    zoomArea.addEventListener('wheel', listener, { passive: false })
+    zoomArea.addEventListener('wheel', listener, { passive: false }) // passive: onWheel can't preventDefault reliably
     return () => zoomArea.removeEventListener('wheel', listener)
   }, [])
 

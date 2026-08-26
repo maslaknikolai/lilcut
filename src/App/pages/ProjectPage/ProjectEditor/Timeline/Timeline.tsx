@@ -11,6 +11,7 @@ import { Scrubber } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/Scrubbe
 import { TimelineClip } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/TimelineClip'
 import type { Project } from '@/App/lib/types'
 import { useKeyPress } from '@/App/lib/useKeyPress'
+import { useOnResize } from '@/App/lib/useOnResize'
 import { ZoomArea } from '@/App/pages/ProjectPage/ProjectEditor/Timeline/ZoomArea'
 
 type TimelineProps = {
@@ -62,6 +63,8 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
   useLayoutEffect(() => {
     applyFillZoom()
   }, [totalDuration])
+
+  useOnResize(scrollerRef, applyFillZoom)
 
   const pendingScrollLeftRef = useRef<number | null>(null)
 
