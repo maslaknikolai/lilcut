@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/App/lib/utils'
@@ -6,6 +5,7 @@ import { isSidebarOpenAtom, libraryOrderAtom } from '@/App/atoms'
 import { HelpButton } from '@/App/Sidebar/HelpButton'
 import { Logo } from '@/App/Sidebar/Logo'
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
+import { LIBRARY_FILTERS, useLibraryFilter } from '@/App/Sidebar/useLibraryFilter'
 import type { LibraryItem } from '@/App/lib/types'
 import { LibraryTransferControls } from '@/App/Sidebar/LibraryTransferControls'
 import { VideoItem } from '@/App/Sidebar/VideoItem'
@@ -16,19 +16,11 @@ import { SortingList } from '@/App/Sidebar/SortingList'
 import { StorageUsage } from '@/App/Sidebar/StorageUsage'
 import { UploadVideoButton } from '@/App/lib/UploadVideoButton'
 
-const LIBRARY_FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'project', label: 'Projects' },
-  { value: 'video', label: 'Videos' },
-] as const
-
-type LibraryFilter = (typeof LIBRARY_FILTERS)[number]['value']
-
 export function Sidebar() {
   const library = useLibraryItems()
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const [isSidebarOpen, setIsSidebarOpen] = useAtom(isSidebarOpenAtom)
-  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>('all')
+  const [libraryFilter, setLibraryFilter] = useLibraryFilter(library)
 
   const visibleLibrary = library.filter((item) => libraryFilter === 'all' || item.type === libraryFilter)
 

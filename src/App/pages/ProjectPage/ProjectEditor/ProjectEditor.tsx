@@ -340,7 +340,11 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
             }}
           />
         ) : (
-          <span className="text-slate-400">{currentPlaybackClip ? 'The clip is removed' : 'No clips yet'}</span>
+          <span className="px-4 text-center text-slate-400">
+            {currentPlaybackClip
+              ? `This clip plays “${currentPlaybackClip.videoOpfsName}”, but that video is no longer in your library`
+              : 'No clips yet'}
+          </span>
         )}
       </div>
 
