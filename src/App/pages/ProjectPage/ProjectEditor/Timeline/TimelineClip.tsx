@@ -114,7 +114,7 @@ export function TimelineClip({
           ) : (
             <FileExclamationPoint
               size={14}
-              className="mx-auto shrink-0"
+              className="mx-auto shrink-0 text-amber-400"
             />
           )}
         </div>
@@ -124,6 +124,16 @@ export function TimelineClip({
         sideOffset={-8}
         className="gap-0.5 p-0.5"
       >
+        {!videoExists && (
+          <span className="flex items-center gap-1.5 self-center px-2">
+            <FileExclamationPoint
+              size={14}
+              className="shrink-0 text-amber-400"
+            />
+            {timelineClip.videoOpfsName}
+          </span>
+        )}
+
         {videoExists && (
           <>
             <TimelineClipAction
