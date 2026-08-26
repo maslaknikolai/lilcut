@@ -1,8 +1,6 @@
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
-// after removing the selected library item, land on the first remaining one
-// instead of the "Item not found" empty state
 export function useRedirectAfterRemove() {
   const library = useLibraryItems()
   const [selectedLibraryItemId, setSelectedLibraryItemId] = useSelectedLibraryItemId()
@@ -11,7 +9,10 @@ export function useRedirectAfterRemove() {
     if (selectedLibraryItemId !== removedId) {
       return
     }
-    const firstRemainingItem = library.find((item) => libraryItemId(item) !== removedId)
-    setSelectedLibraryItemId(firstRemainingItem ? libraryItemId(firstRemainingItem) : null)
+    const removedIndex = library.findIndex((item) => libraryItemId(item) === removedId)
+    const remainingItems = library.filter((item) => libraryItemId(item) !== removedId)
+    // keep the same slot: the item that shifts up, or the last one when the removed was last
+    const nextItem = remainingItems[removedIndex] ?? remainingItems.at(-1)
+    setSelectedLibraryItemId(nextItem ? libraryItemId(nextItem) : null)
   }
 }
