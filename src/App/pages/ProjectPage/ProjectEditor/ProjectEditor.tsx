@@ -340,7 +340,7 @@ export function ProjectEditor({ project, videos }: ProjectEditorProps) {
             }}
           />
         ) : (
-          <span className="text-slate-400">No clips yet</span>
+          <span className="text-slate-400">{currentPlaybackClip ? 'The clip is removed' : 'No clips yet'}</span>
         )}
       </div>
 

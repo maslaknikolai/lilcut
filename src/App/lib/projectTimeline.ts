@@ -42,7 +42,10 @@ export function getTimelineX(timelineClips: TimelineClip[], time: number, pxPerS
   let left = FIRST_CLIP_LEFT
 
   for (const timelineClip of timelineClips) {
-    if (time < timelineClip.projectStart + timelineClip.duration) {
+    const isInsideClip = time < timelineClip.projectStart + timelineClip.duration
+    // an empty clip spans no time, so only its own start point hits it
+    const isAtClipStart = time === timelineClip.projectStart
+    if (isInsideClip || isAtClipStart) {
       return left + (time - timelineClip.projectStart) * pxPerSecond
     }
     left += getTimelineClipWidth(timelineClip.duration, pxPerSecond) + GAP_BETWEEN_CLIPS

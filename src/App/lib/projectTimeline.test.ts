@@ -179,8 +179,8 @@ describe('getTimelineX / getTimelineTime', () => {
   )
   const pxPerSecond = 10
 
-  it('offsets the playhead by the fixed width of the broken clip', () => {
-    expect(getTimelineX(clipsWithBroken, 0, pxPerSecond)).toBe(1 + EMPTY_CLIP_WIDTH + 2)
+  it('keeps the playhead at the row start on the broken clip, offset past it after', () => {
+    expect(getTimelineX(clipsWithBroken, 0, pxPerSecond)).toBe(1)
     expect(getTimelineX(clipsWithBroken, 4, pxPerSecond)).toBe(1 + EMPTY_CLIP_WIDTH + 2 + 40)
   })
 
@@ -197,3 +197,4 @@ describe('getTimelineX / getTimelineTime', () => {
     expect(getTimelineTime(clipsWithBroken, 10, pxPerSecond)).toBe(0)
   })
 })
+
