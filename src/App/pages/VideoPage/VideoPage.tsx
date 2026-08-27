@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { FilePlay, Info, Scissors } from 'lucide-react'
-import { activeModalAtom, libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
+import { activeModalAtom, ModalType, libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
 import { CreateProjectFromVideoButton } from '@/App/pages/VideoPage/CreateProjectFromVideoButton'
 import { formatBytes } from '@/App/lib/formatBytes'
 import { GhostButton } from '@/App/lib/GhostButton'
@@ -95,7 +95,7 @@ export function VideoPage({ video }: VideoPageProps) {
           <CreateProjectFromVideoButton video={video} />
 
           <GhostButton
-            onClick={() => setActiveModal({ type: 'videoInfo', opfsName: video.opfsName })}
+            onClick={() => setActiveModal({ type: ModalType.VideoInfo, opfsName: video.opfsName })}
             className="px-3"
           >
             <Info size={14} />

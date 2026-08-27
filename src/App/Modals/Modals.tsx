@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai'
-import { activeModalAtom } from '@/App/atoms'
+import { activeModalAtom, ModalType } from '@/App/atoms'
 import { ClipCreateModal } from '@/App/Modals/ClipCreateModal/ClipCreateModal'
 import { ClipEditModal } from '@/App/Modals/ClipEditModal/ClipEditModal'
 import { HelpModal } from '@/App/Modals/HelpModal'
@@ -13,11 +13,11 @@ export function Modals() {
     setActiveModal(null)
   }
 
-  if (activeModal?.type === 'help') {
+  if (activeModal?.type === ModalType.Help) {
     return <HelpModal onClose={closeModal} />
   }
 
-  if (activeModal?.type === 'clipEdit') {
+  if (activeModal?.type === ModalType.ClipEdit) {
     return (
       <ClipEditModal
         projectId={activeModal.projectId}
@@ -27,7 +27,7 @@ export function Modals() {
     )
   }
 
-  if (activeModal?.type === 'clipCreate') {
+  if (activeModal?.type === ModalType.ClipCreate) {
     return (
       <ClipCreateModal
         projectId={activeModal.projectId}
@@ -37,7 +37,7 @@ export function Modals() {
     )
   }
 
-  if (activeModal?.type === 'videoInfo') {
+  if (activeModal?.type === ModalType.VideoInfo) {
     return (
       <VideoInfoModal
         opfsName={activeModal.opfsName}
@@ -46,7 +46,7 @@ export function Modals() {
     )
   }
 
-  if (activeModal?.type === 'projectRemove') {
+  if (activeModal?.type === ModalType.ProjectRemove) {
     return (
       <ProjectRemoveModal
         projectId={activeModal.projectId}

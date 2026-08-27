@@ -1,6 +1,6 @@
 import { useAtom, useSetAtom } from 'jotai'
 import { Files, Trash2 } from 'lucide-react'
-import { activeModalAtom, libraryOrderAtom, projectsAtom } from '@/App/atoms'
+import { activeModalAtom, ModalType, libraryOrderAtom, projectsAtom } from '@/App/atoms'
 import { SidebarItemAction } from '@/App/lib/SidebarItemAction'
 import { uniqueName } from '@/App/lib/uniqueName'
 import type { Project } from '@/App/lib/types'
@@ -39,7 +39,7 @@ export function ProjectActions({ project }: ProjectActionsProps) {
       </SidebarItemAction>
 
       <SidebarItemAction
-        onClick={() => setActiveModal({ type: 'projectRemove', projectId: project.id })}
+        onClick={() => setActiveModal({ type: ModalType.ProjectRemove, projectId: project.id })}
         label={`Remove ${project.name}`}
         tooltip="Remove"
         className="hover:text-red-400 active:text-red-300"
