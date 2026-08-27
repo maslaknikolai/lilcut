@@ -10,6 +10,8 @@ export const libraryOrderAtom = atom<string[]>([])
 
 export const libraryFilterAtom = atom<LibraryFilter>('all')
 
+export const playingPreviewAtom = atom<string | null>(null)
+
 export const ModalType = {
   Help: 'help',
   ClipEdit: 'clipEdit',

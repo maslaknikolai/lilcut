@@ -3,6 +3,7 @@ import { Checkbox } from '@/App/lib/ui/checkbox'
 import { cn } from '@/App/lib/utils'
 import { formatTimestamp } from '@/App/lib/formatTimestamp'
 import type { Video } from '@/App/lib/types'
+import { VideoPreviewRow } from '@/App/lib/VideoPreviewRow'
 
 type VideosListItemProps = {
   video: Video
@@ -15,7 +16,7 @@ type VideosListItemProps = {
 
 export function VideosListItem({ video, isChecked, isModified, onToggleChecked, onTrim }: VideosListItemProps) {
   return (
-    <div className="flex items-center gap-2 rounded border border-slate-700 px-2">
+    <VideoPreviewRow video={video}>
       <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2">
         <Checkbox
           checked={isChecked}
@@ -32,7 +33,7 @@ export function VideosListItem({ video, isChecked, isModified, onToggleChecked, 
         type="button"
         onClick={onTrim}
         className={cn(
-          'flex w-10 shrink-0 cursor-pointer items-center justify-center self-stretch',
+          'flex min-h-10 w-10 shrink-0 cursor-pointer items-center justify-center self-stretch',
           isModified
             ? 'text-orange-400 hover:text-orange-300 active:text-orange-200'
             : 'text-slate-500 hover:text-slate-100 active:text-white',
@@ -41,6 +42,6 @@ export function VideosListItem({ video, isChecked, isModified, onToggleChecked, 
       >
         <SlidersHorizontal size={14} />
       </button>
-    </div>
+    </VideoPreviewRow>
   )
 }
