@@ -32,6 +32,11 @@ export function useLibraryItems(): LibraryItem[] {
   return orderLibraryItems(projects, videos, libraryOrder)
 }
 
+export function getProjectVideos(project: Project, videos: Video[]): Video[] {
+  const usedOpfsNames = new Set(project.clips.map((clip) => clip.videoOpfsName))
+  return videos.filter((video) => usedOpfsNames.has(video.opfsName))
+}
+
 export function updateProject(
   projects: Project[],
   projectId: string,

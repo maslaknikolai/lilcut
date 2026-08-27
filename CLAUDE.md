@@ -6,6 +6,7 @@
 - Always build dynamic/conditional `className` values with `cn` (from `@/lib/utils`) — never template literals or string concatenation (`` `... ${className}` ``). Static class strings need no wrapper.
 
 - Never use default exports. Use named exports only.
+- Function names are verbs (`getProjectVideos`, `removeProject`, `formatBytes`), not nouns. React components and `use*` hooks are the exception — they keep their own naming.
 - Check nullable values by truthiness (`!clip`, `if (value)`, `!!clip && …`), not explicit comparisons (`clip !== null`, `x === undefined`). Same for emptiness: `!list.length`, not `list.length === 0`. Exception: keep the explicit comparison where a falsy value (`0`, `''`, `false`) is real data the check must not swallow (e.g. `cutEnd === undefined` when `0` is a valid time).
 - Keep `useEffect` thin: its dependency array should only contain reactive data that should retrigger it. Wrap the actual logic (event handlers, non-reactive reads, imperative work) in `useEffectEvent` (from `react`) so the effect body is just a call to that function. Never list a `useEffectEvent` result in the dependency array — its identity is exempt on purpose and oxlint flags it as an error.
 - Keep functions readable: don't cram multiple expressions or nested template literals onto one dense line. Break out named intermediate variables even for short computations.

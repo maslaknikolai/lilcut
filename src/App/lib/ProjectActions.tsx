@@ -1,7 +1,9 @@
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Files, Trash2 } from 'lucide-react'
-import { activeModalAtom, ModalType, libraryOrderAtom, projectsAtom } from '@/App/atoms'
+import { activeModalAtom, ModalType, libraryOrderAtom, projectsAtom, videosAtom } from '@/App/atoms'
+import { getProjectVideos } from '@/App/lib/library'
 import { SidebarItemAction } from '@/App/lib/SidebarItemAction'
+import { useRemoveProject } from '@/App/lib/useRemoveProject'
 import { uniqueName } from '@/App/lib/uniqueName'
 import type { Project } from '@/App/lib/types'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
@@ -15,6 +17,16 @@ export function ProjectActions({ project }: ProjectActionsProps) {
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
   const setActiveModal = useSetAtom(activeModalAtom)
+  const videos = useAtomValue(videosAtom)
+  const removeProject = useRemoveProject()
+
+  function handleRemove() {
+    if (!getProjectVideos(project, videos).length) {
+      removeProject(project.id)
+      return
+    }
+    setActiveModal({ type: ModalType.ProjectRemove, projectId: project.id })
+  }
 
   function handleClone() {
     const cloneId = crypto.randomUUID()
@@ -39,7 +51,7 @@ export function ProjectActions({ project }: ProjectActionsProps) {
       </SidebarItemAction>
 
       <SidebarItemAction
-        onClick={() => setActiveModal({ type: ModalType.ProjectRemove, projectId: project.id })}
+        onClick={handleRemove}
         label={`Remove ${project.name}`}
         tooltip="Remove"
         className="hover:text-red-400 active:text-red-300"
