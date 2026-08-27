@@ -102,7 +102,11 @@ export function Sidebar() {
             getId={libraryItemId}
             onReorder={reorderLibrary}
             renderItem={(item) =>
-              item.type === LibraryItemType.Project ? <ProjectItem project={item.project} /> : <VideoItem video={item.video} />
+              item.type === LibraryItemType.Project ? (
+                <ProjectItem project={item.project} />
+              ) : (
+                <VideoItem video={item.video} />
+              )
             }
           />
         </div>

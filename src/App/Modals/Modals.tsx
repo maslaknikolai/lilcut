@@ -3,6 +3,7 @@ import { activeModalAtom } from '@/App/atoms'
 import { ClipCreateModal } from '@/App/Modals/ClipCreateModal/ClipCreateModal'
 import { ClipEditModal } from '@/App/Modals/ClipEditModal/ClipEditModal'
 import { HelpModal } from '@/App/Modals/HelpModal'
+import { ProjectRemoveModal } from '@/App/Modals/ProjectRemoveModal'
 import { VideoInfoModal } from '@/App/Modals/VideoInfoModal'
 
 export function Modals() {
@@ -40,6 +41,15 @@ export function Modals() {
     return (
       <VideoInfoModal
         opfsName={activeModal.opfsName}
+        onClose={closeModal}
+      />
+    )
+  }
+
+  if (activeModal?.type === 'projectRemove') {
+    return (
+      <ProjectRemoveModal
+        projectId={activeModal.projectId}
         onClose={closeModal}
       />
     )

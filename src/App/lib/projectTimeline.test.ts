@@ -197,4 +197,3 @@ describe('getTimelineX / getTimelineTime', () => {
     expect(getTimelineTime(clipsWithBroken, 10, pxPerSecond)).toBe(0)
   })
 })
-

@@ -1,11 +1,9 @@
 import { useAtom, useSetAtom } from 'jotai'
-import { Files } from 'lucide-react'
-import { libraryOrderAtom, projectsAtom } from '@/App/atoms'
-import { RemoveButton } from '@/App/lib/RemoveButton'
+import { Files, Trash2 } from 'lucide-react'
+import { activeModalAtom, libraryOrderAtom, projectsAtom } from '@/App/atoms'
 import { SidebarItemAction } from '@/App/lib/SidebarItemAction'
 import { uniqueName } from '@/App/lib/uniqueName'
 import type { Project } from '@/App/lib/types'
-import { useRedirectAfterRemove } from '@/App/lib/useRedirectAfterRemove'
 import { useSelectedLibraryItemId } from '@/App/lib/useSelectedLibraryItemId'
 
 type ProjectActionsProps = {
@@ -16,13 +14,7 @@ export function ProjectActions({ project }: ProjectActionsProps) {
   const [, setSelectedLibraryItemId] = useSelectedLibraryItemId()
   const [projects, setProjects] = useAtom(projectsAtom)
   const setLibraryOrder = useSetAtom(libraryOrderAtom)
-  const redirectAfterRemove = useRedirectAfterRemove()
-
-  function handleRemove() {
-    setProjects((prev) => prev.filter((item) => item.id !== project.id))
-    setLibraryOrder((prev) => prev.filter((id) => id !== project.id))
-    redirectAfterRemove(project.id)
-  }
+  const setActiveModal = useSetAtom(activeModalAtom)
 
   function handleClone() {
     const cloneId = crypto.randomUUID()
@@ -46,10 +38,14 @@ export function ProjectActions({ project }: ProjectActionsProps) {
         <Files size={16} />
       </SidebarItemAction>
 
-      <RemoveButton
-        label={project.name}
-        onRemove={handleRemove}
-      />
+      <SidebarItemAction
+        onClick={() => setActiveModal({ type: 'projectRemove', projectId: project.id })}
+        label={`Remove ${project.name}`}
+        tooltip="Remove"
+        className="hover:text-red-400 active:text-red-300"
+      >
+        <Trash2 size={16} />
+      </SidebarItemAction>
     </>
   )
 }
