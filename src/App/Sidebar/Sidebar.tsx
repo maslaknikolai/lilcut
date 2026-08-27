@@ -2,6 +2,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/App/lib/utils'
 import { isSidebarOpenAtom, libraryOrderAtom } from '@/App/atoms'
+import { EmptyLibraryMessage } from '@/App/Sidebar/EmptyLibraryMessage'
 import { HelpButton } from '@/App/Sidebar/HelpButton'
 import { Logo } from '@/App/Sidebar/Logo'
 import { libraryItemId, useLibraryItems } from '@/App/lib/library'
@@ -97,18 +98,25 @@ export function Sidebar() {
         </header>
 
         <div className="flex-1 overflow-x-hidden overflow-y-auto scrollbar-gutter-stable">
-          <SortingList
-            items={visibleLibrary}
-            getId={libraryItemId}
-            onReorder={reorderLibrary}
-            renderItem={(item) =>
-              item.type === LibraryItemType.Project ? (
-                <ProjectItem project={item.project} />
-              ) : (
-                <VideoItem video={item.video} />
-              )
-            }
-          />
+          {visibleLibrary.length ? (
+            <SortingList
+              items={visibleLibrary}
+              getId={libraryItemId}
+              onReorder={reorderLibrary}
+              renderItem={(item) =>
+                item.type === LibraryItemType.Project ? (
+                  <ProjectItem project={item.project} />
+                ) : (
+                  <VideoItem video={item.video} />
+                )
+              }
+            />
+          ) : (
+            <EmptyLibraryMessage
+              isLibraryEmpty={!library.length}
+              libraryFilter={libraryFilter}
+            />
+          )}
         </div>
 
         <div className="flex flex-col gap-2 border-t border-slate-700 p-2 pt-4">
