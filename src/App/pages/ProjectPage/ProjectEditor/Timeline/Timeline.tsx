@@ -140,7 +140,7 @@ export function Timeline({ project, currentTimelineClipId, projectTime, onSeek, 
           />
 
           {timelineClips.length ? (
-            <div className="flex h-20 gap-px md:h-12">
+            <div className="flex h-20 md:h-12">
               {timelineClips.flatMap((timelineClip, index) => [
                 <InsertClipButton
                   key={`insert-${timelineClip.id}`}
