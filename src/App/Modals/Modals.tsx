@@ -4,6 +4,7 @@ import { ClipCreateModal } from '@/App/Modals/ClipCreateModal/ClipCreateModal'
 import { ClipEditModal } from '@/App/Modals/ClipEditModal/ClipEditModal'
 import { HelpModal } from '@/App/Modals/HelpModal'
 import { ProjectRemoveModal } from '@/App/Modals/ProjectRemoveModal'
+import { VideoRemoveModal } from '@/App/Modals/VideoRemoveModal'
 import { VideoInfoModal } from '@/App/Modals/VideoInfoModal'
 
 export function Modals() {
@@ -50,6 +51,15 @@ export function Modals() {
     return (
       <ProjectRemoveModal
         projectId={activeModal.projectId}
+        onClose={closeModal}
+      />
+    )
+  }
+
+  if (activeModal?.type === ModalType.VideoRemove) {
+    return (
+      <VideoRemoveModal
+        opfsName={activeModal.opfsName}
         onClose={closeModal}
       />
     )

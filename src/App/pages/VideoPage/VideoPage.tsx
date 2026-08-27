@@ -4,6 +4,7 @@ import { FilePlay, Info, Scissors } from 'lucide-react'
 import { activeModalAtom, ModalType, libraryOrderAtom, videosAtom, projectsAtom } from '@/App/atoms'
 import { CreateProjectFromVideoButton } from '@/App/pages/VideoPage/CreateProjectFromVideoButton'
 import { formatBytes } from '@/App/lib/formatBytes'
+import { getProjectsUsingVideo } from '@/App/lib/library'
 import { GhostButton } from '@/App/lib/GhostButton'
 import { VideoActions } from '@/App/lib/VideoActions'
 import { PageTitleField } from '@/App/lib/PageTitleField'
@@ -51,9 +52,7 @@ export function VideoPage({ video }: VideoPageProps) {
     }
   }
 
-  const projectsUsingAsset = projects.filter((project) =>
-    project.clips.some((clip) => clip.videoOpfsName === video.opfsName),
-  )
+  const projectsUsingVideo = getProjectsUsingVideo(projects, video.opfsName)
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-y-auto bg-violet-950/50">
@@ -103,11 +102,11 @@ export function VideoPage({ video }: VideoPageProps) {
           </GhostButton>
         </div>
 
-        {projectsUsingAsset.length > 0 && (
+        {projectsUsingVideo.length > 0 && (
           <div>
             Used in projects:
             <div className="flex flex-wrap gap-2 mt-1">
-              {projectsUsingAsset.map((project) => (
+              {projectsUsingVideo.map((project) => (
                 <button
                   key={project.id}
                   type="button"

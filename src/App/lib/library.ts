@@ -37,6 +37,10 @@ export function getProjectVideos(project: Project, videos: Video[]): Video[] {
   return videos.filter((video) => usedOpfsNames.has(video.opfsName))
 }
 
+export function getProjectsUsingVideo(projects: Project[], opfsName: string): Project[] {
+  return projects.filter((project) => project.clips.some((clip) => clip.videoOpfsName === opfsName))
+}
+
 export function updateProject(
   projects: Project[],
   projectId: string,

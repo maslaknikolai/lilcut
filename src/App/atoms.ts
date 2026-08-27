@@ -18,6 +18,7 @@ export const ModalType = {
   ClipCreate: 'clipCreate',
   VideoInfo: 'videoInfo',
   ProjectRemove: 'projectRemove',
+  VideoRemove: 'videoRemove',
 } as const
 
 export type ModalType = (typeof ModalType)[keyof typeof ModalType]
@@ -28,6 +29,7 @@ export type ActiveModal =
   | { type: typeof ModalType.ClipCreate; projectId: string; insertAt?: number }
   | { type: typeof ModalType.VideoInfo; opfsName: string }
   | { type: typeof ModalType.ProjectRemove; projectId: string }
+  | { type: typeof ModalType.VideoRemove; opfsName: string }
   | null
 
 export const activeModalAtom = atom<ActiveModal>(null)
