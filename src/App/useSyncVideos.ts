@@ -1,18 +1,22 @@
-import { useEffect, useEffectEvent } from 'react'
+import { useEffect, useEffectEvent, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { videosAtom } from '@/App/atoms'
 import { listOpfsVideos } from '@/App/lib/opfs'
 
-// loads the OPFS videos into videosAtom once on mount; every
-// mutation after that refreshes itself via useVideoActions
-export function useSyncVideos(): void {
+export function useSyncVideos(): boolean {
   const setVideos = useSetAtom(videosAtom)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const loadVideos = useEffectEvent(() => {
-    listOpfsVideos().then(setVideos)
+    listOpfsVideos().then((videos) => {
+      setVideos(videos)
+      setIsLoaded(true)
+    })
   })
 
   useEffect(() => {
     loadVideos()
   }, [])
+
+  return isLoaded
 }

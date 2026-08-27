@@ -2,9 +2,7 @@ import { useEffect, useEffectEvent, useState } from 'react'
 import { useAtom, type PrimitiveAtom } from 'jotai'
 import { idbGet, idbSet } from '@/App/lib/indexedDb'
 
-// loads `key` from the IndexedDB kv store into `valueAtom` on mount, then
-// persists every subsequent change back to that key
-export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string, migrate?: (stored: T) => T) {
+export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string, migrate?: (stored: T) => T): boolean {
   const [value, setValue] = useAtom(valueAtom)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -31,5 +29,5 @@ export function useSyncIndexedDbAtom<T>(valueAtom: PrimitiveAtom<T>, key: string
     persist()
   }, [value, isLoaded])
 
-  return [value, setValue] as const
+  return isLoaded
 }

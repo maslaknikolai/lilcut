@@ -11,8 +11,14 @@ import { RecordingPipWindow } from '@/App/RecordingPipWindow'
 import { ScreenRecordingProvider } from '@/App/contexts/ScreenRecordingContext'
 import { useSyncIndexedDbAtom } from '@/App/useSyncIndexedDbAtom'
 import { useSyncVideos } from '@/App/useSyncVideos'
+import { useCreateInitialProject } from '@/App/useCreateInitialProject'
 
 function AppContent() {
+  const isProjectsLoaded = useSyncIndexedDbAtom(projectsAtom, 'projects', migrateProjects)
+  useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
+  const isVideosLoaded = useSyncVideos()
+  useCreateInitialProject(isProjectsLoaded && isVideosLoaded)
+
   return (
     <TooltipProvider>
       <RenderJobProvider>
@@ -35,10 +41,6 @@ function AppContent() {
 }
 
 export function App() {
-  useSyncIndexedDbAtom(projectsAtom, 'projects', migrateProjects)
-  useSyncIndexedDbAtom(libraryOrderAtom, 'libraryOrder')
-  useSyncVideos()
-
   return (
     <HashRouter>
       <Routes>
