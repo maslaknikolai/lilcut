@@ -13,7 +13,7 @@ import { NewProjectButton } from '@/App/Sidebar/NewProjectButton'
 import { ProjectItem } from '@/App/Sidebar/ProjectItem'
 import { RecordControls } from '@/App/lib/RecordControls'
 import { SortingList } from '@/App/Sidebar/SortingList'
-import { StorageUsage } from '@/App/Sidebar/StorageUsage'
+import { StorageUsageText } from '@/App/Sidebar/StorageUsage'
 import { UploadVideoButton } from '@/App/lib/UploadVideoButton'
 
 export function Sidebar() {
@@ -118,15 +118,16 @@ export function Sidebar() {
             <UploadVideoButton />
           </div>
 
-          <StorageUsage />
-
           <details className="group">
-            <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
-              <ChevronRight
-                size={14}
-                className="transition-transform group-open:rotate-90"
-              />
-              Transfer library
+            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between gap-2 text-xs text-slate-400 select-none hover:text-slate-200 active:text-slate-100 [&::-webkit-details-marker]:hidden">
+              <span className="flex min-w-0 items-center gap-1">
+                <ChevronRight
+                  size={14}
+                  className="shrink-0 transition-transform group-open:rotate-90"
+                />
+                Transfer library
+              </span>
+              <StorageUsageText />
             </summary>
             <div className="pt-2">
               <LibraryTransferControls />
